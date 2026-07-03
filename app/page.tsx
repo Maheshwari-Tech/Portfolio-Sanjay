@@ -300,7 +300,15 @@ export default function Home() {
                       <strong>{project.aiApiSummary}</strong>
                     </div>
                     <ul>
-                      {project.aiCapabilities.map((capability) => <li key={capability}>{capability}</li>)}
+                      {project.aiCapabilities.map((capability) => {
+                        const [capabilityTitle, capabilityFlow] = capability.split(" · ");
+                        return (
+                          <li key={capability}>
+                            <strong>{capabilityTitle}</strong>
+                            {capabilityFlow && <code>{capabilityFlow}</code>}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}
@@ -378,7 +386,7 @@ export default function Home() {
                   const text = typeof achievement === "string" ? achievement : achievement.text;
                   const url = typeof achievement === "string" ? undefined : achievement.url;
                   return (
-                    <li key={text}>
+                    <li key={text} tabIndex={0}>
                       <span>{String(index + 1).padStart(2, "0")}</span>
                       {url ? <a href={url} target="_blank" rel="noreferrer">{text} ↗</a> : <p>{text}</p>}
                     </li>

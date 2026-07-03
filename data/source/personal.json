@@ -413,6 +413,66 @@
     "url": "https://en.wikipedia.org/wiki/Delhi"
   },
   {
+    "id": 49,
+    "category": "travel",
+    "title": "Gokarna",
+    "description": "A relaxed coastal town of temple streets, quiet beaches, cliff walks, and slow sunsets.",
+    "location": "Karnataka",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Gokarna,_Karnataka"
+  },
+  {
+    "id": 50,
+    "category": "travel",
+    "title": "Pune",
+    "description": "A lively mix of history, universities, neighbourhood food, and an energetic technology community.",
+    "location": "Maharashtra",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Pune"
+  },
+  {
+    "id": 51,
+    "category": "travel",
+    "title": "Udupi",
+    "description": "Temple heritage, coastal flavours, peaceful beaches, and memorable South Indian food.",
+    "location": "Karnataka",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Udupi"
+  },
+  {
+    "id": 52,
+    "category": "travel",
+    "title": "Mangalore",
+    "description": "A warm coastal city shaped by beaches, port life, regional cuisine, and green surroundings.",
+    "location": "Karnataka",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Mangalore"
+  },
+  {
+    "id": 53,
+    "category": "travel",
+    "title": "Pondicherry",
+    "description": "Colourful lanes, seaside walks, cafés, and a calm blend of Tamil and French influences.",
+    "location": "Puducherry",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Pondicherry"
+  },
+  {
+    "id": 54,
+    "category": "travel",
+    "title": "Chennai",
+    "description": "Coastal energy, deep cultural roots, music, temples, technology, and unmistakable local food.",
+    "location": "Tamil Nadu",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Chennai"
+  },
+  {
     "id": 45,
     "category": "travel_wishlist",
     "title": "North East India",
