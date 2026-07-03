@@ -1,0 +1,358 @@
+[
+  {
+    "id": 1,
+    "name": "Portfolio Website",
+    "description": "A responsive portfolio website built with React and Node.js backend.",
+    "image": "/images/portfolio_website.png",
+    "github": "https://github.com/Maheshwari-Tech",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Portfolio",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:80",
+    "priority": 1,
+    "projectId": 1,
+    "is_app": true,
+    "features": [
+      "Modern UI/UX Design",
+      "Responsive Architecture",
+      "Scalable Backend",
+      "Advanced Features",
+      "Performance Optimized",
+      "Cross-platform Support"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "CouplesCraft",
+    "description": "A location-aware recommendation platform that helps couples discover and plan date ideas, track important moments, and build shared memories using real-time geospatial filtering, budget-based ranking, and interactive maps.",
+    "image": "/images/Coupling_logo.png",
+    "github": "https://github.com/maheshwari-tech/coupling-app",
+    "technologies": ["React", "TypeScript", "Leaflet", "Node.js", "MongoDB", "OCI"],
+    "category": "Social",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:3004",
+    "priority": 2,
+    "projectId": 17,
+    "features": [
+      "Date Planning & Discovery",
+      "Romantic Activity Suggestions",
+      "Shared Memory Creation",
+      "Personalized Recommendations",
+      "Couple Profile Management",
+      "Event Tracking"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Cooking Community App",
+    "description": "What to cook based on available vegetables? Social network for home chef group in India with easy recipe sharing, likes, and community features.",
+    "image": "/images/cooking.png",
+    "github": "https://github.com/maheshwari-tech/cooking-app",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Lifestyle",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:3003",
+    "priority": 3,
+    "projectId": 19,
+    "features": [
+      "Recipe Discovery & Search",
+      "AI-Powered Cooking Suggestions",
+      "Smart Grocery Management",
+      "Social Recipe Sharing",
+      "Multi-language Support",
+      "Real-time Community Feed"
+    ]
+  },
+  {
+    "id": 25,
+    "name": "Udhari App",
+    "description": "A chat-first peer-to-peer lending product where both people can discuss a loan, agree on versioned repayment terms, record partial payments, manage AutoPay, and understand what they owe at a glance.",
+    "image": "/images/udhari-mobile-demo.png",
+    "gallery": [
+      { "src": "/images/udhari-mobile-demo.png", "label": "Lending overview", "portrait": true },
+      { "src": "/images/udhari-contract-mobile-demo.png", "label": "Flexible contract builder", "portrait": true }
+    ],
+    "github": "https://github.com/maheshwari-tech/udhari-app",
+    "technologies": ["Flutter", "Dart", "JSON", "Android", "iOS", "Web"],
+    "category": "Finance",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:3010",
+    "priority": 4,
+    "projectId": 25,
+    "features": [
+      "Versioned contracts approved by both people",
+      "Flexible multi-phase interest and repayment terms",
+      "Payments, wallet ledger, AutoPay, and balance views",
+      "Chat-first conversations with friendly reminders",
+      "English, Hindi, and Marathi localization",
+      "Typed repository architecture ready for a secure backend"
+    ]
+  },
+  {
+    "id": 29,
+    "name": "Intelligent Report Builder",
+    "description": "An AI-intelligence workspace that turns natural-language intent and structured data into polished resumes, biodata, medical records, and business reports—then helps teams build templates, validate quality, investigate failures, and predict delivery time.",
+    "image": "/images/intelligent-report-builder-demo.png",
+    "gallery": [
+      { "src": "/images/intelligent-report-builder-demo.png", "label": "Report generation workspace" },
+      { "src": "/images/intelligent-report-ai-demo.png", "label": "AI report request copilot" },
+      { "src": "/images/intelligent-template-builder-demo.png", "label": "AI-assisted template builder" }
+    ],
+    "github": null,
+    "technologies": ["AI Intelligence", "Generative AI", "Template RAG", "Semantic Retrieval", "Vector Embeddings", "LangChain", "LangGraph", "Agentic Workflows", "LLM Orchestration", "Prompt Engineering", "Structured Outputs", "OCI Generative AI", "Llama 4", "Human-in-the-loop", "AI Template Generation", "AI Concept Onboarding", "AI Quality Review", "AI Root-cause Analysis", "WNN ETA Model", "FastAPI", "React", "TypeScript", "PDF"],
+    "category": "AI · Document Intelligence",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "",
+    "priority": 1,
+    "projectId": 29,
+    "highlight": true,
+    "features": [
+      "Natural-language report requests with missing-input follow-ups",
+      "AI template drafting, enhancement, repair, and save guardrails",
+      "Reusable output for resumes, biodata, healthcare, and business reports",
+      "Report quality and compliance review with actionable findings",
+      "Audit root-cause analysis across the report lifecycle",
+      "Statistical SLA and ETA prediction without an LLM at serving time"
+    ],
+    "aiApiSummary": "15 AI endpoints across 8 intelligence workflows",
+    "aiCapabilities": [
+      "Template formatting & enhancement · format-template / enhance-template",
+      "RAG template builder · template-builder/enhance / workflow",
+      "Template repair & validation · template-repair/repair / validate",
+      "New concept onboarding · concept-onboarding/plan / onboard-concept",
+      "Report request copilot · generate-report-request / report-request-copilot/plan",
+      "Report analysis & quality review · analyze-report / report-quality-review",
+      "Audit root-cause copilot · audit-root-cause",
+      "Report-time prediction · eta-prediction / sla-eta / capabilities"
+    ]
+  },
+  {
+    "id": 27,
+    "name": "Sponsor App",
+    "description": "App for managing sponsorships and partnerships.",
+    "image": null,
+    "github": null,
+    "technologies": [],
+    "category": "Business",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3011",
+    "priority": 5,
+    "projectId": 27,
+    "features": [
+      "Sponsorship Management",
+      "Partnership Tracking",
+      "Contract Handling",
+      "Payment Processing",
+      "Performance Analytics",
+      "Communication Tools"
+    ]
+  },
+  {
+    "id": 28,
+    "name": "Services App",
+    "description": "App to provide nearby services, anyone can post looking for teacher for an hour.",
+    "image": null,
+    "github": null,
+    "technologies": [],
+    "category": "Business",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3012",
+    "priority": 6,
+    "projectId": 28,
+    "features": [
+      "Service Discovery",
+      "Local Service Providers",
+      "Booking System",
+      "Review & Rating",
+      "Secure Payments",
+      "Location-based Search"
+    ]
+  },
+  {
+    "id": 26,
+    "name": "Auditor App",
+    "description": "Comprehensive financial auditing platform that transforms bank statement analysis through intelligent automation. Features include PDF parsing for transaction extraction, transaction merging with duplicate removal, multi-bank statement management, cross-bank transaction grouping, fraud detection algorithms, and interactive visualization dashboards for comprehensive financial analysis and decision-making.",
+    "image": "/images/Audtior_Display_image.png",
+    "github": "https://github.com/maheshwari-tech/auditor-app",
+    "technologies": ["AI", "ML", "Python", "MERN", "pdf-parsing", "excel", "Dashboard"],
+    "category": "Business",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:3013",
+    "priority": 7,
+    "projectId": 26,
+    "features": [
+      "PDF Statement Parsing",
+      "Transaction Analysis",
+      "Fraud Detection",
+      "Multi-bank Integration",
+      "Financial Dashboards",
+      "Automated Reporting"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Cards Game",
+    "description": "A cross-platform real-time card table for web, Android, and iOS, built around authoritative multiplayer rules, private tables, reconnect-safe sessions, and culturally familiar games including Chowgdi and Simple Capture.",
+    "image": "/images/cards-game-mobile-demo.png",
+    "gallery": [
+      { "src": "/images/cards-game-mobile-demo.png", "label": "Cross-platform game catalog", "portrait": true },
+      { "src": "/images/cards-game-table-mobile-demo.png", "label": "Live multiplayer waiting room", "portrait": true }
+    ],
+    "github": "https://github.com/maheshwari-tech/cards-game",
+    "technologies": ["Expo", "React Native", "Go", "WebSocket", "Redis", "Docker"],
+    "category": "Gaming",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:3002",
+    "priority": 8,
+    "projectId": 15,
+    "features": [
+      "Authoritative Go server for deterministic multiplayer rules",
+      "Real-time table state over HTTP and WebSocket",
+      "Private tables, retained seats, and reconnect grace periods",
+      "Two-player Simple Capture and four-player Chowgdi",
+      "Shared Expo client for web, Android, and iOS",
+      "Redis-backed lobby, session, table, and game state"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Exam Prep - Study Assistant",
+    "description": "Focused preparation assistance with weekly progress tracking, interactive quizzes, study analytics, and personalized learning paths.",
+    "image": "/images/Exam_prep.png",
+    "github": "https://github.com/maheshwari-tech/exam-prep",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Education",
+    "type": "app",
+    "deployed": true,
+    "localUrl": "http://localhost:3006",
+    "priority": 9,
+    "projectId": 18,
+    "features": [
+      "Study Progress Tracking",
+      "Interactive Quizzes",
+      "Personalized Learning Paths",
+      "Performance Analytics",
+      "Study Plan Creation",
+      "Motivational Features"
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Resume Builder",
+    "description": "Advanced resume builder with customizable templates, export options, and modern design layouts.",
+    "image": "/images/resume_builder.png",
+    "github": "https://github.com/maheshwari-tech/resume-builder",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Builder",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3009",
+    "priority": 9,
+    "projectId": 22,
+    "features": [
+      "Customizable Templates",
+      "Resume Export Options",
+      "Modern Design Layouts",
+      "Skill Assessment",
+      "Professional Formatting",
+      "Multiple Formats Support"
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Bio Data Builder",
+    "description": "Professional bio-data creation tool with customizable templates, export options, and modern design layouts.",
+    "image": "/images/bio-data.png",
+    "github": "https://github.com/maheshwari-tech/bio-builder",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Builder",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3001",
+    "priority": 10,
+    "projectId": 21,
+    "features": [
+      "Bio-data Templates",
+      "Customizable Designs",
+      "Export Functionality",
+      "Professional Layouts",
+      "Personal Information Management",
+      "Print-ready Formats"
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Portfolio Website Builder",
+    "description": "Drag-and-drop portfolio website builder with customizable themes, content management, and hosting integration.",
+    "image": "/images/portfolio.jpg",
+    "github": "https://github.com/maheshwari-tech/portfolio-builder",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Builder",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3007",
+    "priority": 11,
+    "projectId": 23,
+    "features": [
+      "Drag-and-drop Interface",
+      "Customizable Themes",
+      "Content Management",
+      "Hosting Integration",
+      "SEO Optimization",
+      "Responsive Design"
+    ]
+  },
+  {
+    "id": 24,
+    "name": "AI Dashboard Builder",
+    "description": "Build custom dashboards with AI assistance - just upload any file and get intelligent visualizations and insights.",
+    "image": "/images/google_logo.webp",
+    "github": "https://github.com/maheshwari-tech/dashboard-builder",
+    "technologies": ["React", "Node.js", "Express", "MongoDB"],
+    "category": "Builder",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3005",
+    "priority": 12,
+    "projectId": 24,
+    "features": [
+      "AI-assisted Dashboard Creation",
+      "File Upload & Analysis",
+      "Intelligent Visualizations",
+      "Custom Chart Types",
+      "Data Insights",
+      "Real-time Updates"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Productivity App",
+    "description": "A comprehensive productivity application with task management, time tracking, habit building, and performance analytics.",
+    "image": "/images/productivity_app.png",
+    "github": "https://github.com/maheshwari-tech/productivity-app",
+    "technologies": ["React", "Node.js", "MongoDB", "Chart.js"],
+    "category": "Productivity",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3008",
+    "priority": 13,
+    "projectId": 16,
+    "features": [
+      "Task Management",
+      "Time Tracking",
+      "Habit Building",
+      "Performance Analytics",
+      "Goal Setting",
+      "Progress Visualization"
+    ]
+  }
+]

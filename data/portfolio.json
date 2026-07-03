@@ -1,0 +1,24 @@
+{
+  "profile": {
+    "name": "Sanjay Gandhi",
+    "shortName": "SM",
+    "eyebrow": "Tech lead · Distributed systems · AI",
+    "headline": "I build reliable systems for real-world scale.",
+    "summary": "Senior software engineer and tech lead with 6+ years across Oracle, Google, and Amazon, with experience leading 10+ engineers across 3+ products and 7+ microservices.",
+    "about": "I build and scale cloud-native backend and distributed systems across healthcare, search, and finance. My work spans Java, Python, OCI, AWS, asynchronous systems, machine learning, generative AI, and developer-productivity tooling.",
+    "location": "Bengaluru, India",
+    "availability": "Open to meaningful collaborations",
+    "email": "sanjaymaheshwari.work@gmail.com",
+    "phone": "+91 8847472124",
+    "image": "/images/profile.png",
+    "resume": "/Sanjay_Gandhi_Resume.pdf"
+  },
+  "stats": [
+    { "value": "6+", "label": "Years building at scale" },
+    { "value": "10+", "label": "Engineers led" },
+    { "value": "10+", "label": "Microservices architected end to end" },
+    { "value": "25+", "label": "Cross-functional teams worked with" },
+    { "value": "100+", "label": "Technical interviews" },
+    { "value": "100M+", "label": "USD anomalies discovered" }
+  ]
+}

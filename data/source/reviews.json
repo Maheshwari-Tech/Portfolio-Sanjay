@@ -1,0 +1,113 @@
+[
+  {
+    "id": 1,
+    "name": "Sahil Jobanputra",
+    "rating": 5,
+    "comment": "I had the opportunity to work closely with Sanjay during the early stage of our career, and even though we worked together for just about a year, his impact was clearly visible. He quickly developed strong product knowledge and was able to get a deep understanding of multiple services in a short time — something that usually takes much longer. It was impressive to see him already making an impact at the next level, driving discussions, and contributing meaningfully across teams. What stands out most about Sanjay is his leadership quality and the way he connects with people. He's transparent, approachable, and always willing to help others — whether it's providing technical guidance, or simply supporting teammates when needed. He's someone who not only gets the job done but also uplifts those around him. A great colleague to work with, and someone who is continuously learning from everyone while being open to sharing his own knowledge. I've learned a lot from him in a short span of time, and it's been a real pleasure working together.",
+    "date": "2025-10-16",
+    "context": "Sahil worked with Sanjay on the same team At <b>Amazon</b>",
+    "socialLink": "https://www.linkedin.com/in/sahil-jobanputra"
+  },
+  {
+    "id": 2,
+    "name": "Sanjay Gidwani",
+    "rating": 5,
+    "comment": "I've known Sanjay through Oracle Health, and as his senior from college we've had many conversations about our careers and growth. His technical leadership skills have always stood out to me. He has a strong ability to drive complex initiatives end to end, collaborating with cross-functional teams, communicating clearly with stakeholders, mentoring engineers, and working with global partners to deliver outcomes. His mix of technical depth and execution clarity enables him to lead projects at scale with confidence. I'm confident he will thrive in any high-performing engineering environment.",
+    "date": "2025-10-16",
+    "context": "Sanjay was senior to Sanjay but didn't manage Sanjay directly",
+    "socialLink": "https://www.linkedin.com/in/sanjay-gidwani"
+  },
+  {
+    "id": 3,
+    "name": "Nilesh Yadav",
+    "rating": 5,
+    "comment": "I had the pleasure of working with Sanjay on a project that he led, and it was a really great experience. Thanks to his leadership and clear direction, we were able to deliver the project in just one quarter and a month, compared to the original estimate of two quarters — an impressive achievement for the entire team. What stood out the most was how he always looked at the bigger picture, tackled critical challenges head-on, and worked closely with everyone to get things moving. He brought structure and clarity to the project by defining stories, aligning priorities, and keeping the team focused on outcomes. He also went above and beyond to help junior engineers, ensuring they were unblocked and could contribute effectively. His hands-on involvement in end-to-end testing and release made a big difference in getting the project delivered smoothly. Even with relatively fewer years of experience, Sanjay shows the kind of leadership, ownership, and problem-solving mindset you'd expect from someone at the next level. He's a great teammate to work with — collaborative, reliable, and always positive. Any team would be lucky to have him!",
+    "date": "2025-10-16",
+    "context": "Nilesh worked with Sanjay on the same team at <b>Oracle</b>",
+    "socialLink": "https://www.linkedin.com/in/nilesh-yadav"
+  },
+  {
+    "id": 4,
+    "name": "Akarsh Naveen Chandra",
+    "rating": 5,
+    "comment": "I've had the pleasure of working closely with Sanjay in Oracle Health, and his contributions have been nothing short of exceptional. Despite having comparatively fewer years of experience, Sanjay consistently demonstrates the skills, maturity, and technical depth of a much more seasoned engineer. He possesses a deep understanding of both legacy and next-generation systems, allowing him to bridge complex architectural gaps and deliver robust, scalable solutions. His approach to system design consistently exceeds expectations for his role and level offering clarity, scalability, and long-term value to the product. His code is clean, efficient, and maintainable, and his code reviews are detailed and constructive, improving the overall quality of the team's output. Beyond his technical strengths, Sanjay stands out as a collaborative and dependable teammate. He is proactive in supporting others, unblocking challenges, and sharing knowledge generously. Even without a formal leadership title, he naturally steps up to lead discussions, guide decisions, and ensure alignment across the team. Sanjay is a rare blend of technical excellence, leadership, and humility. As he continues to take on greater ownership and engage more with cross-functional stakeholders, I have no doubt he will continue to make an even bigger impact. He's an exceptional engineer and a true asset to any team.",
+    "date": "2025-10-16",
+    "context": "Sanjay was senior to Akarsh but didn't manage Akarsh directly, in the same team at <b>Oracle</b>",
+    "socialLink": "https://www.linkedin.com/in/akarsh-naveen-chandra"
+  },
+  {
+    "id": 5,
+    "name": "Siddhant Saurabh",
+    "rating": 5,
+    "comment": "I have studied and stayed with him during our b.tech days. He is a very quick learner. He is very good at competitive programming. I love his enthusiasm in cp.",
+    "date": "2021-08-11",
+    "context": "Siddhant and Sanjay studied together at <b>Lovely Professional University</b>",
+    "socialLink": "https://www.linkedin.com/in/siddhant-saurabh"
+  },
+  {
+    "id": 6,
+    "name": "Subhajeet Mishra",
+    "rating": 5,
+    "comment": "I have worked with Sanjay for 6 months and it was a pleasure working with him. Sanjay is a result-oriented and responsible person and has very good programming skills.",
+    "date": "2021-05-12",
+    "context": "Subhajeet was senior to Sanjay but didn't manage Sanjay directly at <b>HackerEarth</b>",
+    "socialLink": "https://www.linkedin.com/in/subhajeet-mishra"
+  },
+  {
+    "id": 7,
+    "name": "Yash Thakur",
+    "rating": 5,
+    "comment": "I have worked with Sanjay for over 6 months and I have never come across such a polite person. He is an exceptional programmer and knows the concepts of programming from basic to advance.",
+    "date": "2020-07-26",
+    "context": "Yash was senior to Sanjay but didn't manage Sanjay directly at <b>HackerEarth</b>",
+    "socialLink": "https://www.linkedin.com/in/yash-thakur"
+  },
+  {
+    "id": 8,
+    "name": "Nikhil Jain",
+    "rating": 5,
+    "comment": "Sanjay is a results-oriented person. He has excellent programming skills and a great attitude towards learning. I found him a hard-working and self-motivated student. I met him when he started competitive programming and saw him climbing-up stairs throughout till now. Having been associated with Sanjay and guiding him throughout, I have no reservations in strongly recommending him.",
+    "date": "2020-03-15",
+    "context": "Nikhil was Sanjay's mentor from college days",
+    "socialLink": "https://www.linkedin.com/in/nikhil-jain"
+  },
+  {
+    "author": "Shalini",
+    "content": "You are great.",
+    "email": "shalinthebariaa@gmail.com",
+    "createdAt": "2025-11-01T12:40:23.660Z",
+    "_id": "1762667006757"
+  },
+  {
+    "name": "TestUser B 20251109T061726Z",
+    "comment": "Automated feedback no rating (20251109T061726Z)",
+    "rating": 5,
+    "date": "2025-11-09",
+    "_id": "1762669050595",
+    "createdAt": "2025-11-09T06:17:30.595Z"
+  },
+  {
+    "name": "TestUser B 20251109T061944Z",
+    "comment": "Automated feedback no rating (20251109T061944Z)",
+    "rating": 5,
+    "date": "2025-11-09",
+    "_id": "1762669189682",
+    "createdAt": "2025-11-09T06:19:49.682Z"
+  },
+  {
+    "name": "Anonymous",
+    "comment": "Feedback 9 Nov !",
+    "rating": 5,
+    "date": "2025-11-09",
+    "_id": "1762669253969",
+    "createdAt": "2025-11-09T06:20:53.969Z"
+  },
+  {
+    "name": "Sanjay",
+    "comment": "Hey",
+    "rating": 5,
+    "date": "2025-11-09",
+    "_id": "1762669309291",
+    "createdAt": "2025-11-09T06:21:49.291Z"
+  }
+]

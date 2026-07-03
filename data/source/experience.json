@@ -1,0 +1,73 @@
+[
+  {
+    "company": "Oracle",
+    "role": "Senior Member of Technical Staff (SDE III) — Tech Lead",
+    "period": "Apr 2024 – Present, Bengaluru (Remote)",
+    "duration": "Promoted to Tech Lead in Oct 2025",
+    "logo": "/images/oracle_logo.svg",
+    "technologies": ["Java", "Micronaut", "Kafka", "Redis", "SQL", "Elasticsearch", "Large Semantic Object Storage", "OCI", "Microservices"],
+    "keySkills": ["Technical Leadership", "System Architecture", "Performance Tuning", "Hiring", "Mentoring", "Cross-team Delivery"],
+    "rating": 10,
+    "details": [
+      "Technical lead for Oracle Health’s Clinical Reporting / Output Management team, owning <strong>MRO / Clinical Reporting Gen2</strong>, used by <strong>25+ concept teams</strong> with 20+ additional concepts on the roadmap.",
+      "Architected and implemented <strong>7+ microservices</strong> for a Java Micronaut medical-record output platform, redesigning it into a modular Gen2 reporting system across APIs, templates, data extraction, report generation, and PDF assembly.",
+      "Introduced asynchronous processing, fast/slow lanes, bulk generation, retries, DLQ handling, idempotency, horizontal scaling, authN/authZ, audit logging, metrics, dashboards, and alerting.",
+      "Led delivery across <strong>49 closed epics</strong>, 39 planned epics, <strong>89 Jira items</strong>, and <strong>251 story points</strong> spanning architecture, releases, compliance, monitoring, and deployment readiness.",
+      "Optimized a 262-page report from <strong>9.0s to 4.2s</strong>, reduced heap from <strong>891.7MB to 426.2MB</strong>, and reduced output from <strong>17.6MB to 13.7MB</strong>.",
+      "Supported <strong>20+ Gen2 concept onboardings</strong> and reduced onboarding time from roughly two weeks to under one week.",
+      "Built and led the India Clinical Reporting team, with leadership experience across <strong>10+ engineers</strong>, <strong>3+ products</strong>, <strong>25+ cross-functional teams</strong>, <strong>100+ interviews</strong>, and <strong>20+ hires</strong>."
+    ]
+  },
+  {
+    "company": "Google",
+    "role": "Software Engineer II",
+    "period": "Sep 2021 – Feb 2024, Bengaluru (Hybrid)",
+    "duration": "2 years 6 months",
+    "logo": "/images/google_logo.webp",
+    "technologies": ["C++", "Java", "Python", "gRPC", "Protocol Buffers", "Knowledge Graphs", "Monorepo"],
+    "keySkills": ["Product Engineering", "API Design", "Localization", "Cross-functional Collaboration", "System Design"],
+    "rating": 7,
+    "details": [
+      "Developed education-domain features in the Search India team for exam OSRPs and structured educational content.",
+      "Built the <strong>Exam Quiz</strong> feature to improve engagement with interactive learning modules.",
+      "Migrated architecture from entity-driven to intent-driven, impacting <strong>0.05%</strong> of Search traffic.",
+      "That measured reach maps to an estimated <strong>1M+ daily-query scale</strong> when applied to Google’s public baseline of billions of searches per day.",
+      "Launched localized Exam OSRP experiences in Hindi, Tamil, and Telugu.",
+      "Designed and integrated a scalable Language API for Indic locales in lower-tier cities.",
+      "Collaborated across teams to resolve issues, align requirements, and prioritize improvements.",
+      "Worked in a large-scale monorepo using C++, Java, Python, gRPC, protobuf, and internal technologies."
+    ]
+  },
+  {
+    "company": "Amazon",
+    "role": "Software Development Engineer I",
+    "period": "Jul 2020 – Aug 2021, Hyderabad",
+    "duration": "1 year 2 months",
+    "logo": "/images/amazon_logo.svg",
+    "technologies": ["Java", "Kotlin", "TypeScript", "Python", "AWS CDK", "Elasticsearch", "DynamoDB", "Coral", "Smithy"],
+    "keySkills": ["Machine Learning", "Anomaly Detection", "Microservices", "API Design", "CI/CD", "Monitoring"],
+    "rating": 10,
+    "details": [
+      "Built statistical and ML-powered systems in Amazon Finance Automation to detect invoice fraud, duplicates, and anomalies at scale.",
+      "Supported a finance ingestion surface receiving <strong>1 lakh+ invoice create/update requests every day</strong> across retail, non-retail, and corporate workflows.",
+      "Implemented <strong>3 anomaly-detection rules</strong> using Isolation Forest, identifying over <strong>100M USD</strong> in anomalies.",
+      "Reduced anomaly reporting latency from <strong>24 hours</strong> to near real time through Gandalf-Veritas integration.",
+      "Built APIs and monitoring dashboards and used AWS CDK for infrastructure and CI/CD pipelines.",
+      "Developed microservices using Java, Kotlin, TypeScript, Python, ML, Elasticsearch, DynamoDB, Coral, Smithy, and AWS."
+    ]
+  },
+  {
+    "company": "HackerEarth",
+    "role": "Problem Curator Intern",
+    "period": "Jan 2020 – Jun 2020, Bengaluru",
+    "duration": "6 months",
+    "logo": "/images/HackerEarth_logo.png",
+    "technologies": ["C++", "Python", "Java", "JavaScript", "Data Structures", "Algorithms"],
+    "keySkills": ["Problem Setting", "Competitive Programming", "Teaching", "Public Speaking"],
+    "rating": 10,
+    "details": [
+      "Created and tested algorithmic problems for hiring contests at companies including Infosys, Google, Facebook, Nokia, PayPal, and Salesforce.",
+      "Presented a <strong>2-day / 10+ hour</strong> advanced data structures and algorithms workshop at MNIT Jaipur to <strong>120+ attendees</strong>."
+    ]
+  }
+]

@@ -1,0 +1,455 @@
+[
+  {
+    "id": 10,
+    "category": "movies",
+    "title": "Superboys of Malegaon",
+    "description": "A warm, inventive story about friendship, community, and grassroots filmmaking in Malegaon.",
+    "format": "Film",
+    "genre": "Drama",
+    "url": "https://en.wikipedia.org/wiki/Superboys_of_Malegaon"
+  },
+  {
+    "id": 11,
+    "category": "movies",
+    "title": "Aspirants",
+    "description": "Ambition, friendship, and the emotional cost of preparing for India’s civil-services examination.",
+    "format": "Series",
+    "genre": "Drama",
+    "url": "https://www.imdb.com/title/tt14392248/?ref_=ls_t_5"
+  },
+  {
+    "id": 12,
+    "category": "movies",
+    "title": "Panchayat",
+    "description": "A gentle rural comedy grounded in character, community, and everyday bureaucracy.",
+    "format": "Series",
+    "genre": "Comedy drama",
+    "url": "https://www.imdb.com/title/tt12004706/?ref_=ls_t_9"
+  },
+  {
+    "id": 13,
+    "category": "movies",
+    "title": "TVF Pitchers",
+    "description": "A sharp Indian startup story about leaving safe careers to build something together.",
+    "format": "Series",
+    "genre": "Comedy drama",
+    "url": "https://www.imdb.com/title/tt4742876/"
+  },
+  {
+    "id": 14,
+    "category": "movies",
+    "title": "Rocket Boys",
+    "description": "A dramatized look at the scientists and decisions that shaped India’s space and nuclear programs.",
+    "format": "Series",
+    "genre": "Historical drama",
+    "url": "https://www.imdb.com/title/tt13868972/"
+  },
+  {
+    "id": 15,
+    "category": "movies",
+    "title": "Bandish Bandits",
+    "description": "A musical drama where classical tradition meets modern ambition and changing relationships.",
+    "format": "Series",
+    "genre": "Musical drama",
+    "url": "https://www.imdb.com/title/tt9814458/"
+  },
+  {
+    "id": 16,
+    "category": "movies",
+    "title": "Permanent Roommates",
+    "description": "A relationship comedy about commitment, compromise, and growing together.",
+    "format": "Series",
+    "genre": "Romantic comedy",
+    "url": "https://www.imdb.com/title/tt4156586/"
+  },
+  {
+    "id": 17,
+    "category": "movies",
+    "title": "Parasite",
+    "description": "A sharp social satire crossing class, aspiration, deception, and survival.",
+    "format": "Film",
+    "genre": "Thriller",
+    "url": "https://www.imdb.com/title/tt6751668/"
+  },
+  {
+    "id": 18,
+    "category": "movies",
+    "title": "A Beautiful Mind",
+    "description": "A moving portrait of mathematical brilliance, resilience, and partnership.",
+    "format": "Film",
+    "genre": "Biographical drama",
+    "url": "https://www.imdb.com/title/tt0268978/"
+  },
+  {
+    "id": 19,
+    "category": "movies",
+    "title": "Gangs of Wasseypur",
+    "description": "A sprawling Indian crime saga shaped by family, power, politics, and revenge.",
+    "format": "Film",
+    "genre": "Crime drama",
+    "url": "https://www.imdb.com/title/tt1954470/"
+  },
+  {
+    "id": 1,
+    "category": "movies",
+    "title": "The Shawshank Redemption",
+    "description": "A profound story of hope, friendship, and redemption. One of the most inspiring films ever made.",
+    "rating": 5,
+    "year": 1994,
+    "genre": "Drama",
+    "url": "https://www.imdb.com/title/tt0111161/"
+  },
+  {
+    "id": 2,
+    "category": "movies",
+    "title": "Inception",
+    "description": "Mind-bending exploration of dreams within dreams. Christopher Nolan at his finest.",
+    "rating": 5,
+    "year": 2010,
+    "genre": "Sci-Fi Thriller",
+    "url": "https://www.imdb.com/title/tt1375666/"
+  },
+  {
+    "id": 3,
+    "category": "movies",
+    "title": "The Dark Knight",
+    "description": "Heath Ledger's Joker is legendary. A masterpiece of superhero cinema.",
+    "rating": 4,
+    "year": 2008,
+    "genre": "Action",
+    "url": "https://www.imdb.com/title/tt0468569/"
+  },
+  {
+    "id": 4,
+    "category": "books",
+    "title": "Focus on What Matters",
+    "description": "Practical Stoic reflections on directing attention toward the work, relationships, and choices that matter most.",
+    "author": "Darius Foroux",
+    "rating": 5,
+    "year": 2022,
+    "genre": "Philosophy",
+    "url": "https://books.google.com/books?q=Focus+on+What+Matters+Darius+Foroux"
+  },
+  {
+    "id": 5,
+    "category": "books",
+    "title": "Four Thousand Weeks",
+    "description": "A thoughtful challenge to productivity culture and a more honest approach to our limited time.",
+    "author": "Oliver Burkeman",
+    "rating": 5,
+    "year": 2021,
+    "genre": "Time & life",
+    "url": "https://books.google.com/books?q=Four+Thousand+Weeks+Oliver+Burkeman"
+  },
+  {
+    "id": 6,
+    "category": "books",
+    "title": "Deep Work",
+    "description": "A practical framework for protecting concentration and producing valuable work without distraction.",
+    "author": "Cal Newport",
+    "rating": 5,
+    "year": 2016,
+    "genre": "Productivity",
+    "url": "https://books.google.com/books?q=Deep+Work+Cal+Newport"
+  },
+  {
+    "id": 20,
+    "category": "books",
+    "title": "Getting Things Done",
+    "description": "A practical system for capturing commitments, clarifying next actions, and reducing mental clutter.",
+    "author": "David Allen",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Productivity",
+    "url": "https://books.google.com/books?q=Getting+Things+Done+David+Allen"
+  },
+  {
+    "id": 21,
+    "category": "books",
+    "title": "The Psychology of Money",
+    "description": "Timeless lessons on behavior, risk, compounding, and building a healthy relationship with money.",
+    "author": "Morgan Housel",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Personal finance",
+    "url": "https://books.google.com/books?q=The+Psychology+of+Money+Morgan+Housel"
+  },
+  {
+    "id": 22,
+    "category": "books",
+    "title": "Atomic Habits",
+    "description": "A clear framework for making small behavioral changes compound over time.",
+    "author": "James Clear",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Self-development",
+    "url": "https://books.google.com/books?q=Atomic+Habits+James+Clear"
+  },
+  {
+    "id": 23,
+    "category": "books",
+    "title": "The Subtle Art of Not Giving a F*ck",
+    "description": "A direct argument for choosing values carefully and spending attention on what genuinely matters.",
+    "author": "Mark Manson",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Self-development",
+    "url": "https://books.google.com/books?q=The+Subtle+Art+of+Not+Giving+a+Fck+Mark+Manson"
+  },
+  {
+    "id": 24,
+    "category": "books",
+    "title": "The Richest Man in Babylon",
+    "description": "Simple financial parables about saving, investing, and building lasting wealth.",
+    "author": "George S. Clason",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Personal finance",
+    "url": "https://books.google.com/books?q=The+Richest+Man+in+Babylon+George+Clason"
+  },
+  {
+    "id": 25,
+    "category": "books",
+    "title": "Master Your Emotions",
+    "description": "Practical exercises for understanding emotional patterns and responding with greater clarity.",
+    "author": "Thibaut Meurisse",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Emotional wellbeing",
+    "url": "https://books.google.com/books?q=Master+Your+Emotions+Thibaut+Meurisse"
+  },
+  {
+    "id": 26,
+    "category": "books",
+    "title": "Die with Zero",
+    "description": "A framework for balancing money, time, health, and meaningful experiences across life.",
+    "author": "Bill Perkins",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Life planning",
+    "url": "https://books.google.com/books?q=Die+with+Zero+Bill+Perkins"
+  },
+  {
+    "id": 27,
+    "category": "books",
+    "title": "The 5 AM Club",
+    "description": "A motivational system for protecting focused morning time and building consistent routines.",
+    "author": "Robin Sharma",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Personal development",
+    "url": "https://books.google.com/books?q=The+5+AM+Club+Robin+Sharma"
+  },
+  {
+    "id": 28,
+    "category": "books",
+    "title": "Everything Is F*cked",
+    "description": "A reflective exploration of hope, meaning, and modern discomfort.",
+    "author": "Mark Manson",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Philosophy",
+    "url": "https://books.google.com/books?q=Everything+Is+Fcked+Mark+Manson"
+  },
+  {
+    "id": 29,
+    "category": "books",
+    "title": "Scrum",
+    "description": "A concise guide to iterative delivery, empowered teams, feedback loops, and continuous improvement.",
+    "author": "Jeff Sutherland",
+    "format": "Book",
+    "status": "Reading list",
+    "genre": "Product delivery",
+    "url": "https://books.google.com/books?q=Scrum+Jeff+Sutherland"
+  },
+  {
+    "id": 30,
+    "category": "travel",
+    "title": "Ooty",
+    "description": "Misty Nilgiri hills, tea gardens, winding roads, and weather that makes you slow down.",
+    "location": "Tamil Nadu",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Ooty"
+  },
+  {
+    "id": 31,
+    "category": "travel",
+    "title": "Coorg",
+    "description": "Coffee country with forested hills, quiet mornings, waterfalls, and generous local food.",
+    "location": "Karnataka",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Kodagu_district"
+  },
+  {
+    "id": 32,
+    "category": "travel",
+    "title": "Wayanad",
+    "description": "Green Western Ghats, plantation roads, rain-washed landscapes, and an easygoing pace.",
+    "location": "Kerala",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Wayanad_district"
+  },
+  {
+    "id": 33,
+    "category": "travel",
+    "title": "Bengaluru",
+    "description": "Home-base energy, welcoming weather, neighbourhood cafés, and a constantly evolving technology community.",
+    "location": "Karnataka",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Bengaluru"
+  },
+  {
+    "id": 34,
+    "category": "travel",
+    "title": "Gujarat",
+    "description": "A colourful mix of food, craft, heritage, entrepreneurial spirit, and long coastlines.",
+    "location": "Western India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Gujarat"
+  },
+  {
+    "id": 35,
+    "category": "travel",
+    "title": "Rajasthan",
+    "description": "Forts, desert landscapes, detailed architecture, and stories carried through every old city.",
+    "location": "Northwestern India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Rajasthan"
+  },
+  {
+    "id": 36,
+    "category": "travel",
+    "title": "Goa",
+    "description": "Beaches, local food, old neighbourhoods, and the rare permission to enjoy an unhurried day.",
+    "location": "Western India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Goa"
+  },
+  {
+    "id": 37,
+    "category": "travel",
+    "title": "Chhattisgarh",
+    "description": "Forests, waterfalls, regional traditions, and landscapes that deserve far more attention.",
+    "location": "Central India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Chhattisgarh"
+  },
+  {
+    "id": 38,
+    "category": "travel",
+    "title": "Punjab",
+    "description": "Warm hospitality, generous food, open fields, and a strong sense of community.",
+    "location": "Northern India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Punjab,_India"
+  },
+  {
+    "id": 39,
+    "category": "travel",
+    "title": "Hyderabad",
+    "description": "Historic quarters, biryani, modern technology hubs, and a city comfortable with both worlds.",
+    "location": "Telangana",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Hyderabad"
+  },
+  {
+    "id": 40,
+    "category": "travel",
+    "title": "Himachal Pradesh",
+    "description": "Mountain roads, pine forests, small towns, and views that make the journey part of the destination.",
+    "location": "Northern India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Himachal_Pradesh"
+  },
+  {
+    "id": 41,
+    "category": "travel",
+    "title": "Uttarakhand",
+    "description": "Himalayan landscapes, rivers, temples, trails, and a quiet sense of perspective.",
+    "location": "Northern India",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Uttarakhand"
+  },
+  {
+    "id": 42,
+    "category": "travel",
+    "title": "Shimla",
+    "description": "A familiar hill-town rhythm with mountain views, heritage streets, and crisp evenings.",
+    "location": "Himachal Pradesh",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Shimla"
+  },
+  {
+    "id": 43,
+    "category": "travel",
+    "title": "Manali",
+    "description": "A lively valley surrounded by mountains, river views, road trips, and outdoor adventures.",
+    "location": "Himachal Pradesh",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Manali,_Himachal_Pradesh"
+  },
+  {
+    "id": 44,
+    "category": "travel",
+    "title": "Delhi",
+    "description": "Layers of history, memorable food, busy streets, and something new around every old corner.",
+    "location": "National Capital Territory",
+    "date": "India",
+    "status": "Visited",
+    "url": "https://en.wikipedia.org/wiki/Delhi"
+  },
+  {
+    "id": 45,
+    "category": "travel_wishlist",
+    "title": "North East India",
+    "description": "Mountain landscapes, distinct cultures, forests, food, and a part of India I would love to explore slowly.",
+    "location": "India",
+    "date": "Wishlist",
+    "status": "Wishlist",
+    "url": "https://en.wikipedia.org/wiki/Northeast_India"
+  },
+  {
+    "id": 46,
+    "category": "travel_wishlist",
+    "title": "Seychelles",
+    "description": "Island landscapes, clear water, granite beaches, and time close to nature.",
+    "location": "Indian Ocean",
+    "date": "Wishlist",
+    "status": "Wishlist",
+    "url": "https://en.wikipedia.org/wiki/Seychelles"
+  },
+  {
+    "id": 47,
+    "category": "travel_wishlist",
+    "title": "Japan",
+    "description": "A long-standing wish for its balance of tradition, design, technology, food, and everyday detail.",
+    "location": "East Asia",
+    "date": "Wishlist",
+    "status": "Wishlist",
+    "url": "https://en.wikipedia.org/wiki/Japan"
+  },
+  {
+    "id": 48,
+    "category": "travel_wishlist",
+    "title": "Europe",
+    "description": "Historic cities, train journeys, architecture, museums, and many cultures within one extended trip.",
+    "location": "Europe",
+    "date": "Wishlist",
+    "status": "Wishlist",
+    "url": "https://en.wikipedia.org/wiki/Europe"
+  }
+]

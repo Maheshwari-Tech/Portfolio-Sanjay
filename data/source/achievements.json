@@ -1,0 +1,46 @@
+{
+  "professional_leadership": [
+    "Promoted to Tech Lead, owning architecture, delivery, and technical direction for a multi-service healthcare platform with leadership experience across 10+ engineers.",
+    "Oracle Certified Bar Raiser; conducted 100+ interviews and contributed to 20+ hires.",
+    "First student from Lovely Professional University to receive a direct SDE full-time offer from Amazon during third-year on-campus internship hiring."
+  ],
+  "certifications": [
+    "Oracle Cloud Infrastructure 2025 Generative AI Professional",
+    {
+      "text": "Oracle Cloud Infrastructure 2025 Certified Developer Professional",
+      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=E6EA0D02CCCB8650680C392264F1F29B72C5B8895C915ED25C8F1C63C6D850EE"
+    },
+    {
+      "text": "Oracle Cloud Infrastructure 2024 Certified AI Foundations Associate",
+      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=0A80139CE66ACD03D6226677B4ED648AE55C308A559F9D9E222F1906F6DF6904"
+    },
+    {
+      "text": "CodeChef Certified Data Structures and Algorithms Programme (CCDSAP – Advanced)",
+      "url": "https://www.codechef.com/certificates/public/1765982"
+    },
+    {
+      "text": "Earned 30+ technical certifications across computer science, cloud, and software engineering.",
+      "url": "https://www.linkedin.com/in/snjumaheshwari/details/certifications/"
+    }
+  ],
+  "competitive_programming": [
+    "Secured World Rank 1 in CodeChef October Challenge 2018 (Div 2).",
+    "Qualified for ACM-ICPC Asia Regionals; secured 85th rank in Gwalior-Pune regionals, 2018.",
+    "Secured 2nd rank out of 175 teams in the University Coding Contest at LPU.",
+    "Secured 5th rank in the national coding contest ALOHOMORA at NIT Durgapur.",
+    "Secured 21st rank in a national coding contest at LNMIIT Jaipur.",
+    {
+      "text": "Solved 1000+ problems across major competitive programming platforms.",
+      "url": "https://www.stopstalk.com/user/profile/snjumaheshwari"
+    }
+  ],
+  "academic_excellence": [
+    "Obtained 99.98 percentile in eLitmus Quantitative Aptitude.",
+    "Secured 86th rank among 60,946 candidates in Rajasthan Pre-Engineering Test, 2014.",
+    "Secured 15,550 rank among 1.26 lakh candidates in JEE Advanced."
+  ],
+  "hackathons": [
+    "Participated in three hackathons during university, building machine learning and web development projects.",
+    "Mentored and judged 10 AI-focused teams at OraHacks; one mentored team won with CodeAtlas, a local-first code knowledge graph that scans repositories, stores structural relationships in SQLite, and provides bounded retrieval for AI-assisted development."
+  ]
+}

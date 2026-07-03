@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "From LPU to Google",
+    "description": "Journey of Sanjay Gandhi hosted by Megha in a candid discussion,",
+    "thumbnail": "/images/video_1_thumbnail.jpg",
+    "url": "https://www.youtube.com/watch?v=G1ch7xP_W9Y"
+  },
+  {
+    "id": 2,
+    "title": "Shalini's journey from Rakuten to #goldmansachs",
+    "description": "A candid discussion with Shalini regarding her journey.",
+    "thumbnail": "/images/video_shalini_journey_thumbnail.jpg",
+    "url": "https://www.youtube.com/watch?v=Mrqf3WK-KVY"
+  }
+]

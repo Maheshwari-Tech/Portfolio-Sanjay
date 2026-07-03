@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "title": "Choosing a Programming Language for Interviews",
+    "content_description": "\n\n* Pick a language you are most comfortable with. \n* If you have knowledge of multiple language, you can actually code fluently in all of them\n\t* or you are in college first yr wants to decide what all languages I need to learn for able to clear interviews, than here is my advice... \n\n- Java / C++ -- to be default (pick any). \n* For senior -- Java should be default. \n\n## My Preference - \n\n\n1. **I prefer java - take additional time to write code, but i can give better focus on code quality. (If along with the code, code quality is metrics that interview cares about.)**\n2. **Python - when interview prfioritize code completion time (speed) / no of problems coded or i am running low on time and have implementation pending.** (generally not the first problem.)\n3. **C++ - when interviewer focus on complexities/actual runtime/space of code or I need balance between the two priorities.**\n4. Js  -  (very rarely personally for me.)\n\t1. Project / frontend question\n\t2. priority is to have working demo. \n\n\n### **Pro Tip:** \nTry to find out the about the company you are being interviewed for and interviewer profile. \n\n- Sr engineer prioritise code quality. \n- Jr engineer cares more about no of problems solved in interview.\n\n\n## Other criteria to decide - \n\nUnderstanding of language what it offers and fits the use case required for the problem.\n\nEvery problem can be solved in every programming language. \nWhether it can be done easily, or your preference of doing in certain language.. \n\nFor example -\n\n 1. consider java in comparison to C++  \n\nJava - \n* Priority Queue - sorting simplified. \n* Pointers related -- Linked list, Tree\n* Stream does solve lot of problems in java -- conversion of one to another is simplified.. if you learn it.  (map sorting filtering ...)\n* multi dimensional .. \n\n* Pain -\n\t* Passing primitive as reference \n\t\t* ResultWrapper \n\t* multiset missing.. \n\t* conditionals to evaluate to boolean. \n\t\t* if(ptr) && while(x--)  -> can't do it. \n\t*  Not having auto \n\t- String immutable -- StringBuilder.... \n\t\n\n2. Python in comparison to both - \n\t1. No data type, multiple types of item needed to glue together. \n\t2. automatic handling of int, long, .. without worrying about the overflow. \n\t3. Recursive solution -- have recursion depth limit and you need to remember to adjust it. \n\n\t* Pain - \n\t\t* When you write in python, you do functional programming than oops, which might be okay 90% of the time. \n\t\t- Use of advance data structure / graph : you might not be fluent.. \n\t\t- class, self / OOP oriented programming.\n\t\t- Risk of missing internal complexity and incorrect time complexity analysis - big red flag in interview ; \n\t\n\t",
+    "date": "2025-09-16",
+    "tags": [
+      "Java",
+      "Python",
+      "JavaScript",
+      "C++",
+      "Interview",
+      "Data Structures",
+      "Programming"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "md",
+    "isTextFile": true
+  },
+  {
+    "id": 4,
+    "title": "System Design Interviews: Lessons and Experience",
+    "content_description": "[SVG File: System Design Interview and experience.svg] This is a svg document.",
+    "date": "2025-10-04",
+    "tags": [
+      "Interview",
+      "System Design",
+      "Experience"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "svg",
+    "isTextFile": false
+  },
+  {
+    "id": 6,
+    "title": "A Typical Day for Sanjay Gandhi",
+    "content_description": "[SVG File: Typical Days for Sanjay Maheshwari.svg] This is a svg document.",
+    "date": "2025-10-04",
+    "tags": [
+      "Technology"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "svg",
+    "isTextFile": false
+  }
+]

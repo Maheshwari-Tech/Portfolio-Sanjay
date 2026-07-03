@@ -1,0 +1,29 @@
+{
+  "tagline": "Senior Software Engineer & Tech Lead",
+  "introduction": "Senior Software Engineer and <strong>Tech Lead</strong> with <strong>6+ years</strong> of experience building and scaling backend and distributed systems at Oracle, Google, and Amazon. Experienced in leading <strong>10+ engineers</strong> across <strong>3+ products</strong>, architecting <strong>10+ microservices</strong>, and collaborating with <strong>25+ cross-functional teams</strong>. Certified <em>Bar Raiser</em> at Oracle with expertise in cloud-native systems across healthcare, search, and finance. Strong in Java, Python, OCI, AWS, distributed and asynchronous systems, machine learning, generative AI, and developer-productivity tooling.",
+  "image": "/images/profile.png",
+  "socialProfiles": {
+    "linkedin": "https://linkedin.com/in/snjumaheshwari",
+    "github": "https://github.com/Maheshwari-Tech",
+    "youtube": "https://youtube.com/@sanjaygandhi",
+    "email": "sanjaymaheshwari.work@gmail.com",
+    "leetcode": "https://leetcode.com/snjumaheshwari",
+    "codechef": "https://codechef.com/users/snjumaheshwari",
+    "hackerrank": "https://hackerrank.com/snjumaheshwari",
+    "codeforces": "https://codeforces.com/profile/snjumaheshwari98",
+    "spoj": "https://spoj.com/users/snjumaheshwari"
+  },
+  "contacts": {
+    "linkedin": "https://linkedin.com/in/snjumaheshwari",
+    "email": "sanjaymaheshwari.work@gmail.com",
+    "phone": "+91 8847472124"
+  },
+  "blogsUrl": "https://blogs.website.com",
+  "copyright": "© 2026 Sanjay Gandhi. All rights reserved.",
+  "education": {
+    "degree": "B.Tech CSE (sp.: Machine Learning)",
+    "institution": "Lovely Professional University (Jalandhar, Punjab)",
+    "period": "July 2016 – May 2020",
+    "cgpa": "9.06/10"
+  }
+}

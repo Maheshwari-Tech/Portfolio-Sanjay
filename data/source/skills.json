@@ -1,0 +1,9 @@
+{
+  "languages": ["Java", "C++", "Python", "TypeScript"],
+  "databases": ["MySQL", "DynamoDB", "MongoDB", "Redis", "Redshift", "Knowledge Graph", "Object Storage"],
+  "cloudAndInfrastructure": ["AWS", "OCI", "Azure", "Docker", "Kubernetes", "Terraform/CDK"],
+  "distributedSystems": ["Kafka", "gRPC", "Elasticsearch", "Microservices", "WebSockets", "Async Systems"],
+  "aiAndMachineLearning": ["Scikit-Learn", "Isolation Forest", "Anomaly Detection", "Generative AI", "MCP Server", "Agents"],
+  "architectureAndQuality": ["System Design", "API Design", "Performance Tuning", "Code Reviews", "Testing", "Observability"],
+  "techLeadAndLeadership": ["Technical Direction", "Team Leadership", "Architecture Reviews", "Mentoring", "Hiring & Onboarding", "Stakeholder Management", "Cross-team Alignment", "Delivery Planning", "Roadmapping", "Documentation"]
+}
