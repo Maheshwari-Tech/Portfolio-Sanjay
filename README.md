@@ -2,6 +2,8 @@
 
 A content-rich personal portfolio that presents Sanjay’s professional experience, engineering work, writing, achievements, recommendations, and life beyond technology in one coherent story.
 
+**Live website:** [portfolio-sanjay-tech.vercel.app](https://portfolio-sanjay-tech.vercel.app/)
+
 ## What the website communicates
 
 The portfolio is designed to help a visitor quickly understand:
