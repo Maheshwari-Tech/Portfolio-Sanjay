@@ -4,7 +4,7 @@
     "shortName": "SM",
     "eyebrow": "Tech lead · Distributed systems · AI",
     "headline": "I build reliable systems for real-world scale.",
-    "summary": "Senior software engineer and tech lead with 6+ years across Oracle, Google, and Amazon, with experience leading 10+ engineers across 3+ products and 7+ microservices.",
+    "summary": "Senior software engineer and tech lead with 6+ years across Oracle, Google, and Amazon, leading 10+ engineers across 3+ products and 10+ microservices.",
     "about": "I build and scale cloud-native backend and distributed systems across healthcare, search, and finance. My work spans Java, Python, OCI, AWS, asynchronous systems, machine learning, generative AI, and developer-productivity tooling.",
     "location": "Bengaluru, India",
     "availability": "Open to meaningful collaborations",
@@ -15,10 +15,13 @@
   },
   "stats": [
     { "value": "6+", "label": "Years building at scale" },
-    { "value": "10+", "label": "Engineers led" },
+    { "value": "10+", "label": "Engineers led as Tech Lead" },
     { "value": "10+", "label": "Microservices architected end to end" },
     { "value": "25+", "label": "Cross-functional teams worked with" },
     { "value": "100+", "label": "Technical interviews" },
-    { "value": "100M+", "label": "USD anomalies discovered" }
+    { "value": "100M+", "label": "USD anomalies discovered" },
+    { "value": "1B+", "label": "Users reached through products built for impact" },
+    { "value": "30+", "label": "Technical certifications earned" },
+    { "value": "3+", "label": "Live personal projects" }
   ]
 }
