@@ -4,8 +4,10 @@ import projects from "../../data/source/projects.json";
 import ProjectExplorer from "./ProjectExplorer";
 
 export const metadata: Metadata = {
-  title: "Projects — Sanjay Gandhi",
+  title: "Projects",
   description: "Software products, experiments, and engineering projects by Sanjay Gandhi.",
+  alternates: { canonical: "/projects" },
+  openGraph: { url: "/projects", title: "Projects — Sanjay Gandhi", description: "Software products, experiments, and engineering projects by Sanjay Gandhi." },
 };
 
 export const dynamic = "force-static";

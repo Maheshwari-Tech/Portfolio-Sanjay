@@ -15,6 +15,9 @@ import VideoCarousel from "./VideoCarousel";
 import ContactFeedback from "./ContactFeedback";
 import PersonalRecommendation from "./PersonalRecommendation";
 import ProjectGallery from "./ProjectGallery";
+import { technologyClassName } from "./technologyStyles";
+import { siteConfig } from "./siteConfig";
+import MobileNavigation from "./MobileNavigation";
 
 export const dynamic = "force-static";
 
@@ -42,7 +45,13 @@ const achievementLabels: Record<string, string> = {
   Hackathons: "Hackathons",
 };
 
-type Achievement = string | { text: string; url?: string; priority?: number };
+const recommendationKeywords = [
+  "Technical leadership", "Architecture", "Ownership", "Execution clarity",
+  "Mentoring", "Collaboration", "System design", "Code quality",
+  "Product knowledge", "Problem solving", "Dependability", "Humility",
+];
+
+type Achievement = string | { text: string; url?: string; priority?: number; learning?: string };
 type Recommendation = {
   id: number;
   name: string;
@@ -124,22 +133,27 @@ export default function Home() {
   const featuredProjectIds = [29, 15, 25, 17, 26];
   const projects = featuredProjectIds.map((id) => projectData.find((project) => project.id === id)).filter((project) => project !== undefined);
   const travelWishlist = personalItems.filter((item) => item.category === "travel_wishlist");
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.name,
+    url: siteConfig.url,
+    image: `${siteConfig.url}${profile.image}`,
+    jobTitle: "Tech Lead and Software Engineer",
+    email: `mailto:${profile.email}`,
+    sameAs: [siteConfig.linkedIn, "https://github.com/Maheshwari-Tech"],
+    knowsAbout: ["Distributed systems", "Cloud architecture", "Generative AI", "LangChain", "LangGraph", "RAG", "Technical leadership"],
+    worksFor: { "@type": "Organization", name: "Oracle" },
+  };
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label={`${profile.name}, home`}>
           {profile.shortName}<span>.</span>
         </a>
-        <nav aria-label="Primary navigation">
-          <a href="#work">Work</a>
-          <a href="#technologies">Technologies</a>
-          <a href="#writing">Blogs</a>
-          <a href="#recommendations">Recommendations</a>
-          <a href="#personal">Personal</a>
-          <a href="#contact">Contact</a>
-          <a className="nav-cta" href={profile.resume} download>Resume <span>PDF ↓</span></a>
-        </nav>
+        <MobileNavigation resume={profile.resume} />
       </header>
 
       <section className="hero" id="top">
@@ -202,6 +216,7 @@ export default function Home() {
                 </div>
                 <h3>{item.company}</h3>
                 <p>{item.role}</p>
+                <div className="experience-time"><time>{item.period}</time><span>{item.duration}</span></div>
               </div>
               <div className="experience-copy">
                 <ul>
@@ -210,7 +225,7 @@ export default function Home() {
                 <div className="experience-tag-section experience-technology-section">
                   <span className="experience-tag-label">Technologies</span>
                   <div className="experience-meta">
-                    {item.technologies.map((technology) => <span key={technology}>{technology}</span>)}
+                    {item.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}
                   </div>
                 </div>
                 <div className="experience-tag-section experience-learning-section">
@@ -220,7 +235,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="experience-time"><time>{item.period}</time><span>{item.duration}</span></div>
             </article>
           ))}
         </div>
@@ -248,7 +262,7 @@ export default function Home() {
             <article className="skill-card" key={category}>
               <h3>{skillLabels[category] ?? category}</h3>
               <div className="skill-tags">
-                {items.map((item) => <span key={item}>{item}</span>)}
+                {items.map((item) => <span className={technologyClassName(item)} key={item}>{item}</span>)}
               </div>
             </article>
           ))}
@@ -282,7 +296,7 @@ export default function Home() {
               <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""}`} key={project.name}>
                 <ProjectGallery images={screenshots} projectName={project.name} />
                 <div className="project-header">
-                  <div><span>{project.category}</span><h3>{project.name}</h3></div>
+                  <div><span>{project.category}</span><h3><Link href={`/projects/${project.id}`}>{project.name}</Link></h3></div>
                   <span className="project-number">{highlighted ? "AI Intelligence" : "Product demo"}</span>
                 </div>
                 <p className="project-description">{project.description}</p>
@@ -291,7 +305,8 @@ export default function Home() {
                 </ul>
                 <div className="project-technology-block">
                   <span>Key technologies</span>
-                  <div className="project-tags">{project.technologies.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                  <div className="project-tags">{project.technologies.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
+                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View project details ↗</Link>
                 </div>
                 {"aiCapabilities" in project && project.aiCapabilities && (
                   <div className="project-capabilities">
@@ -348,7 +363,7 @@ export default function Home() {
                   <span>{blog.tags[0]}</span>
                   <span>0{index + 1}</span>
                 </div>
-                <h3>{cleanBlogTitle(blog.title)}</h3>
+                <h3><Link href={`/articles/${blog.id}`}>{cleanBlogTitle(blog.title)}</Link></h3>
                 <p className="blog-author">By {blog.author}</p>
                 <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
                 <div className="blog-tags">{blog.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
@@ -385,10 +400,14 @@ export default function Home() {
                 {(items as Achievement[]).map((achievement, index) => {
                   const text = typeof achievement === "string" ? achievement : achievement.text;
                   const url = typeof achievement === "string" ? undefined : achievement.url;
+                  const learning = typeof achievement === "string" ? undefined : achievement.learning;
                   return (
                     <li key={text} tabIndex={0}>
                       <span>{String(index + 1).padStart(2, "0")}</span>
-                      {url ? <a href={url} target="_blank" rel="noreferrer">{text} ↗</a> : <p>{text}</p>}
+                      <div className="achievement-copy">
+                        {url ? <a href={url} target="_blank" rel="noreferrer">{text} ↗</a> : <p>{text}</p>}
+                        {learning && <p className="achievement-learning"><strong>Key learning</strong>{learning}</p>}
+                      </div>
                     </li>
                   );
                 })}
@@ -405,6 +424,13 @@ export default function Home() {
             <h2>What teammates and mentors say.</h2>
           </div>
           <span>{recommendations.length} recommendations</span>
+        </div>
+        <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
+          <div className="recommendation-keyword-track" aria-hidden="true">
+            {[...recommendationKeywords, ...recommendationKeywords].map((keyword, index) => (
+              <span key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
+            ))}
+          </div>
         </div>
         <div className="recommendations-grid">
           {recommendations.map((recommendation, index) => (

@@ -4,8 +4,10 @@ import blogs from "../../data/source/blogs.json";
 import ArticleExplorer from "./ArticleExplorer";
 
 export const metadata: Metadata = {
-  title: "Blogs & Articles — Sanjay Gandhi",
+  title: "Blogs & Articles",
   description: "Writing on software engineering, system design, interviews, and career growth by Sanjay Gandhi.",
+  alternates: { canonical: "/articles" },
+  openGraph: { url: "/articles", title: "Blogs & Articles — Sanjay Gandhi", description: "Writing on software engineering, system design, interviews, and career growth by Sanjay Gandhi." },
 };
 
 export const dynamic = "force-static";

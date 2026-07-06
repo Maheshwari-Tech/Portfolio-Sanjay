@@ -1,13 +1,31 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import blogs from "../../../data/source/blogs.json";
+import { siteConfig } from "../../siteConfig";
 
 export const dynamicParams = false;
 export const dynamic = "force-static";
 
 export function generateStaticParams() {
   return blogs.map((blog) => ({ id: String(blog.id) }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const article = blogs.find((blog) => String(blog.id) === id);
+  if (!article) return {};
+  const title = cleanTitle(article.title);
+  const description = article.content_description.replace(/[#*_`>-]/g, " ").replace(/\s+/g, " ").trim().slice(0, 155);
+  const url = `/articles/${article.id}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: "article", url, title, description, publishedTime: article.date, authors: [article.author], tags: article.tags, images: ["/opengraph-image"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/twitter-image"] },
+  };
 }
 
 const articleAssets: Record<number, { svg: string; pdf?: string }> = {
@@ -88,9 +106,22 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
   const asset = articleAssets[article.id];
   const related = blogs.filter((blog) => blog.id !== article.id);
+  const articleTitle = cleanTitle(article.title);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: articleTitle,
+    description: article.content_description.replace(/[#*_`>-]/g, " ").replace(/\s+/g, " ").trim().slice(0, 220),
+    datePublished: article.date,
+    author: { "@type": "Person", name: article.author, url: siteConfig.url },
+    publisher: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    mainEntityOfPage: `${siteConfig.url}/articles/${article.id}`,
+    keywords: article.tags.join(", "),
+  };
 
   return (
     <main className="article-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <header className="article-nav">
         <Link className="wordmark" href="/" aria-label="Sanjay Maheshwari, home">SM<span>.</span></Link>
         <Link href="/articles">All blogs & articles</Link>

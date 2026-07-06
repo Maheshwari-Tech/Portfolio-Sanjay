@@ -2,6 +2,8 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { technologyClassName } from "../technologyStyles";
 
 type Project = {
   id: number;
@@ -61,19 +63,19 @@ export default function ProjectExplorer({ projects }: { projects: Project[] }) {
       <div className="project-results">
         {filtered.slice(0, visibleCount).map((project) => (
           <article key={project.id}>
-            <div className="project-result-image">
+            <Link className="project-result-image" href={`/projects/${project.id}`} aria-label={`View ${project.name}`}>
               {project.image ? <img src={project.image} alt="" /> : <span>{project.name}</span>}
               <div><span>{project.category}</span></div>
-            </div>
+            </Link>
             <div className="project-result-copy">
-              <h2>{project.name}</h2>
+              <h2><Link href={`/projects/${project.id}`}>{project.name}</Link></h2>
               <p>{project.description}</p>
               {project.features.length > 0 && (
                 <ul>{project.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
               )}
               <div className="project-result-footer">
-                <div>{project.technologies.map((technology) => <span key={technology}>{technology}</span>)}</div>
-                {project.github && <a href={project.github} target="_blank" rel="noreferrer">View on GitHub ↗</a>}
+                <div>{project.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div>
+                <Link href={`/projects/${project.id}`}>View details ↗</Link>
               </div>
             </div>
           </article>

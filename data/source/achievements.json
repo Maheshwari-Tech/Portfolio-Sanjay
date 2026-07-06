@@ -5,18 +5,25 @@
     "First student from Lovely Professional University to receive a direct SDE full-time offer from Amazon during third-year on-campus internship hiring."
   ],
   "certifications": [
-    "Oracle Cloud Infrastructure 2025 Generative AI Professional",
+    {
+      "text": "Oracle Cloud Infrastructure 2025 Generative AI Professional",
+      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=C72EFA41F0C8B51EEDCF7E759B92FCA34E59F058D11AFD39D71DB564ABB8DDFE",
+      "learning": "Building production GenAI solutions with OCI Generative AI, LLMs, RAG, embeddings, and responsible AI patterns."
+    },
     {
       "text": "Oracle Cloud Infrastructure 2025 Certified Developer Professional",
-      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=E6EA0D02CCCB8650680C392264F1F29B72C5B8895C915ED25C8F1C63C6D850EE"
+      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=E6EA0D02CCCB8650680C392264F1F29B72C5B8895C915ED25C8F1C63C6D850EE",
+      "learning": "Designing, securing, deploying, and observing cloud-native applications using OCI developer services."
     },
     {
       "text": "Oracle Cloud Infrastructure 2024 Certified AI Foundations Associate",
-      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=0A80139CE66ACD03D6226677B4ED648AE55C308A559F9D9E222F1906F6DF6904"
+      "url": "https://catalog-education.oracle.com/ords/certview/sharebadge?id=0A80139CE66ACD03D6226677B4ED648AE55C308A559F9D9E222F1906F6DF6904",
+      "learning": "Core machine learning, deep learning, generative AI, and OCI AI service fundamentals."
     },
     {
       "text": "CodeChef Certified Data Structures and Algorithms Programme (CCDSAP – Advanced)",
-      "url": "https://www.codechef.com/certificates/public/1765982"
+      "url": "https://www.codechef.com/certificates/public/1765982",
+      "learning": "Advanced problem solving with graphs, dynamic programming, trees, range queries, and complexity analysis."
     },
     {
       "text": "Earned 30+ technical certifications across computer science, cloud, and software engineering.",
