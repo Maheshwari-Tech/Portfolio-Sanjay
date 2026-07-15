@@ -14,6 +14,7 @@
       "Introduced asynchronous processing, fast/slow lanes, bulk generation, retries, DLQ handling, idempotency, horizontal scaling, authN/authZ, audit logging, metrics, dashboards, and alerting.",
       "Led delivery across <strong>49 closed epics</strong>, 39 planned epics, <strong>89 Jira items</strong>, and <strong>251 story points</strong> spanning architecture, releases, compliance, monitoring, and deployment readiness.",
       "Optimized a 262-page report from <strong>9.0s to 4.2s</strong>, reduced heap from <strong>891.7MB to 426.2MB</strong>, and reduced output from <strong>17.6MB to 13.7MB</strong>.",
+      "Implemented a <strong>request-level cache</strong> that reduced data-extraction time by <strong>75%</strong>.",
       "Supported <strong>20+ Gen2 concept onboardings</strong> and reduced onboarding time from roughly two weeks to under one week.",
       "Built and led the India Clinical Reporting team, with leadership experience across <strong>10+ engineers</strong>, <strong>3+ products</strong>, <strong>25+ cross-functional teams</strong>, <strong>100+ interviews</strong>, and <strong>20+ hires</strong>."
     ]

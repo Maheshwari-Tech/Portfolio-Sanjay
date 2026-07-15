@@ -12,6 +12,7 @@ type Article = {
   author: string;
   fileType: string;
   isTextFile: boolean;
+  href?: string;
 };
 
 const cleanTitle = (title: string) => title.replace(/\.(md|svg|pdf)$/i, "");
@@ -75,11 +76,11 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
         {filtered.slice(0, visibleCount).map((article) => (
           <article key={article.id}>
             <div className="article-result-meta"><span>{article.date}</span><span>{article.tags[0]}</span></div>
-            <h2><Link href={`/articles/${article.id}`}>{cleanTitle(article.title)}</Link></h2>
+            <h2><Link href={article.href ?? `/articles/${article.id}`}>{cleanTitle(article.title)}</Link></h2>
             <p>{excerpt(article)}</p>
             <div className="article-result-footer">
               <span>{article.tags.join(" · ")}</span>
-              <Link href={`/articles/${article.id}`}>Read article ↗</Link>
+              <Link href={article.href ?? `/articles/${article.id}`}>Read article ↗</Link>
             </div>
           </article>
         ))}

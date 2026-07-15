@@ -27,7 +27,7 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
     setStatus("Sending…");
 
     try {
-      await submitPortfolioEntry({
+      const result = await submitPortfolioEntry({
         type: "recommendation",
         category,
         title: title.trim(),
@@ -36,7 +36,7 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
       });
       setTitle("");
       setMessage("");
-      setStatus("Sent. Thank you for the recommendation!");
+      setStatus(result.delivery === "api" ? "Sent. Thank you for the recommendation!" : "The service is offline. This recommendation is saved on your device and was not sent yet.");
     } catch {
       setStatus("Could not send yet—the API is not available. Please try again later.");
     } finally {

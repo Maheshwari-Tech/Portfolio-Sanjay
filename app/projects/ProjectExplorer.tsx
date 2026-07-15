@@ -13,6 +13,7 @@ type Project = {
   github: string | null;
   technologies: string[];
   category: string;
+  badges?: string[];
   features: string[];
 };
 
@@ -65,7 +66,7 @@ export default function ProjectExplorer({ projects }: { projects: Project[] }) {
           <article key={project.id}>
             <Link className="project-result-image" href={`/projects/${project.id}`} aria-label={`View ${project.name}`}>
               {project.image ? <img src={project.image} alt="" /> : <span>{project.name}</span>}
-              <div><span>{project.category}</span></div>
+              <div>{(project.badges ?? [project.category]).map((badge) => <span key={badge}>{badge}</span>)}</div>
             </Link>
             <div className="project-result-copy">
               <h2><Link href={`/projects/${project.id}`}>{project.name}</Link></h2>

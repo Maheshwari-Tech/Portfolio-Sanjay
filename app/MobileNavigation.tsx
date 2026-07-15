@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const links = [
   ["Work", "#work"], ["Technologies", "#technologies"], ["Projects", "#projects"],
-  ["Blogs", "#writing"], ["Recommendations", "#recommendations"], ["Personal", "#personal"], ["Contact", "#contact"],
+  ["Blogs", "#writing"], ["Certificates", "/certificates"], ["Recommendations", "#recommendations"], ["Personal", "#personal"], ["Contact", "#contact"],
 ];
 
 export default function MobileNavigation({ resume }: { resume: string }) {

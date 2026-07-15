@@ -23,7 +23,7 @@ export default function ContactFeedback() {
     setSendingContact(true);
     setContactStatus("Sending…");
     try {
-      await submitPortfolioEntry({
+      const result = await submitPortfolioEntry({
         type: "contact",
         title: topic,
         category: topic,
@@ -32,7 +32,7 @@ export default function ContactFeedback() {
         email: contactEmail.trim(),
       });
       setMessage("");
-      setContactStatus("Sent. Thanks for reaching out!");
+      setContactStatus(result.delivery === "api" ? "Sent. Thanks for reaching out!" : "The service is offline. Your message is saved on this device; please use the email option above for immediate delivery.");
     } catch {
       setContactStatus("Could not send yet—the API is not available. Please try again later.");
     } finally {
@@ -45,7 +45,7 @@ export default function ContactFeedback() {
     setSendingFeedback(true);
     setFeedbackStatus("Sending…");
     try {
-      await submitPortfolioEntry({
+      const result = await submitPortfolioEntry({
         type: "feedback",
         title: `Portfolio feedback — ${rating}/5`,
         message: feedback.trim(),
@@ -53,7 +53,7 @@ export default function ContactFeedback() {
         rating,
       });
       setFeedback("");
-      setFeedbackStatus("Sent. Thank you for the feedback!");
+      setFeedbackStatus(result.delivery === "api" ? "Sent. Thank you for the feedback!" : "The service is offline. Your feedback is saved on this device and was not sent yet.");
     } catch {
       setFeedbackStatus("Could not send yet—the API is not available. Please try again later.");
     } finally {

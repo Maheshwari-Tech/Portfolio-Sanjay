@@ -4,12 +4,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import blogs from "../../../data/source/blogs.json";
 import { siteConfig } from "../../siteConfig";
+import ContentInteractions from "../../ContentInteractions";
+import SiteHeader from "../../SiteHeader";
+import SiteFooter from "../../SiteFooter";
 
 export const dynamicParams = false;
 export const dynamic = "force-static";
 
 export function generateStaticParams() {
-  return blogs.map((blog) => ({ id: String(blog.id) }));
+  return blogs.filter((blog) => !("href" in blog)).map((blog) => ({ id: String(blog.id) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -122,10 +125,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   return (
     <main className="article-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <header className="article-nav">
-        <Link className="wordmark" href="/" aria-label="Sanjay Maheshwari, home">SM<span>.</span></Link>
-        <Link href="/articles">All blogs & articles</Link>
-      </header>
+      <SiteHeader />
 
       <article className="article-shell">
         <header className="article-header">
@@ -151,6 +151,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             </div>
           </div>
         ) : null}
+        <ContentInteractions contentId={`article-${article.id}`} />
       </article>
 
       <aside className="related-articles">
@@ -165,6 +166,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
           ))}
         </div>
       </aside>
+      <SiteFooter />
     </main>
   );
 }

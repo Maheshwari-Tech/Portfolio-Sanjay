@@ -18,6 +18,9 @@ import ProjectGallery from "./ProjectGallery";
 import { technologyClassName } from "./technologyStyles";
 import { siteConfig } from "./siteConfig";
 import MobileNavigation from "./MobileNavigation";
+import PersonalVerticalCarousel from "./PersonalVerticalCarousel";
+import AccountStatus from "./AccountStatus";
+import SiteFooter from "./SiteFooter";
 
 export const dynamic = "force-static";
 
@@ -94,38 +97,6 @@ const personalLabels: Record<string, { title: string; eyebrow: string }> = {
   travel: { title: "Places I’d go back to", eyebrow: "Travel" },
 };
 
-type PersonalItem = (typeof personalItems)[number];
-
-function PersonalItemCard({ item }: { item: PersonalItem }) {
-  const isScreenTitle = item.category === "movies";
-  const marker = "status" in item
-    ? item.status
-    : isScreenTitle
-      ? "Favourite"
-      : "rating" in item
-        ? "★".repeat(typeof item.rating === "number" ? item.rating : 0)
-        : "";
-  const itemType = "format" in item ? item.format : "year" in item ? item.year : item.date;
-
-  return (
-    <div className="personal-item">
-      <div className="personal-item-topline">
-        <span>{marker}</span>
-        <span>{itemType}</span>
-      </div>
-      <h4>
-        <a href={item.url} target="_blank" rel="noreferrer">{item.title} <span aria-hidden="true">↗</span></a>
-      </h4>
-      <p>{item.description}</p>
-      <div className="personal-item-meta">
-        {"author" in item && <span>{item.author}</span>}
-        {"location" in item && <span>{item.location}</span>}
-        {"genre" in item && <span>{item.genre}</span>}
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   const { profile, stats } = portfolio;
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
@@ -154,6 +125,7 @@ export default function Home() {
           {profile.shortName}<span>.</span>
         </a>
         <MobileNavigation resume={profile.resume} />
+        <AccountStatus />
       </header>
 
       <section className="hero" id="top">
@@ -267,6 +239,11 @@ export default function Home() {
             </article>
           ))}
         </div>
+        <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
+          <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
+          <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy], index) => <article key={title}><span>0{index + 1}</span><h4>{title}</h4><p>{copy}</p></article>)}</div>
+          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span>↗</span></Link>
+        </section>
       </section>
 
       <section className="projects-section" id="projects">
@@ -356,6 +333,7 @@ export default function Home() {
 
         <div className="blog-grid">
           {blogs.map((blog, index) => {
+            const articleHref = "href" in blog && typeof blog.href === "string" ? blog.href : `/articles/${blog.id}`;
             return (
               <article className={`blog-card ${index === 0 ? "blog-card-featured" : ""}`} key={blog.id}>
                 <div className="blog-meta">
@@ -363,11 +341,11 @@ export default function Home() {
                   <span>{blog.tags[0]}</span>
                   <span>0{index + 1}</span>
                 </div>
-                <h3><Link href={`/articles/${blog.id}`}>{cleanBlogTitle(blog.title)}</Link></h3>
+                <h3><Link href={articleHref}>{cleanBlogTitle(blog.title)}</Link></h3>
                 <p className="blog-author">By {blog.author}</p>
                 <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
                 <div className="blog-tags">{blog.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                <Link className="blog-read-link" href={`/articles/${blog.id}`} aria-label={`Read ${cleanBlogTitle(blog.title)}`}>
+                <Link className="blog-read-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`}>
                   Read article <span>↗</span>
                 </Link>
               </article>
@@ -475,14 +453,7 @@ export default function Home() {
         <div className="personal-categories">
           {["movies", "books", "travel"].map((category) => {
             const categoryItems = personalItems.filter((item) => item.category === category);
-            const initialCount = category === "travel" ? 3 : 5;
-            const visibleItems = categoryItems.slice(0, initialCount);
-            const remainingItems = categoryItems.slice(initialCount);
-            const moreLabel = category === "books"
-              ? "Browse book favourites"
-              : category === "travel"
-                ? "Browse all recently visited places"
-                : "Browse screen favourites";
+            const visibleCount = category === "travel" ? 2 : 3;
 
             return (
               <article className="personal-category" key={category}>
@@ -522,18 +493,7 @@ export default function Home() {
                   </div>
                 )}
                 <div className="personal-items">
-                  {visibleItems.map((item) => <PersonalItemCard item={item} key={item.id} />)}
-                  {remainingItems.length > 0 && (
-                    <details className="personal-more">
-                      <summary>
-                        <span>{moreLabel}</span>
-                        <span>{remainingItems.length} picks ↓</span>
-                      </summary>
-                      <div className="personal-more-items">
-                        {remainingItems.map((item) => <PersonalItemCard item={item} key={item.id} />)}
-                      </div>
-                    </details>
-                  )}
+                  <PersonalVerticalCarousel items={categoryItems} visibleCount={visibleCount} />
                 </div>
               </article>
             );
@@ -562,6 +522,7 @@ export default function Home() {
             </div>
             <a href="#top">Back to top ↑</a>
           </div>
+          <SiteFooter />
         </div>
       </section>
     </main>
