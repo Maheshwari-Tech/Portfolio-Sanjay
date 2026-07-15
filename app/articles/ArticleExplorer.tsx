@@ -75,8 +75,9 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
       <div className="article-results">
         {filtered.slice(0, visibleCount).map((article) => (
           <article key={article.id}>
+            <Link className="article-card-link" href={article.href ?? `/articles/${article.id}`} aria-label={`Read ${cleanTitle(article.title)}`} />
             <div className="article-result-meta"><span>{article.date}</span><span>{article.tags[0]}</span></div>
-            <h2><Link href={article.href ?? `/articles/${article.id}`}>{cleanTitle(article.title)}</Link></h2>
+            <h2>{cleanTitle(article.title)}</h2>
             <p>{excerpt(article)}</p>
             <div className="article-result-footer">
               <span>{article.tags.join(" · ")}</span>

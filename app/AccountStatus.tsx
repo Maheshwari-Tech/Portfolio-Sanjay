@@ -41,6 +41,7 @@ export default function AccountStatus() {
       <div className="profile-dropdown">
         <p>Signed in as</p>
         <strong>{displayName}</strong>
+        <Link href="/profile" onClick={() => menu.current?.removeAttribute("open")}>Update profile</Link>
         <button type="button" onClick={logout}>Log out</button>
       </div>
     </details>

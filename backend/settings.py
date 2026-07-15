@@ -5,6 +5,13 @@ run locally, on Supabase, AWS, Azure, OCI, Render, or another container host.
 """
 from dataclasses import dataclass, field
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+
+# Local convenience only. Real environment variables and Azure secret
+# references take precedence because load_dotenv does not override them.
+load_dotenv(Path(__file__).with_name(".env"), override=False)
 
 
 def _csv(value: str) -> list[str]:

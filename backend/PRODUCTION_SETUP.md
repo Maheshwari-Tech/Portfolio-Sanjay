@@ -3,10 +3,10 @@
 The implemented login flow is:
 
 1. User enters mobile number and password.
-2. Supabase checks the password first.
-3. If the password fails, Supabase sends an SMS OTP.
-4. User verifies the OTP.
-5. The verified OTP becomes the next password.
+2. Supabase checks the password when the user selects Login.
+3. The user can explicitly choose “Forgot password? Login with OTP”.
+4. User verifies the OTP and receives a session.
+5. OTP login never changes the account password.
 6. New users add their name after verification.
 
 Supabase owns passwords, OTPs, and sessions. FastAPI validates the Supabase
@@ -47,6 +47,7 @@ In the frontend deployment, add:
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 NEXT_PUBLIC_API_BASE_URL=https://api.your-domain.com
+NEXT_PUBLIC_SITE_URL=https://portfolio-sanjay-tech.vercel.app
 ```
 
 The publishable key is intended for browser use. Never expose a secret or
@@ -66,31 +67,17 @@ DATABASE_URL=postgresql+psycopg://...
 JWT_SECRET=A_DIFFERENT_RANDOM_SECRET_AT_LEAST_32_CHARACTERS
 OTP_HASH_SECRET=ANOTHER_RANDOM_SECRET_AT_LEAST_32_CHARACTERS
 ADMIN_PHONE=+918847472124
-CORS_ORIGINS=https://your-domain.com,https://www.your-domain.com
+CORS_ORIGINS=https://portfolio-sanjay-tech.vercel.app,http://localhost:3001
 ```
 
 FastAPI asks Supabase to validate bearer tokens. It assigns the admin role only
 when the verified phone equals `ADMIN_PHONE`; user-editable metadata is never
 trusted for authorization.
 
-## 5. Bootstrap Sanjay's initial password
+## 5. Set Sanjay's password
 
-Run the included script once from a trusted machine. Pass the initial password
-through environment variables rather than committing it to code.
-
-```bash
-cd backend
-SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co \
-SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY \
-ADMIN_PHONE=+918847472124 \
-ADMIN_INITIAL_PASSWORD=YOUR_INITIAL_PASSWORD \
-.venv/bin/python bootstrap_supabase_admin.py
-```
-
-The service-role key is available under Supabase API settings. Treat it like a
-root credential. Do not put it in frontend settings, application logs, Git, or
-screenshots. Remove the terminal-history entry if the shell records inline
-environment variables.
+Use the Supabase Dashboard SQL Editor for the one-time admin password setup. Do
+not add a service-role key or password-setting utility to the application.
 
 ## 6. Deploy
 
@@ -107,14 +94,15 @@ check. Deploy Next.js to Azure Static Web Apps, Cloudflare Pages, or Vercel.
 
 1. `/health` reports `production`, `supabase`, and `postgresql`.
 2. Correct mobile/password logs in without sending SMS.
-3. Incorrect password sends one Supabase OTP.
-4. Correct OTP logs in and works as the next password.
-5. A new user is asked for their name only after verification.
-6. The access token works for comments, likes, demo requests, and admin APIs.
-7. Only `+918847472124` receives the backend admin role.
-8. SMS uses the DLT-approved template and sender.
-9. CAPTCHA, SMS rate limits, provider spending alerts, CORS, and HTTPS are active.
-10. Supabase backups and service alerts are enabled before the service becomes
+3. Incorrect password does not automatically send an SMS.
+4. “Forgot password? Login with OTP” sends one Supabase OTP.
+5. Correct OTP logs in without changing the fixed password.
+6. A new user is asked for their name only after verification.
+7. The access token works for comments, likes, demo requests, and admin APIs.
+8. Only `+918847472124` receives the backend admin role.
+9. SMS uses the approved provider template and sender.
+10. CAPTCHA, SMS rate limits, provider spending alerts, CORS, and HTTPS are active.
+11. Supabase backups and service alerts are enabled before the service becomes
     business-critical.
 
 ## Expected starting cost

@@ -24,6 +24,7 @@ client = TestClient(main.app)
 @pytest.fixture(autouse=True)
 def clean_state(monkeypatch):
     main.store.put_json("application", main.default_db())
+    main.ensure_development_admin()
     with main.store.engine.begin() as connection:
         connection.execute(delete(challenge_table))
     monkeypatch.setattr(main, "settings", replace(main.settings, auth_provider="local"))
@@ -34,6 +35,8 @@ def create_user(phone: str, name: str):
     assert sent.status_code == 200
     code = main.json.loads(main.LOCAL_OTP_OUTBOX.read_text())["code"]
     requires_name = client.post("/auth/verify-otp", json={"phone": phone, "code": code})
+    if requires_name.status_code == 200:
+        return requires_name.json()
     assert requires_name.status_code == 428
     verified = client.post("/auth/verify-otp", json={"phone": phone, "code": code, "name": name})
     assert verified.status_code == 200
@@ -80,8 +83,12 @@ def test_public_forms_work_without_login_but_demo_does_not():
 
 
 def test_admin_can_read_dashboard_and_create_content():
+    before_otp = client.post("/auth/password", json={"phone": "8847472124", "password": "123456"})
+    assert before_otp.status_code == 200
     auth = create_user("8847472124", "Sanjay")
     assert auth["user"]["role"] == "admin"
+    after_otp = client.post("/auth/password", json={"phone": "8847472124", "password": "123456"})
+    assert after_otp.status_code == 200
     headers = {"Authorization": f"Bearer {auth['token']}"}
     assert client.get("/member/candidates", headers=headers).status_code == 200
     assert client.get("/member/recruiters", headers=headers).status_code == 200
@@ -121,7 +128,7 @@ def test_supabase_access_token_is_validated_and_role_is_server_controlled(monkey
         def __enter__(self): return self
         def __exit__(self, *_): return False
         def read(self):
-            return b'{"id":"supabase-user-id","phone":"+918847472124","user_metadata":{"name":"Sanjay","role":"member"}}'
+            return b'{"id":"supabase-user-id","phone":"918847472124","user_metadata":{"name":"Sanjay","role":"member"}}'
 
     monkeypatch.setattr(main, "settings", replace(main.settings, auth_provider="supabase", supabase_url="https://example.supabase.co", supabase_publishable_key="sb_publishable_test"))
     monkeypatch.setattr(main, "urlopen", lambda *_args, **_kwargs: Response())
@@ -129,6 +136,31 @@ def test_supabase_access_token_is_validated_and_role_is_server_controlled(monkey
     assert overview.status_code == 200
     user = main.read_db()["users"][0]
     assert user["role"] == "admin"
+
+
+def test_admin_request_queue_filters_status_and_crud_content():
+    auth = create_user("8847472124", "Sanjay")
+    headers = {"Authorization": f"Bearer {auth['token']}"}
+    request = client.post("/submissions", json={"type": "contact", "title": "New enquiry", "name": "Visitor", "message": "Can we talk?"})
+    request_id = request.json()["id"]
+    actionable = client.get("/admin/requests?status=actionable&type=contact", headers=headers)
+    assert actionable.status_code == 200
+    assert [item["id"] for item in actionable.json()["items"]] == [request_id]
+    accepted = client.patch(f"/admin/submissions/{request_id}/status", headers=headers, json={"status": "accepted"})
+    assert accepted.status_code == 200
+    assert accepted.json()["status"] == "accepted"
+    assert client.get("/admin/requests?status=actionable&type=contact", headers=headers).json()["total"] == 0
+    assert client.get("/admin/requests?status=accepted&type=contact", headers=headers).json()["total"] == 1
+
+    created = client.post("/admin/content", headers=headers, json={"kind": "blog", "title": "Managed Article", "description": "Managed summary", "body": "Managed body"})
+    content_id = created.json()["id"]
+    updated = client.patch(f"/admin/content/blog/{content_id}", headers=headers, json={"title": "Updated Managed Article", "hidden": True, "visibility": "semi-private"})
+    assert updated.status_code == 200
+    assert updated.json()["title"] == "Updated Managed Article"
+    assert updated.json()["hidden"] is True
+    assert all(item["id"] != content_id for item in client.get("/content/blogs").json())
+    deleted = client.delete(f"/admin/content/blog/{content_id}", headers=headers)
+    assert deleted.json() == {"deleted": True, "id": content_id, "kind": "blog"}
 
 
 def test_local_auth_endpoints_are_closed_in_supabase_mode(monkeypatch):

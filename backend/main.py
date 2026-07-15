@@ -12,7 +12,9 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 import json
 import logging
+import re
 import smtplib
+from threading import RLock
 
 import jwt
 from fastapi import Depends, FastAPI, HTTPException
@@ -34,6 +36,7 @@ LOCAL_OTP_OUTBOX = BASE_DIR / "local_otp_outbox.json"
 logger = logging.getLogger("portfolio.auth")
 store = Store(settings.database_url)
 bearer = HTTPBearer(auto_error=False)
+identity_sync_lock = RLock()
 
 
 def now() -> datetime:
@@ -104,8 +107,12 @@ def write_content(path: Path, value):
 
 
 def normalise_phone(phone: str) -> str:
-    digits = phone.replace(" ", "").replace("-", "")
-    return f"+91{digits}" if len(digits) == 10 and not digits.startswith("+") else digits
+    digits = re.sub(r"\D", "", phone)
+    if len(digits) == 10:
+        return f"+91{digits}"
+    if len(digits) == 12 and digits.startswith("91"):
+        return f"+{digits}"
+    return f"+{digits}" if phone.strip().startswith("+") else digits
 
 
 def otp_hash(identifier: str, code: str) -> str:
@@ -148,33 +155,58 @@ def current_user(credentials: HTTPAuthorizationCredentials | None = Depends(bear
     except (HTTPError, URLError, ValueError) as exc:
         raise HTTPException(401, "Your Supabase session is invalid or has expired.") from exc
 
-    phone = identity.get("phone")
-    if not phone:
+    raw_phone = identity.get("phone")
+    if not raw_phone:
         raise HTTPException(401, "A verified mobile number is required.")
-    db = read_db()
-    user = next((u for u in db["users"] if u.get("supabase_id") == identity.get("id") or u.get("phone") == phone), None)
+    phone = normalise_phone(raw_phone)
     safe_name = (identity.get("user_metadata") or {}).get("name") or "Member"
-    if not user:
-        user = {
-            "id": max([u.get("id", 0) for u in db["users"]] or [0]) + 1,
-            "supabase_id": identity.get("id"),
-            "name": safe_name,
-            "phone": phone,
-            "role": "admin" if phone == settings.admin_phone else "member",
-            "access": ["admin", "candidate", "recruiter"] if phone == settings.admin_phone else [],
-            "created_at": now().isoformat(),
-        }
-        db["users"].append(user)
-    else:
-        user["supabase_id"] = identity.get("id")
-        user["name"] = safe_name
-        # Authorization stays server-controlled; user metadata is never trusted for roles.
-        user["role"] = "admin" if phone == settings.admin_phone else "member"
-        if phone == settings.admin_phone:
-            user["access"] = ["admin", "candidate", "recruiter"]
+    is_admin = phone == normalise_phone(settings.admin_phone)
+    # React development checks and multiple protected widgets can validate the
+    # same fresh identity concurrently. Keep the initial profile synchronization
+    # atomic so the normalized store is not rewritten by overlapping requests.
+    with identity_sync_lock:
+        db = read_db()
+        phone_user = next((u for u in db["users"] if normalise_phone(u.get("phone", "")) == phone), None)
+        identity_user = next((u for u in db["users"] if u.get("supabase_id") == identity.get("id")), None)
+        changed = False
+        if phone_user and identity_user and phone_user["id"] != identity_user["id"]:
+            # Reconcile a legacy duplicate created before phone normalization.
+            # Keep the canonical country-code record and preserve linked requests.
+            for submission in db.get("submissions", []):
+                if submission.get("user_id") == identity_user["id"]:
+                    submission["user_id"] = phone_user["id"]
+            phone_user["access"] = sorted(set(phone_user.get("access", [])) | set(identity_user.get("access", [])))
+            db["users"].remove(identity_user)
+            user = phone_user
+            changed = True
         else:
-            user.setdefault("access", [])
-    write_db(db)
+            user = phone_user or identity_user
+        if not user:
+            user = {
+                "id": max([u.get("id", 0) for u in db["users"]] or [0]) + 1,
+                "supabase_id": identity.get("id"),
+                "name": safe_name,
+                "phone": phone,
+                "role": "admin" if is_admin else "member",
+                "access": ["admin", "candidate", "recruiter"] if is_admin else [],
+                "created_at": now().isoformat(),
+            }
+            db["users"].append(user)
+            changed = True
+        else:
+            desired = {
+                "supabase_id": identity.get("id"),
+                "name": safe_name,
+                # Authorization stays server-controlled; user metadata is never trusted for roles.
+                "role": "admin" if is_admin else "member",
+                "access": ["admin", "candidate", "recruiter"] if is_admin else user.get("access", []),
+            }
+            for key, value in desired.items():
+                if user.get(key) != value:
+                    user[key] = value
+                    changed = True
+        if changed:
+            write_db(db)
     return user
 
 
@@ -239,6 +271,22 @@ class ContentCreate(BaseModel):
     tags: list[str] = []
     technologies: list[str] = []
     category: str = "General"
+    visibility: Literal["public", "private", "semi-private"] = "public"
+
+
+class ContentUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=3, max_length=160)
+    description: str | None = Field(default=None, min_length=3)
+    body: str | None = None
+    tags: list[str] | None = None
+    technologies: list[str] | None = None
+    category: str | None = None
+    visibility: Literal["public", "private", "semi-private"] | None = None
+    hidden: bool | None = None
+
+
+class SubmissionStatusUpdate(BaseModel):
+    status: Literal["accepted", "rejected", "later"]
 
 
 class UserAccessUpdate(BaseModel):
@@ -342,17 +390,17 @@ def ready():
 
 @app.get("/content/blogs")
 def list_blogs():
-    return read_content(BLOGS_PATH)
+    return [item for item in read_content(BLOGS_PATH) if not item.get("hidden", False)]
 
 
 @app.get("/content/projects")
 def list_projects():
-    return read_content(PROJECTS_PATH)
+    return [item for item in read_content(PROJECTS_PATH) if not item.get("hidden", False)]
 
 
 @app.get("/content/blogs/{content_id}")
 def get_blog(content_id: int):
-    item = next((blog for blog in read_content(BLOGS_PATH) if blog.get("id") == content_id), None)
+    item = next((blog for blog in read_content(BLOGS_PATH) if blog.get("id") == content_id and not blog.get("hidden", False)), None)
     if not item:
         raise HTTPException(404, "Blog not found")
     asset = item.get("asset_path")
@@ -407,8 +455,9 @@ def verify_otp(payload: Verify):
         db["users"].append(user)
     elif payload.name and payload.name.strip():
         user["name"] = payload.name.strip()
-    if settings.auth_provider == "local":
-        user["password_hash"] = hash_password(payload.code)
+    if channel == "phone" and identifier == settings.admin_phone:
+        user["role"] = "admin"
+        user["access"] = ["admin", "candidate", "recruiter"]
     store.clear_challenge(identifier)
     write_db(db)
     return {"token": issue_token(user), "user": {key: value for key, value in user.items() if key != "password_hash"}}
@@ -471,7 +520,52 @@ def admin_overview(_: dict = Depends(admin)):
     db = read_db()
     comments = [{"content_id": cid, **comment} for cid, record in db["interactions"].items() for comment in record["comments"]]
     likes = [{"content_id": cid, "count": len(record["likes"]), "people": record["likes"]} for cid, record in db["interactions"].items() if record["likes"]]
-    return {"submissions": list(reversed(db["submissions"])), "comments": list(reversed(comments)), "likes": likes, "users": db["users"], "counts": {"requests": len(db["submissions"]), "comments": len(comments), "likes": sum(item["count"] for item in likes)}}
+    submissions = list(reversed(db["submissions"]))
+    actionable = [item for item in submissions if item.get("status", "pending") in {"pending", "later"}]
+    request_types = {kind: len([item for item in actionable if item.get("type") == kind]) for kind in ("contact", "feedback", "recommendation", "demo", "candidate", "recruiter")}
+    return {
+        "submissions": submissions,
+        "comments": list(reversed(comments)),
+        "likes": likes,
+        "users": db["users"],
+        "content": {"blogs": read_content(BLOGS_PATH), "projects": read_content(PROJECTS_PATH)},
+        "counts": {"requests": len(submissions), "actionable": len(actionable), "comments": len(comments), "likes": sum(item["count"] for item in likes), "by_type": request_types},
+    }
+
+
+@app.get("/admin/requests")
+def admin_requests(
+    type: str | None = None,
+    status: str = "actionable",
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
+    _: dict = Depends(admin),
+):
+    items = read_db()["submissions"]
+    if type and type != "all":
+        items = [item for item in items if item.get("type") == type]
+    if status == "actionable":
+        items = [item for item in items if item.get("status", "pending") in {"pending", "later"}]
+    elif status != "all":
+        items = [item for item in items if item.get("status", "pending") == status]
+    if from_date:
+        items = [item for item in items if datetime.fromisoformat(item["created_at"].replace("Z", "+00:00")) >= from_date]
+    if to_date:
+        items = [item for item in items if datetime.fromisoformat(item["created_at"].replace("Z", "+00:00")) <= to_date]
+    return {"items": list(reversed(items)), "total": len(items)}
+
+
+@app.patch("/admin/submissions/{submission_id}/status")
+def update_submission_status(submission_id: int, payload: SubmissionStatusUpdate, _: dict = Depends(admin)):
+    with identity_sync_lock:
+        db = read_db()
+        item = next((entry for entry in db["submissions"] if entry.get("id") == submission_id), None)
+        if not item:
+            raise HTTPException(404, "Request not found")
+        item["status"] = payload.status
+        item["reviewed_at"] = now().isoformat()
+        write_db(db)
+    return item
 
 
 @app.patch("/admin/users/{user_id}/access")
@@ -496,13 +590,49 @@ def create_content(payload: ContentCreate, _: dict = Depends(admin)):
         slug = "-".join("".join(ch.lower() if ch.isalnum() else " " for ch in payload.title).split())
         asset_path = f"articles/{slug}.md"
         ARTICLES_DIR.mkdir(parents=True, exist_ok=True)
-        item = {"id": content_id, "title": payload.title, "content_description": payload.description, "date": now().date().isoformat(), "tags": payload.tags or [payload.category], "author": "Sanjay Gandhi", "fileType": "md", "isTextFile": True, "asset_path": asset_path, "body": payload.body or payload.description}
+        item = {"id": content_id, "title": payload.title, "content_description": payload.description, "date": now().date().isoformat(), "tags": payload.tags or [payload.category], "author": "Sanjay Gandhi", "fileType": "md", "isTextFile": True, "asset_path": asset_path, "body": payload.body or payload.description, "visibility": payload.visibility, "hidden": False}
         blogs.insert(0, item)
         write_content(BLOGS_PATH, blogs)
         return item
     projects = read_content(PROJECTS_PATH)
     content_id = max([item.get("id", 0) for item in projects], default=0) + 1
-    item = {"id": content_id, "name": payload.title, "description": payload.description, "image": None, "github": None, "technologies": payload.technologies, "category": payload.category, "type": "app", "deployed": False, "priority": content_id, "projectId": content_id, "is_app": True, "features": [line.strip() for line in (payload.body or "").split("\n") if line.strip()]}
+    item = {"id": content_id, "name": payload.title, "description": payload.description, "image": None, "github": None, "technologies": payload.technologies, "category": payload.category, "type": "app", "deployed": False, "priority": content_id, "projectId": content_id, "is_app": True, "features": [line.strip() for line in (payload.body or "").split("\n") if line.strip()], "visibility": payload.visibility, "hidden": False}
     projects.insert(0, item)
     write_content(PROJECTS_PATH, projects)
     return item
+
+
+def content_store(kind: Literal["blog", "project"]):
+    return (BLOGS_PATH, read_content(BLOGS_PATH)) if kind == "blog" else (PROJECTS_PATH, read_content(PROJECTS_PATH))
+
+
+@app.patch("/admin/content/{kind}/{content_id}")
+def update_content(kind: Literal["blog", "project"], content_id: int, payload: ContentUpdate, _: dict = Depends(admin)):
+    path, items = content_store(kind)
+    item = next((entry for entry in items if entry.get("id") == content_id), None)
+    if not item:
+        raise HTTPException(404, "Content not found")
+    changes = payload.model_dump(exclude_none=True)
+    if "title" in changes:
+        item["title" if kind == "blog" else "name"] = changes.pop("title")
+    if "description" in changes:
+        item["content_description" if kind == "blog" else "description"] = changes.pop("description")
+    if "body" in changes:
+        if kind == "blog":
+            item["body"] = changes.pop("body")
+        else:
+            item["features"] = [line.strip() for line in changes.pop("body").split("\n") if line.strip()]
+    item.update(changes)
+    item["updated_at"] = now().isoformat()
+    write_content(path, items)
+    return item
+
+
+@app.delete("/admin/content/{kind}/{content_id}")
+def delete_content(kind: Literal["blog", "project"], content_id: int, _: dict = Depends(admin)):
+    path, items = content_store(kind)
+    remaining = [entry for entry in items if entry.get("id") != content_id]
+    if len(remaining) == len(items):
+        raise HTTPException(404, "Content not found")
+    write_content(path, remaining)
+    return {"deleted": True, "id": content_id, "kind": kind}
