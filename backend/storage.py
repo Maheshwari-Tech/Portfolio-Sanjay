@@ -33,6 +33,7 @@ comments_table = Table("content_comments", metadata,
     UniqueConstraint("content_id", "source_comment_id", name="uq_content_comment_source"))
 blogs_table = Table("blogs", metadata, Column("id", Integer, primary_key=True), Column("sort_order", Integer, nullable=False), Column("payload", JSON, nullable=False))
 projects_table = Table("projects", metadata, Column("id", Integer, primary_key=True), Column("sort_order", Integer, nullable=False), Column("payload", JSON, nullable=False))
+interview_tracker_table = Table("interview_tracker", metadata, Column("id", Integer, primary_key=True), Column("sort_order", Integer, nullable=False), Column("payload", JSON, nullable=False))
 challenge_table = Table("otp_challenges", metadata,
     Column("identifier", String(320), primary_key=True), Column("code_hash", String(128), nullable=False),
     Column("expires_at", DateTime(timezone=True), nullable=False), Column("attempts", Integer, nullable=False, default=0))
@@ -66,19 +67,28 @@ class Store:
 
     def get_json(self, key: str, default):
         if key == "application": return self._application(default)
-        table = blogs_table if key == "content:blogs.json" else projects_table if key == "content:projects.json" else None
+        table = blogs_table if key == "content:blogs.json" else projects_table if key == "content:projects.json" else interview_tracker_table if key == "interview_tracker" else None
         if table is None: return default
         with self.engine.connect() as conn:
             rows = conn.execute(select(table.c.payload).order_by(table.c.sort_order)).scalars().all()
+            if key == "interview_tracker":
+                initialized = conn.execute(select(store_meta_table.c.value).where(store_meta_table.c.key == "interview_tracker_initialized")).scalar_one_or_none()
+                return rows if initialized else default
         return rows if rows else default
 
     def put_json(self, key: str, value):
         if key == "application": self._replace_application(value); return
-        table = blogs_table if key == "content:blogs.json" else projects_table if key == "content:projects.json" else None
+        table = blogs_table if key == "content:blogs.json" else projects_table if key == "content:projects.json" else interview_tracker_table if key == "interview_tracker" else None
         if table is None: raise KeyError(f"Unsupported state key: {key}")
         with self.engine.begin() as conn:
             conn.execute(delete(table))
             if value: conn.execute(table.insert(), [{"id": int(item["id"]), "sort_order": index, "payload": item} for index, item in enumerate(value)])
+            if key == "interview_tracker":
+                initialized = conn.execute(select(store_meta_table.c.key).where(store_meta_table.c.key == "interview_tracker_initialized")).scalar_one_or_none()
+                if initialized:
+                    conn.execute(store_meta_table.update().where(store_meta_table.c.key == "interview_tracker_initialized").values(value="true"))
+                else:
+                    conn.execute(store_meta_table.insert().values(key="interview_tracker_initialized", value="true"))
 
     def _application(self, default):
         with self.engine.connect() as conn:

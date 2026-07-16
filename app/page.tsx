@@ -21,6 +21,7 @@ import MobileNavigation from "./MobileNavigation";
 import PersonalVerticalCarousel from "./PersonalVerticalCarousel";
 import AccountStatus from "./AccountStatus";
 import SiteFooter from "./SiteFooter";
+import RecommendationCarousel from "./RecommendationCarousel";
 
 export const dynamic = "force-static";
 
@@ -410,24 +411,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className="recommendations-grid">
-          {recommendations.map((recommendation, index) => (
-            <article className="recommendation-card" key={recommendation.id}>
-              <div className="recommendation-topline">
-                <span>0{index + 1}</span>
-                <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
-              </div>
-              <blockquote>“{recommendation.comment}”</blockquote>
-              <div className="recommendation-person">
-                <div>
-                  <a href={recommendation.socialLink} target="_blank" rel="noreferrer">{recommendation.name} ↗</a>
-                  <p dangerouslySetInnerHTML={{ __html: recommendation.context }} />
-                </div>
-                <time>{recommendation.date}</time>
-              </div>
-            </article>
-          ))}
-        </div>
+        <RecommendationCarousel recommendations={recommendations} />
       </section>
 
       <section className="personal-section" id="personal">

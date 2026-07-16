@@ -81,6 +81,45 @@ The visual approach is editorial and product-focused: large typography, clear se
 
 Most portfolio content is maintained in JSON files under `data/`. This keeps professional experience, projects, articles, recommendations, skills, videos, and personal interests editable without restructuring page components.
 
+### Build the resume
+
+The editable resume source and generated PDF live together in `public/`:
+
+- `public/Sanjay_Gandhi_Resume.tex`
+- `public/Sanjay_Gandhi_Resume.pdf`
+
+Install [Tectonic](https://tectonic-typesetting.github.io/) (`brew install tectonic` on macOS), then run:
+
+```bash
+npm run build:resume
+```
+
+The command compiles into a temporary directory and replaces the public PDF only after a successful build.
+
+### Import PDF blogs from Obsidian
+
+PDFs under `/Users/snju/Documents/Obsidian Vault/Organized Notes/Blogs` can be
+synchronized into the blog archive with:
+
+```bash
+npm run import:blogs
+```
+
+The importer leaves the vault unchanged, copies the PDFs into the web-accessible
+`public/blogs/obsidian` directory, preserves stable article IDs, and updates both
+`data/source/blogs.json` (frontend cache) and `backend/content/blogs.json`
+(backend seed snapshot). Previously imported files and stale importer-owned PDF
+copies are removed on the next run; manually maintained articles and assets are
+preserved. Searchable PDF text is included when `pypdf` or `pdftotext` is
+available. To preview counts without writing files:
+
+```bash
+python3 scripts/import_obsidian_blogs.py --dry-run
+```
+
+Set `OBSIDIAN_BLOG_SOURCE` or pass `--source /another/folder` when the vault is
+stored elsewhere.
+
 ## Deployment
 
 The website is prepared for Vercel using standard Next.js. See the [Vercel deployment guide](./DEPLOYMENT.md).

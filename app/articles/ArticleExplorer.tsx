@@ -13,6 +13,8 @@ type Article = {
   fileType: string;
   isTextFile: boolean;
   href?: string;
+  summary?: string;
+  asset_url?: string;
 };
 
 const cleanTitle = (title: string) => title.replace(/\.(md|svg|pdf)$/i, "");
@@ -21,7 +23,7 @@ const summaries: Record<number, string> = {
   6: "A visual look at the rhythms, priorities, and everyday systems behind a software engineer’s week.",
 };
 
-const excerpt = (article: Article) => summaries[article.id] ?? article.content_description
+const excerpt = (article: Article) => summaries[article.id] ?? article.summary ?? article.content_description
   .replace(/[#*_`>-]/g, " ")
   .replace(/\s+/g, " ")
   .trim()

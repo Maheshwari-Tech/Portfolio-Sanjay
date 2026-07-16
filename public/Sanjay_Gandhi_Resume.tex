@@ -1,0 +1,240 @@
+%-------------------------
+% Resume in LaTeX
+% Clean two-page layout
+%-------------------------
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[a4paper,left=0.48in,right=0.48in,top=0.38in,bottom=0.44in]{geometry}
+\usepackage{latexsym}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{multicol}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+\setlength{\multicolsep}{2pt}
+\setlength{\columnsep}{14pt}
+\setlength{\footskip}{10pt}
+
+%-------------------------
+% Section formatting
+\titleformat{\section}{
+  \vspace{6pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{3pt}]
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+
+\newcommand{\resumeSubheading}[4]{
+  \item
+  \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & \textbf{\small #2} \\
+    \textit{\small #3} & \textit{\small #4} \\
+  \end{tabular*}\vspace{-2pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+  \item
+  \begin{tabular*}{1.0\textwidth}{l@{\extracolsep{\fill}}r}
+    \small #1 & \textbf{\small #2} \\
+  \end{tabular*}\vspace{-2pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in,label={},itemsep=8pt,topsep=2pt,parsep=0pt]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.16in,itemsep=2pt,topsep=2pt,parsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{3pt}}
+\newcommand{\achievementCategory}[1]{\vspace{7pt}\noindent\textbf{#1}\vspace{2pt}}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+%-------------------------
+% Document start
+\begin{document}
+
+%-----------HEADER-----------
+\begin{center}
+  {\Huge \scshape Sanjay Gandhi} \\
+  \vspace{3pt}
+  \small Phone: +91-8847472124 $|$
+  \href{mailto:sanjaymaheshwari.work@gmail.com}{Email: sanjaymaheshwari.work@gmail.com} \\
+  \small \href{https://linkedin.com/in/snjumaheshwari}{LinkedIn: linkedin.com/in/snjumaheshwari} $|$
+  \href{https://portfolio-sanjay-tech.vercel.app/}{Web: portfolio-sanjay-tech.vercel.app}
+\end{center}
+\vspace{-2pt}
+
+%-----------PROFESSIONAL SUMMARY-----------
+\section{Professional Summary}
+\noindent\small{\textbf{Senior Software Engineer and Tech Lead} with \textbf{6+ years} of experience building and scaling backend and distributed systems at \textbf{Oracle, Google, and Amazon}. Leadership experience across \textbf{10+ engineers}, \textbf{3+ products}, and \textbf{7+ microservices}. Recognized as a \textbf{Certified Bar Raiser at Oracle}. Expertise in cloud-native systems across \textbf{Healthcare, Search, and Finance}, with strong skills in \textbf{Java, Python, OCI, AWS, distributed systems, and asynchronous architectures}. Applied \textbf{Machine Learning and Generative AI} to report intelligence, developer productivity, and anomaly detection.}
+\vspace{4pt}
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Oracle}{Apr 2024 -- Present}
+    {Senior Member of Technical Staff (SDE III) -- \textbf{Promoted to Tech Lead (Oct 2025)}}{Bengaluru (Remote)}
+  \resumeItemListStart
+    \resumeItem{Own architecture, technical direction, delivery, and production readiness for Oracle Health's \textbf{MRO / Clinical Reporting Gen2} platform across \textbf{3+ products}.}
+    \resumeItem{Architected and implemented \textbf{7+ Java Micronaut microservices}, evolving the platform into modular APIs for template management, data extraction, report generation, and the \textbf{PDF Output Assembler}.}
+    \resumeItem{Led product delivery across \textbf{4 quarterly releases}, translating roadmaps into scoped work for \textbf{5--8 engineers}, unblocking execution, and driving architecture, defect resolution, compliance, monitoring, and production readiness.}
+    \resumeItem{Resolved a critical production issue where approximately \textbf{1,000-page reports} breached the \textbf{30-second SLA}; reduced heap usage by \textbf{40\%}, improved performance by over \textbf{25\%}, and drove request-level caching that cut data-extraction time by \textbf{60\%}.}
+    \resumeItem{Built the cloud-native platform with \textbf{Java, Micronaut, React, Large Semantic Object Storage, and Oracle Cloud Infrastructure}; added Kafka-based async processing, retries, DLQs, idempotency, horizontal scaling, dashboards, metrics, and alerting.}
+    \resumeItem{Partnered with \textbf{25+ cross-functional teams} to turn custom clinical-reporting needs into scalable platform capabilities and reduced Gen2 onboarding from roughly \textbf{2 weeks to under 1 week}.}
+    \resumeItem{Built and led the India Clinical Reporting team from scratch, with leadership scope across \textbf{10+ engineers}; strengthened hiring through \textbf{100+ interviews} and \textbf{25+ hires}.}
+  \resumeItemListEnd
+
+  \resumeSubheading
+    {Google}{Sep 2021 -- Feb 2024}
+    {Software Engineer II}{Bengaluru (Hybrid)}
+  \resumeItemListStart
+    \resumeItem{Worked in the \textbf{Search India} team, developing education-domain features for exam OSRPs to deliver structured educational content.}
+    \resumeItem{Built the \textbf{Exam Quiz} feature to improve user engagement with interactive learning modules.}
+    \resumeItem{Migrated architecture from entity-driven to intent-driven, impacting \textbf{0.05\%} of Search traffic.}
+    \resumeItem{Launched localized \textbf{Exam OSRP} experiences with tabs and content in Hindi, Tamil, and Telugu to improve accessibility.}
+    \resumeItem{Designed and integrated a scalable \textbf{Language API} for Indic locales in lower-tier cities.}
+    \resumeItem{Collaborated with cross-functional teams to resolve issues, align requirements, and prioritize enhancements.}
+    \resumeItem{Worked on a large-scale \textbf{monorepo codebase} involving \textbf{C++, Java, Python, gRPC, protobuf, and Graph Database (Knowledge Graph)}, alongside internal technologies.}
+  \resumeItemListEnd
+
+  \resumeSubheading
+    {Amazon}{Jul 2020 -- Aug 2021}
+    {Software Development Engineer I}{Hyderabad}
+  \resumeItemListStart
+    \resumeItem{Worked in \textbf{Amazon Finance Automation}, building statistical and ML-powered systems to detect invoice fraud, duplicates, and anomalies at scale.}
+    \resumeItem{Implemented \textbf{3} ML-based anomaly-detection rules using \textbf{Isolation Forest}, identifying over \textbf{100M USD} in anomalies.}
+    \resumeItem{Reduced anomaly reporting latency from \textbf{24 hours} to near real-time through \textbf{Gandalf-Veritas Integration}.}
+    \resumeItem{Built APIs and monitoring dashboards, and used \textbf{AWS CDK} to create infrastructure and CI/CD pipelines.}
+    \resumeItem{Developed microservices using \textbf{Java, Kotlin, TypeScript, Python, ML, Elasticsearch, DynamoDB, and Redshift}, alongside Coral, Smithy, and AWS technologies.}
+  \resumeItemListEnd
+
+  \resumeSubheading
+    {HackerEarth}{Jan 2020 -- Jun 2020}
+    {Problem Curator Intern}{Bengaluru}
+  \resumeItemListStart
+    \resumeItem{Created and tested algorithmic problems for hiring contests at companies including Infosys, Google, Facebook, Nokia, PayPal, and Salesforce.}
+    \resumeItem{Presented a \textbf{2-day / 10+ hour} Advanced Data Structures and Algorithms workshop at MNIT Jaipur to \textbf{120+} attendees on behalf of HackerEarth.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\newpage
+
+%-----------EDUCATION-----------
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading
+    {Lovely Professional University}{Jul 2016 -- May 2020}
+    {B.Tech. in Computer Science Engineering, Specialization: Machine Learning}{Jalandhar, Punjab | \href{https://drive.google.com/file/d/1n-Xg5Bm-tyqGOUC7onOlteQrPqXydC8Z/view}{\underline{CGPA: \textbf{9.06/10}}}}
+\resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+\vspace{2pt}
+\begin{tabular}{p{0.22\textwidth} p{0.74\textwidth}}
+  \textbf{Languages} & Java, C++, Python, TypeScript \\
+  \textbf{Databases} & MySQL, DynamoDB, MongoDB, Redshift, Object Storage \\
+  \textbf{Cloud \& Infra} & AWS, OCI, Docker, Kubernetes, CI/CD, Terraform/CDK \\
+  \textbf{Distributed Systems} & Kafka, gRPC, Redis, Elasticsearch, Microservices, WebSockets \\
+  \textbf{AI \& Machine Learning} & Scikit-Learn, Isolation Forest, Anomaly Detection, Gen AI, MCP Server, Agents\\
+  \textbf{Miscellaneous} & System Design, API Design, Performance Tuning, Code Reviews, Mentoring, Documentation \\
+\end{tabular}
+\vspace{3pt}
+
+%-----------ACHIEVEMENTS-----------
+\section{Achievements}
+
+\achievementCategory{Professional \& Leadership}
+{\small
+\begin{itemize}[leftmargin=0.30in,topsep=2pt]
+  \item Promoted to \textbf{Tech Lead}, owning architecture, delivery, and technical direction for a multi-service healthcare platform with leadership experience across \textbf{10+ engineers}.
+  \item Oracle Certified Bar Raiser; conducted \textbf{100+ interviews} and contributed to \textbf{25+ hires}. OraHacks judge and mentor for \textbf{10+ AI teams}, guiding projects from proof of concept toward production.
+  \item First student from the university to receive a \textbf{direct SDE full-time offer from Amazon} during third-year on-campus internship hiring.
+\end{itemize}
+}
+
+\achievementCategory{Cloud \& Technical Certifications}
+{\small
+\begin{itemize}[leftmargin=0.30in,topsep=2pt]
+  \item \href{https://catalog-education.oracle.com/pls/certview/sharebadge?id=C72EFA41F0C8B51EEDCF7E759B92FCA34E59F058D11AFD39D71DB564ABB8DDFE}{Oracle Cloud Infrastructure 2025 Generative AI Professional}
+  \item \href{https://catalog-education.oracle.com/ords/certview/sharebadge?id=E6EA0D02CCCB8650680C392264F1F29B72C5B8895C915ED25C8F1C63C6D850EE}{Oracle Cloud Infrastructure 2025 Certified Developer Professional}
+  \item \href{https://catalog-education.oracle.com/ords/certview/sharebadge?id=0A80139CE66ACD03D6226677B4ED648AE55C308A559F9D9E222F1906F6DF6904}{Oracle Cloud Infrastructure 2024 Certified AI Foundations Associate}
+  % \item \href{https://catalog-education.oracle.com/ords/certview/sharebadge?id=54658A707D70FAE955041F74C82458539E2EB6ACD5F2BBB5FAD88DAF8767FA12}{Oracle Cloud Infrastructure 2023 Certified Foundations Associate}
+  \item \href{https://www.codechef.com/certificates/public/1765982}{CodeChef Certified Data Structures and Algorithms Programme \textbf{(CCDSAP -- Advanced)}}
+  \item \href{https://www.linkedin.com/in/snjumaheshwari/details/certifications/}{Earned \textbf{30+ technical certifications} across computer science, cloud, and software engineering.}
+\end{itemize}
+}
+
+\achievementCategory{Competitive Programming \& Coding Excellence}
+{\small
+\begin{itemize}[leftmargin=0.30in,topsep=2pt]
+  \item Secured \textbf{World Rank 1} in CodeChef October Challenge 2018 (Div 2).
+  \item Qualified for \textbf{ACM-ICPC Asia Regionals}; secured \textbf{85th} rank in Gwalior-Pune regionals, 2018.
+  \item Secured \textbf{2nd} rank out of \textbf{175 teams} in University Coding Contest at LPU.
+  \item Secured \textbf{5th} rank in the national coding contest ``ALOHOMORA'' at NIT Durgapur.
+  \item Secured \textbf{21st} rank in a national coding contest at LNMIIT Jaipur.
+  \item Solved \textbf{1000+} problems across major competitive programming platforms.
+\end{itemize}
+}
+
+\achievementCategory{National Exams \& Academic Rankings}
+{\small
+\begin{itemize}[leftmargin=0.30in,topsep=2pt]
+  \item Obtained \textbf{99.98 percentile} in eLitmus Quantitative Aptitude.
+  \item Secured \textbf{86th} rank among \textbf{60,946} candidates in Rajasthan Pre-Engineering Test, 2014.
+  \item Secured \textbf{15,550} rank among \textbf{1.26 lakh} candidates in JEE Advanced.
+  \item Participated in \textbf{3 hackathons}, developing projects in machine learning and web development.
+\end{itemize}
+}
+\vspace{2pt}
+
+%-----------ONLINE PROFILES-----------
+\section{Online Profiles}
+\vspace{2pt}
+\begin{multicols}{4}
+\begin{itemize}[leftmargin=*,itemsep=3pt,topsep=0pt,label={}]
+  \item[] \href{https://github.com/Maheshwari-Tech}{\underline{Github}}
+  \item[] \href{https://leetcode.com/u/snjumaheshwari/}{\underline{Leetcode}} \\
+    \small{Rating: 1811* \textbf{top 10\%}}
+  \item[] \href{https://codeforces.com/profile/snjumaheshwari98}{\underline{Codeforces}} \\
+    \small{Rating: 1813* \textbf{Expert}}
+  \item[] \href{https://www.codechef.com/users/snjumaheshwari}{\underline{CodeChef}} \\
+    \small{Rating: 2022* \textbf{5-Star}}
+\end{itemize}
+\end{multicols}
+
+
+%-----------PERSONAL PROJECTS-----------
+\section{Personal Projects}
+\resumeSubHeadingListStart
+  \resumeProjectHeading
+    {\href{https://portfolio-sanjay-tech.vercel.app/}{\textbf{Portfolio Website}} $|$ \href{https://portfolio-sanjay-tech.vercel.app/}{\underline{Live}} $|$ \emph{Next.js, TypeScript, FastAPI, Supabase, Vercel, AWS Cloud}}{2025 -- Present}
+  \resumeItemListStart
+    \resumeItem{Built a production-oriented portfolio with searchable blogs, detailed project case studies, certificate previews, role-based member/admin experiences, and a separately deployable FastAPI backend.}
+    \resumeItem{\textbf{Intelligent Report Builder:} AI workspace for report requests, templates, quality review, and SLA prediction.}
+    \resumeItem{\textbf{LLM Semantic Query Agent:} Validated NL-to-SQL with pgvector retrieval and \textbf{90\% lower prompt-token cost}.}
+    \resumeItem{\textbf{Agentic AI Support:} LangGraph/RAG agent using MCP tools over support documents and governed APIs.}
+    \resumeItem{\textbf{Cards Game:} Reconnect-safe multiplayer Indian card games across web and mobile.}
+    \resumeItem{\textbf{Udhari:} Chat-first peer lending with versioned terms, AutoPay, and repayment tracking.}
+    \resumeItem{\textbf{CouplesCraft:} Location-aware date planning with budget ranking, maps, and shared memories.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\end{document}

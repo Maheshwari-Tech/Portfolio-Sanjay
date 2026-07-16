@@ -31,6 +31,7 @@ LEGACY_DB_PATH = BASE_DIR / "database.json"
 CONTENT_DIR = BASE_DIR / "content"
 BLOGS_PATH = CONTENT_DIR / "blogs.json"
 PROJECTS_PATH = CONTENT_DIR / "projects.json"
+TARGET_COMPANIES_PATH = CONTENT_DIR / "target_companies.json"
 ARTICLES_DIR = CONTENT_DIR / "articles"
 LOCAL_OTP_OUTBOX = BASE_DIR / "local_otp_outbox.json"
 logger = logging.getLogger("portfolio.auth")
@@ -293,6 +294,66 @@ class UserAccessUpdate(BaseModel):
     access: list[Literal["admin", "candidate", "recruiter"]]
 
 
+class InterviewCompanyCreate(BaseModel):
+    company: str = Field(min_length=2, max_length=100)
+    target_role: str = Field(default="Senior Software Engineer / Tech Lead", max_length=160)
+    priority: Literal["dream", "high", "target", "watch"] = "target"
+    status: Literal["wishlist", "researching", "ready", "applied", "recruiter", "screening", "interviewing", "offer", "rejected", "paused"] = "wishlist"
+    last_applied: str | None = None
+    next_action: str | None = Field(default=None, max_length=500)
+    next_action_date: str | None = None
+    rounds_information: str | None = None
+    company_values: str | None = None
+    contacts: str | None = None
+    job_url: str | None = Field(default=None, max_length=500)
+    notes: str | None = None
+
+
+class InterviewCompanyUpdate(BaseModel):
+    company: str | None = Field(default=None, min_length=2, max_length=100)
+    target_role: str | None = Field(default=None, max_length=160)
+    priority: Literal["dream", "high", "target", "watch"] | None = None
+    status: Literal["wishlist", "researching", "ready", "applied", "recruiter", "screening", "interviewing", "offer", "rejected", "paused"] | None = None
+    last_applied: str | None = None
+    next_action: str | None = Field(default=None, max_length=500)
+    next_action_date: str | None = None
+    rounds_information: str | None = None
+    company_values: str | None = None
+    contacts: str | None = None
+    job_url: str | None = Field(default=None, max_length=500)
+    notes: str | None = None
+
+
+def ensure_interview_tracker() -> list[dict]:
+    """Seed a new environment once while preserving every admin edit thereafter."""
+    items = store.get_json("interview_tracker", None)
+    if items is None:
+        timestamp = now().isoformat()
+        targets = json.loads(TARGET_COMPANIES_PATH.read_text()) if TARGET_COMPANIES_PATH.exists() else []
+        items = [
+            {
+                "id": index,
+                "company": target["company"],
+                "target_role": target.get("target_role", ""),
+                "priority": target.get("priority", "target"),
+                "status": "wishlist",
+                "last_applied": None,
+                "next_action": "Research the role, team, and interview loop",
+                "next_action_date": None,
+                "rounds_information": "",
+                "company_values": "",
+                "contacts": "",
+                "job_url": "",
+                "notes": "",
+                "created_at": timestamp,
+                "updated_at": timestamp,
+            }
+            for index, target in enumerate(targets, start=1)
+        ]
+        store.put_json("interview_tracker", items)
+    return items
+
+
 def identifier_for(payload: OTPRequest) -> tuple[str, str]:
     if payload.phone:
         return "phone", normalise_phone(payload.phone)
@@ -531,6 +592,73 @@ def admin_overview(_: dict = Depends(admin)):
         "content": {"blogs": read_content(BLOGS_PATH), "projects": read_content(PROJECTS_PATH)},
         "counts": {"requests": len(submissions), "actionable": len(actionable), "comments": len(comments), "likes": sum(item["count"] for item in likes), "by_type": request_types},
     }
+
+
+@app.get("/admin/interview-tracker")
+def get_interview_tracker(
+    status: str | None = None,
+    priority: str | None = None,
+    search: str | None = None,
+    _: dict = Depends(admin),
+):
+    items = ensure_interview_tracker()
+    if status and status != "all":
+        items = [item for item in items if item.get("status") == status]
+    if priority and priority != "all":
+        items = [item for item in items if item.get("priority") == priority]
+    if search:
+        needle = search.strip().lower()
+        items = [item for item in items if needle in " ".join(str(item.get(key, "")) for key in ("company", "target_role", "contacts", "notes", "rounds_information")).lower()]
+    return {"items": items, "total": len(items)}
+
+
+@app.post("/admin/interview-tracker")
+def create_interview_company(payload: InterviewCompanyCreate, _: dict = Depends(admin)):
+    with identity_sync_lock:
+        items = ensure_interview_tracker()
+        if any(item.get("company", "").casefold() == payload.company.strip().casefold() for item in items):
+            raise HTTPException(409, "This company is already in the tracker.")
+        timestamp = now().isoformat()
+        item = {
+            "id": max([entry.get("id", 0) for entry in items] or [0]) + 1,
+            **payload.model_dump(),
+            "company": payload.company.strip(),
+            "created_at": timestamp,
+            "updated_at": timestamp,
+        }
+        items.append(item)
+        store.put_json("interview_tracker", items)
+    return item
+
+
+@app.patch("/admin/interview-tracker/{company_id}")
+def update_interview_company(company_id: int, payload: InterviewCompanyUpdate, _: dict = Depends(admin)):
+    with identity_sync_lock:
+        items = ensure_interview_tracker()
+        item = next((entry for entry in items if entry.get("id") == company_id), None)
+        if not item:
+            raise HTTPException(404, "Company not found")
+        changes = payload.model_dump(exclude_unset=True)
+        if "company" in changes:
+            changes["company"] = changes["company"].strip()
+            if any(entry.get("id") != company_id and entry.get("company", "").casefold() == changes["company"].casefold() for entry in items):
+                raise HTTPException(409, "This company is already in the tracker.")
+        item.update(changes)
+        item["updated_at"] = now().isoformat()
+        store.put_json("interview_tracker", items)
+    return item
+
+
+@app.delete("/admin/interview-tracker/{company_id}")
+def delete_interview_company(company_id: int, _: dict = Depends(admin)):
+    with identity_sync_lock:
+        items = ensure_interview_tracker()
+        item = next((entry for entry in items if entry.get("id") == company_id), None)
+        if not item:
+            raise HTTPException(404, "Company not found")
+        items.remove(item)
+        store.put_json("interview_tracker", items)
+    return {"deleted": True, "id": company_id}
 
 
 @app.get("/admin/requests")

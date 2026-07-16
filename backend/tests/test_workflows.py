@@ -163,6 +163,41 @@ def test_admin_request_queue_filters_status_and_crud_content():
     assert deleted.json() == {"deleted": True, "id": content_id, "kind": "blog"}
 
 
+def test_interview_tracker_is_admin_only_and_supports_full_company_workflow():
+    member = create_user("9999999999", "Career Member")
+    member_headers = {"Authorization": f"Bearer {member['token']}"}
+    assert client.get("/admin/interview-tracker", headers=member_headers).status_code == 403
+
+    admin_auth = create_user("8847472124", "Sanjay")
+    headers = {"Authorization": f"Bearer {admin_auth['token']}"}
+    seeded = client.get("/admin/interview-tracker", headers=headers)
+    assert seeded.status_code == 200
+    assert seeded.json()["total"] > 0
+
+    created = client.post("/admin/interview-tracker", headers=headers, json={
+        "company": "Test Company",
+        "target_role": "Principal Engineer",
+        "priority": "high",
+        "status": "researching",
+        "rounds_information": "Coding, system design, leadership",
+        "company_values": "Customer focus and ownership",
+        "contacts": "Hiring Manager · LinkedIn",
+    })
+    assert created.status_code == 200
+    company_id = created.json()["id"]
+    updated = client.patch(f"/admin/interview-tracker/{company_id}", headers=headers, json={
+        "status": "applied",
+        "last_applied": "2026-07-15",
+        "next_action": "Ask for a referral",
+    })
+    assert updated.status_code == 200
+    assert updated.json()["status"] == "applied"
+    assert updated.json()["rounds_information"] == "Coding, system design, leadership"
+    assert client.get("/admin/interview-tracker?status=applied&search=Test", headers=headers).json()["total"] == 1
+    assert client.delete(f"/admin/interview-tracker/{company_id}", headers=headers).json() == {"deleted": True, "id": company_id}
+    assert client.get("/admin/interview-tracker", headers=member_headers).status_code == 403
+
+
 def test_local_auth_endpoints_are_closed_in_supabase_mode(monkeypatch):
     monkeypatch.setattr(main, "settings", replace(main.settings, auth_provider="supabase", supabase_url="https://example.supabase.co", supabase_publishable_key="sb_publishable_test"))
     payload = {"phone": "9999999999"}

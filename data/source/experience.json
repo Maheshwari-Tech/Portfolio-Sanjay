@@ -5,18 +5,17 @@
     "period": "Apr 2024 – Present, Bengaluru (Remote)",
     "duration": "Promoted to Tech Lead in Oct 2025",
     "logo": "/images/oracle_logo.svg",
-    "technologies": ["Java", "Micronaut", "Kafka", "Redis", "SQL", "Elasticsearch", "Large Semantic Object Storage", "OCI", "Microservices"],
+    "technologies": ["Java", "Micronaut", "React", "Kafka", "Redis", "SQL", "Elasticsearch", "Large Semantic Object Storage", "Oracle Cloud Infrastructure", "Microservices"],
     "keySkills": ["Technical Leadership", "System Architecture", "Performance Tuning", "Hiring", "Mentoring", "Cross-team Delivery"],
     "rating": 10,
     "details": [
-      "Technical lead for Oracle Health’s Clinical Reporting / Output Management team, owning <strong>MRO / Clinical Reporting Gen2</strong>, used by <strong>25+ concept teams</strong> with 20+ additional concepts on the roadmap.",
-      "Architected and implemented <strong>7+ microservices</strong> for a Java Micronaut medical-record output platform, redesigning it into a modular Gen2 reporting system across APIs, templates, data extraction, report generation, and PDF assembly.",
+      "Technical Lead for Oracle Health’s Clinical Reporting / Output Management team, owning the architecture, technical direction, delivery, and production readiness of <strong>MRO / Clinical Reporting Gen2</strong> across <strong>3+ products</strong>.",
+      "Architected and implemented <strong>7+ microservices</strong> for a Java Micronaut medical-record output platform, redesigning it into a modular Gen2 reporting system across APIs, templates, data extraction, report generation, and the <strong>PDF Output Assembler</strong>.",
       "Introduced asynchronous processing, fast/slow lanes, bulk generation, retries, DLQ handling, idempotency, horizontal scaling, authN/authZ, audit logging, metrics, dashboards, and alerting.",
-      "Led delivery across <strong>49 closed epics</strong>, 39 planned epics, <strong>89 Jira items</strong>, and <strong>251 story points</strong> spanning architecture, releases, compliance, monitoring, and deployment readiness.",
-      "Optimized a 262-page report from <strong>9.0s to 4.2s</strong>, reduced heap from <strong>891.7MB to 426.2MB</strong>, and reduced output from <strong>17.6MB to 13.7MB</strong>.",
-      "Implemented a <strong>request-level cache</strong> that reduced data-extraction time by <strong>75%</strong>.",
-      "Supported <strong>20+ Gen2 concept onboardings</strong> and reduced onboarding time from roughly two weeks to under one week.",
-      "Built and led the India Clinical Reporting team, with leadership experience across <strong>10+ engineers</strong>, <strong>3+ products</strong>, <strong>25+ cross-functional teams</strong>, <strong>100+ interviews</strong>, and <strong>20+ hires</strong>."
+      "Led product delivery across <strong>4 quarterly releases</strong>—from roadmap planning and architecture to breaking down work for <strong>5–8 engineers</strong>, unblocking execution, and driving architecture decisions, defect resolution, release execution, compliance, monitoring, operational readiness, and production readiness.",
+      "Led the resolution of a critical production issue in which generation of approximately <strong>1,000-page reports</strong> breached the <strong>30-second SLA</strong>; reduced heap usage by <strong>40%</strong>, improved performance by over <strong>25%</strong>, and drove a request-level cache that reduced data-extraction time by <strong>60%</strong>.",
+      "Partnered with <strong>25+ cross-functional teams</strong> to translate custom clinical-reporting needs into scalable platform capabilities, while reducing Gen2 onboarding time from roughly two weeks to under one week.",
+      "Built and led the India Clinical Reporting team from scratch—growing the leadership scope to <strong>10+ engineers</strong> across <strong>3+ products</strong>, partnering with <strong>25+ cross-functional teams</strong>, and strengthening hiring through <strong>100+ interviews</strong> and <strong>25+ hires</strong>."
     ]
   },
   {
@@ -25,7 +24,7 @@
     "period": "Sep 2021 – Feb 2024, Bengaluru (Hybrid)",
     "duration": "2 years 6 months",
     "logo": "/images/google_logo.webp",
-    "technologies": ["C++", "Java", "Python", "gRPC", "Protocol Buffers", "Knowledge Graphs", "Monorepo"],
+    "technologies": ["C++", "Java", "Python", "gRPC", "Protocol Buffers", "Graph Database (Knowledge Graph)", "Monorepo"],
     "keySkills": ["Product Engineering", "API Design", "Localization", "Cross-functional Collaboration", "System Design"],
     "rating": 7,
     "details": [
@@ -45,7 +44,7 @@
     "period": "Jul 2020 – Aug 2021, Hyderabad",
     "duration": "1 year 2 months",
     "logo": "/images/amazon_logo.svg",
-    "technologies": ["Java", "Kotlin", "TypeScript", "Python", "AWS CDK", "Elasticsearch", "DynamoDB", "Coral", "Smithy"],
+    "technologies": ["Java", "Kotlin", "TypeScript", "Python", "AWS CDK", "Elasticsearch", "DynamoDB", "Redshift", "Coral", "Smithy"],
     "keySkills": ["Machine Learning", "Anomaly Detection", "Microservices", "API Design", "CI/CD", "Monitoring"],
     "rating": 10,
     "details": [

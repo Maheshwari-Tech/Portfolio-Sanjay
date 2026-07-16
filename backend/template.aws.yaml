@@ -29,6 +29,8 @@ Resources:
   PortfolioApi:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: sanjay-portfolio-api
+      Description: Sanjay Gandhi portfolio FastAPI backend
       PackageType: Image
       Architectures: [x86_64]
       MemorySize: 512
@@ -58,7 +60,18 @@ Resources:
       DockerContext: .
       DockerTag: python312-v1
 
+  PortfolioApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      LogGroupName: /aws/lambda/sanjay-portfolio-api
+      RetentionInDays: 14
+
 Outputs:
   ApiUrl:
     Description: Public HTTPS backend URL; application endpoints still enforce Supabase JWT authorization
     Value: !GetAtt PortfolioApiUrl.FunctionUrl
+  FunctionName:
+    Description: Lambda function used by the portfolio API
+    Value: !Ref PortfolioApi
