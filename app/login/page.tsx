@@ -6,6 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, normalizeIndianPhone } from "../supabaseClient";
 import { apiFetch } from "../apiClient";
 import CaptchaChallenge, { type CaptchaProvider } from "../CaptchaChallenge";
+import Wordmark from "../Wordmark";
 
 export default function LoginPage({ adminMode = false }: { adminMode?: boolean }) {
   const [phone, setPhone] = useState("");
@@ -200,7 +201,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   return (
     <main className="auth-page">
       <header className="article-nav">
-        <Link className="wordmark" href="/">SM<span>.</span></Link>
+        <Wordmark />
         <Link href="/">Back to portfolio</Link>
       </header>
       <section className="auth-shell">

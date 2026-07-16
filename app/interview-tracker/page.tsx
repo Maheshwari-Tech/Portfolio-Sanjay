@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch, ApiUnavailableError, authHeaders } from "../apiClient";
+import Wordmark from "../Wordmark";
 
 type Stage = "wishlist" | "researching" | "ready" | "applied" | "recruiter" | "screening" | "interviewing" | "offer" | "rejected" | "paused";
 type Priority = "dream" | "high" | "target" | "watch";
@@ -122,12 +123,12 @@ export default function InterviewTrackerPage() {
   }
 
   if (state !== "ready") return <main className="tracker-page">
-    <header className="admin-topbar"><Link className="wordmark" href="/">SM<span>.</span></Link><nav><Link href="/admin">Admin portal</Link><Link href="/">Public website</Link></nav><span>{userName}</span></header>
+    <header className="admin-topbar"><Wordmark/><nav><Link href="/admin">Admin portal</Link><Link href="/">Public website</Link></nav><span>{userName}</span></header>
     <section className="admin-empty"><p className="eyebrow">PRIVATE · ADMIN ONLY</p><h1>{state === "loading" ? "Opening your tracker…" : state === "offline" ? "Tracker service unavailable." : "Admin access only."}</h1><p>{message}</p>{state === "offline" ? <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection ↗</button> : state === "denied" ? <Link className="button button-dark" href="/admin/login?next=/interview-tracker">Admin login ↗</Link> : null}</section>
   </main>;
 
   return <main className="tracker-page">
-    <header className="admin-topbar"><Link className="wordmark" href="/">SM<span>.</span></Link><nav><Link href="/admin">Admin portal</Link><a href="#companies">Companies</a><a href="#actions">Next actions</a></nav><span>{userName}</span></header>
+    <header className="admin-topbar"><Wordmark/><nav><Link href="/admin">Admin portal</Link><a href="#companies">Companies</a><a href="#actions">Next actions</a></nav><span>{userName}</span></header>
     <section className="tracker-shell">
       <header className="tracker-hero">
         <div><p className="eyebrow">PRIVATE CAREER WORKSPACE</p><h1>Top companies.<br/><em>One clear pipeline.</em></h1><p>Track applications, interview loops, people, values, preparation notes, and the next move for every target company.</p></div>

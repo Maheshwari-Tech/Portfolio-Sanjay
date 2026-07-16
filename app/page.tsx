@@ -20,6 +20,7 @@ import { siteConfig } from "./siteConfig";
 import MobileNavigation from "./MobileNavigation";
 import PersonalVerticalCarousel from "./PersonalVerticalCarousel";
 import AccountStatus from "./AccountStatus";
+import Wordmark from "./Wordmark";
 import SiteFooter from "./SiteFooter";
 import RecommendationCarousel from "./RecommendationCarousel";
 
@@ -122,9 +123,7 @@ export default function Home() {
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label={`${profile.name}, home`}>
-          {profile.shortName}<span>.</span>
-        </a>
+        <Wordmark href="#top" label={`${profile.name}, home`} initials={profile.shortName} />
         <MobileNavigation resume={profile.resume} />
         <AccountStatus />
       </header>

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch, ApiUnavailableError, authHeaders } from "../apiClient";
 import AdminContentManager, { ManagedContent } from "../AdminContentManager";
 import ContentCreator from "../ContentCreator";
+import Wordmark from "../Wordmark";
 
 type RequestStatus = "pending"|"accepted"|"rejected"|"later";
 type Submission = {id:number;type:string;title:string;name:string;email?:string;message?:string;category?:string;rating?:string;project_id?:string;status?:RequestStatus;created_at:string};
@@ -81,12 +82,12 @@ export default function AdminPage() {
     const response=await apiFetch(`/admin/users/${userId}/access`,{method:"PATCH",headers:authHeaders(),body:JSON.stringify({access})});if(response.ok)await loadOverview();
   }
 
-  if(state!=="ready"||!data)return <main className="admin-page"><header className="article-nav"><Link className="wordmark" href="/">SM<span>.</span></Link><Link href="/">Public website</Link></header><section className="admin-empty"><p className="eyebrow">PRIVATE ADMIN</p><h1>{state==="loading"?"Verifying access…":state==="offline"?"Admin service unavailable.":"Admin access only."}</h1>{message&&<p>{message}</p>}{state==="offline"&&<button className="button button-dark" onClick={()=>void loadOverview(true)}>Retry connection ↗</button>}{state==="denied"&&<Link className="button button-dark" href="/admin/login">Admin login ↗</Link>}</section></main>;
+  if(state!=="ready"||!data)return <main className="admin-page"><header className="article-nav"><Wordmark/><Link href="/">Public website</Link></header><section className="admin-empty"><p className="eyebrow">PRIVATE ADMIN</p><h1>{state==="loading"?"Verifying access…":state==="offline"?"Admin service unavailable.":"Admin access only."}</h1>{message&&<p>{message}</p>}{state==="offline"&&<button className="button button-dark" onClick={()=>void loadOverview(true)}>Retry connection ↗</button>}{state==="denied"&&<Link className="button button-dark" href="/admin/login">Admin login ↗</Link>}</section></main>;
 
   return <main className="admin-page">
-    <header className="admin-topbar"><Link className="wordmark" href="/">SM<span>.</span></Link><nav><Link href="/interview-tracker">Interview tracker</Link><a href="#requests">Requests</a><a href="#content">Content</a><a href="#access">Access</a><a href="#engagement">Engagement</a></nav><span>{storedName}</span></header>
+    <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker">Interview tracker</Link><a href="#requests">Requests</a><a href="#content">Content</a><a href="#access">Access</a><a href="#engagement">Engagement</a></nav><span>{storedName}</span></header>
     <section className="admin-shell">
-      <div className="admin-hero"><div><p className="eyebrow">ADMIN PORTAL</p><h1>Good day, {storedName}.</h1><p>Review incoming requests, publish work, and manage access from one place.</p></div><div className="admin-notification-card"><span>Needs attention</span><strong>{data.counts.actionable}</strong><p>{data.counts.actionable===1?"request is":"requests are"} waiting for a decision.</p><a href="#requests">Open queue ↓</a></div></div>
+      <div className="admin-hero"><div><p className="eyebrow">ADMIN PORTAL</p><h1>Good day, {storedName}.</h1><p>Review incoming requests, publish work, and manage access from one place.</p><div className="admin-pulse-legend"><span><i className="available"/>Green dot: backend available</span><span><i className="unavailable"/>Red dot: backend unavailable</span><span><i className="checking"/>Blue dot: checking</span></div></div><div className="admin-notification-card"><span>Needs attention</span><strong>{data.counts.actionable}</strong><p>{data.counts.actionable===1?"request is":"requests are"} waiting for a decision.</p><a href="#requests">Open queue ↓</a></div></div>
       <div className="admin-counts"><div><strong>{data.counts.actionable}</strong><span>Waiting for review</span></div><div><strong>{data.counts.requests}</strong><span>Total requests</span></div><div><strong>{data.counts.comments+data.counts.likes}</strong><span>Engagement events</span></div></div>
 
       <section className="admin-section admin-request-workspace" id="requests">
