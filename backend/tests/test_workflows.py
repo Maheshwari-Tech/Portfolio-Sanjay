@@ -1,10 +1,15 @@
 import os
 from dataclasses import replace
+from pathlib import Path
+from tempfile import gettempdir
+
+
+TEST_DATABASE_PATH = Path(gettempdir()) / "sanjay-portfolio-tests.db"
 
 os.environ.update({
     "APP_ENV": "development",
     "AUTH_PROVIDER": "local",
-    "DATABASE_URL": "sqlite:////private/tmp/sanjay-portfolio-tests.db",
+    "DATABASE_URL": f"sqlite:///{TEST_DATABASE_PATH}",
     "JWT_SECRET": "test-jwt-secret-that-is-longer-than-thirty-two-characters",
     "OTP_HASH_SECRET": "test-otp-secret-that-is-longer-than-thirty-two-characters",
     "ADMIN_PHONE": "+918847472124",
