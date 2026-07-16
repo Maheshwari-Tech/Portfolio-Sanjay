@@ -1,8 +1,11 @@
-const base = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
-export const apiUrl = (path: string) => `${base}${path}`;
+const base = (process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(/\/$/, "");
 export class ApiUnavailableError extends Error {
   constructor() { super("The portfolio service is temporarily unavailable."); }
 }
+export const apiUrl = (path: string) => {
+  if (!base) throw new ApiUnavailableError();
+  return `${base}${path}`;
+};
 
 export async function apiFetch(path: string, init: RequestInit = {}, timeoutMs = 8000) {
   const controller = new AbortController();
