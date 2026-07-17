@@ -106,9 +106,8 @@ npm run import:blogs
 ```
 
 The importer leaves the vault unchanged, copies the PDFs into the web-accessible
-`public/blogs/obsidian` directory, preserves stable article IDs, and updates both
-`data/source/blogs.json` (frontend cache) and `backend/content/blogs.json`
-(backend seed snapshot). Previously imported files and stale importer-owned PDF
+`public/blogs/obsidian` directory, preserves stable article IDs, and updates
+`data/source/blogs.json` (the frontend content cache). Previously imported files and stale importer-owned PDF
 copies are removed on the next run; manually maintained articles and assets are
 preserved. Searchable PDF text is included when `pypdf` or `pdftotext` is
 available. To preview counts without writing files:
@@ -123,6 +122,9 @@ stored elsewhere.
 ## Deployment
 
 The website is prepared for Vercel using standard Next.js. See the [Vercel deployment guide](./DEPLOYMENT.md).
+The frontend consumes the separately hosted UltimateBackend service through
+`NEXT_PUBLIC_API_BASE_URL`; backend source and deployment automation are kept in
+the sibling `projects/UltimateBackend` project.
 
 ## Technical reference
 

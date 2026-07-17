@@ -1,16 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import portfolio from "../data/portfolio.json";
-import about from "../data/source/about.json";
-import achievementGroups from "../data/source/achievements.json";
-import blogs from "../data/source/blogs.json";
-import education from "../data/source/education.json";
-import experience from "../data/source/experience.json";
-import personalItems from "../data/source/personal.json";
-import projectData from "../data/source/projects.json";
-import reviews from "../data/source/reviews.json";
-import skills from "../data/source/skills.json";
-import videos from "../data/source/videos.json";
+import portfolioFallback from "../data/portfolio.json";
+import aboutFallback from "../data/source/about.json";
+import achievementGroupsFallback from "../data/source/achievements.json";
+import blogsFallback from "../data/source/blogs.json";
+import educationFallback from "../data/source/education.json";
+import experienceFallback from "../data/source/experience.json";
+import personalItemsFallback from "../data/source/personal.json";
+import projectDataFallback from "../data/source/projects.json";
+import reviewsFallback from "../data/source/reviews.json";
+import skillsFallback from "../data/source/skills.json";
+import videosFallback from "../data/source/videos.json";
 import VideoCarousel from "./VideoCarousel";
 import ContactFeedback from "./ContactFeedback";
 import PersonalRecommendation from "./PersonalRecommendation";
@@ -23,8 +23,9 @@ import AccountStatus from "./AccountStatus";
 import Wordmark from "./Wordmark";
 import SiteFooter from "./SiteFooter";
 import RecommendationCarousel from "./RecommendationCarousel";
+import { backendFirst } from "./serverContent";
 
-export const dynamic = "force-static";
+export const revalidate = 120;
 
 const skillLabels: Record<string, string> = {
   languages: "Languages",
@@ -99,7 +100,20 @@ const personalLabels: Record<string, { title: string; eyebrow: string }> = {
   travel: { title: "Places I’d go back to", eyebrow: "Travel" },
 };
 
-export default function Home() {
+export default async function Home() {
+  const [portfolio, about, achievementGroups, blogs, education, experience, personalItems, projectData, reviews, skills, videos] = await Promise.all([
+    backendFirst("portfolio", portfolioFallback),
+    backendFirst("about", aboutFallback),
+    backendFirst("achievements", achievementGroupsFallback),
+    backendFirst("blogs", blogsFallback),
+    backendFirst("education", educationFallback),
+    backendFirst("experience", experienceFallback),
+    backendFirst("personal", personalItemsFallback),
+    backendFirst("projects", projectDataFallback),
+    backendFirst("reviews", reviewsFallback),
+    backendFirst("skills", skillsFallback),
+    backendFirst("videos", videosFallback),
+  ]);
   const { profile, stats } = portfolio;
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
   const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
@@ -283,7 +297,7 @@ export default function Home() {
                 <div className="project-technology-block">
                   <span>Key technologies</span>
                   <div className="project-tags">{project.technologies.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View project details ↗</Link>
+                  <Link className="project-detail-link" href={`/projects/${project.id}#request-demo`}>Request demo ↗</Link>
                 </div>
                 {"aiCapabilities" in project && project.aiCapabilities && (
                   <div className="project-capabilities">

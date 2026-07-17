@@ -5,10 +5,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch, ApiUnavailableError, authHeaders } from "../apiClient";
 import AdminContentManager, { ManagedContent } from "../AdminContentManager";
 import ContentCreator from "../ContentCreator";
+import SiteFooter from "../SiteFooter";
 import Wordmark from "../Wordmark";
 
 type RequestStatus = "pending"|"accepted"|"rejected"|"later";
-type Submission = {id:number;type:string;title:string;name:string;email?:string;message?:string;category?:string;rating?:string;project_id?:string;status?:RequestStatus;created_at:string};
+type Submission = {id:number;type:string;source_website:string;title:string;name:string;email?:string;message?:string;category?:string;rating?:string;project_id?:string;status?:RequestStatus;created_at:string};
 type Overview = {
   submissions:Submission[];
   comments:Array<{id:number;content_id:string;author:string;message:string;created_at:string}>;
@@ -82,12 +83,12 @@ export default function AdminPage() {
     const response=await apiFetch(`/admin/users/${userId}/access`,{method:"PATCH",headers:authHeaders(),body:JSON.stringify({access})});if(response.ok)await loadOverview();
   }
 
-  if(state!=="ready"||!data)return <main className="admin-page"><header className="article-nav"><Wordmark/><Link href="/">Public website</Link></header><section className="admin-empty"><p className="eyebrow">PRIVATE ADMIN</p><h1>{state==="loading"?"Verifying access…":state==="offline"?"Admin service unavailable.":"Admin access only."}</h1>{message&&<p>{message}</p>}{state==="offline"&&<button className="button button-dark" onClick={()=>void loadOverview(true)}>Retry connection ↗</button>}{state==="denied"&&<Link className="button button-dark" href="/admin/login">Admin login ↗</Link>}</section></main>;
+  if(state!=="ready"||!data)return <main className="admin-page"><header className="article-nav"><Wordmark/><Link href="/">Public website</Link></header><section className="admin-empty"><p className="eyebrow">PRIVATE ADMIN</p><h1>{state==="loading"?"Verifying access…":state==="offline"?"Admin service unavailable.":"Admin access only."}</h1>{message&&<p>{message}</p>}{state==="offline"&&<button className="button button-dark" onClick={()=>void loadOverview(true)}>Retry connection ↗</button>}{state==="denied"&&<Link className="button button-dark" href="/admin/login">Admin login ↗</Link>}</section><SiteFooter/></main>;
 
   return <main className="admin-page">
     <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker">Interview tracker</Link><a href="#requests">Requests</a><a href="#content">Content</a><a href="#access">Access</a><a href="#engagement">Engagement</a></nav><span>{storedName}</span></header>
     <section className="admin-shell">
-      <div className="admin-hero"><div><p className="eyebrow">ADMIN PORTAL</p><h1>Good day, {storedName}.</h1><p>Review incoming requests, publish work, and manage access from one place.</p><div className="admin-pulse-legend"><span><i className="available"/>Green dot: backend available</span><span><i className="unavailable"/>Red dot: backend unavailable</span><span><i className="checking"/>Blue dot: checking</span></div></div><div className="admin-notification-card"><span>Needs attention</span><strong>{data.counts.actionable}</strong><p>{data.counts.actionable===1?"request is":"requests are"} waiting for a decision.</p><a href="#requests">Open queue ↓</a></div></div>
+      <div className="admin-hero"><div><p className="eyebrow">ADMIN PORTAL</p><h1>Good day, {storedName}.</h1><p>Review incoming requests, publish work, and manage access from one place.</p></div><div className="admin-notification-card"><span>Needs attention</span><strong>{data.counts.actionable}</strong><p>{data.counts.actionable===1?"request is":"requests are"} waiting for a decision.</p><a href="#requests">Open queue ↓</a></div></div>
       <div className="admin-counts"><div><strong>{data.counts.actionable}</strong><span>Waiting for review</span></div><div><strong>{data.counts.requests}</strong><span>Total requests</span></div><div><strong>{data.counts.comments+data.counts.likes}</strong><span>Engagement events</span></div></div>
 
       <section className="admin-section admin-request-workspace" id="requests">
@@ -101,7 +102,7 @@ export default function AdminPage() {
         </div>
         {requests.length===0?<div className="admin-zero-state"><strong>Queue clear.</strong><p>No requests match these filters.</p></div>:<div className="admin-request-list">{requests.map(item=><article key={item.id}>
           <div className="admin-request-icon">{item.type.slice(0,1).toUpperCase()}</div>
-          <div className="admin-request-copy"><div><span>{item.type}</span><span className={`request-status ${item.status||"pending"}`}>{item.status==="pending"||!item.status?"later":item.status}</span></div><h3>{item.title}</h3><p className="admin-request-person">{item.name}{item.email?` · ${item.email}`:""}</p><p>{item.message||item.category||item.rating||"No additional detail provided."}</p><time>{new Date(item.created_at).toLocaleString()}</time></div>
+          <div className="admin-request-copy"><div><span>{item.type}</span><span className={`request-status ${item.status||"pending"}`}>{item.status==="pending"||!item.status?"later":item.status}</span></div><h3>{item.title}</h3><p className="admin-request-person">{item.name}{item.email?` · ${item.email}`:""}</p><a className="admin-request-source" href={item.source_website} target="_blank" rel="noreferrer">{item.source_website} ↗</a><p>{item.message||item.category||item.rating||"No additional detail provided."}</p><time>{new Date(item.created_at).toLocaleString()}</time></div>
           <div className="admin-decision-actions"><button disabled={actionId===item.id} className="accept" title="Accept request" onClick={()=>void setRequestStatus(item.id,"accepted")}><b>✓</b><span>Accept</span></button><button disabled={actionId===item.id} className="reject" title="Reject request" onClick={()=>void setRequestStatus(item.id,"rejected")}><b>×</b><span>Reject</span></button><button disabled={actionId===item.id} className="later" title="Review later" onClick={()=>void setRequestStatus(item.id,"later")}><b>↗</b><span>Later</span></button></div>
         </article>)}</div>}
       </section>
@@ -112,5 +113,6 @@ export default function AdminPage() {
 
       <section className="admin-section admin-engagement" id="engagement"><div className="admin-section-heading"><div><p className="eyebrow">NOTIFICATIONS</p><h2>Likes & comments</h2></div><span>{data.counts.comments+data.counts.likes} events</span></div><div className="admin-engagement-grid"><div><h3>Recent comments <span>{data.counts.comments}</span></h3>{data.comments.length===0?<p>No comments yet.</p>:data.comments.map(item=><article key={`${item.content_id}-${item.id}`}><span>{item.content_id}</span><strong>{item.author}</strong><p>{item.message}</p><time>{new Date(item.created_at).toLocaleString()}</time></article>)}</div><div><h3>Likes <span>{data.counts.likes}</span></h3>{data.likes.length===0?<p>No likes yet.</p>:data.likes.map(item=><article key={item.content_id}><span>{item.content_id}</span><strong>{item.count} {item.count===1?"like":"likes"}</strong><p>{item.people.join(", ")}</p></article>)}</div></div></section>
     </section>
+    <SiteFooter/>
   </main>;
 }

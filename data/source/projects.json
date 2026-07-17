@@ -96,11 +96,9 @@
     "id": 29,
     "name": "Intelligent Report Builder",
     "description": "An AI-intelligence workspace that turns natural-language intent and structured data into polished resumes, biodata, medical records, and business reports—then helps teams build templates, validate quality, investigate failures, and predict delivery time.",
-    "image": "/images/intelligent-report-builder-demo.png",
+    "image": "/images/project-concept-placeholder.svg",
     "gallery": [
-      { "src": "/images/intelligent-report-builder-demo.png", "label": "Report generation workspace" },
-      { "src": "/images/intelligent-report-ai-demo.png", "label": "AI report request copilot" },
-      { "src": "/images/intelligent-template-builder-demo.png", "label": "AI-assisted template builder" }
+      { "src": "/images/project-concept-placeholder.svg", "label": "Project concept preview" }
     ],
     "github": null,
     "technologies": ["AI Intelligence", "Generative AI", "Template RAG", "Semantic Retrieval", "Vector Embeddings", "LangChain", "LangGraph", "Agentic Workflows", "LLM Orchestration", "Prompt Engineering", "Structured Outputs", "OCI Generative AI", "Llama 4", "Human-in-the-loop", "AI Template Generation", "AI Concept Onboarding", "AI Quality Review", "AI Root-cause Analysis", "WNN ETA Model", "FastAPI", "React", "TypeScript", "PDF"],

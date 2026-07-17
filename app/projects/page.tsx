@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import projects from "../../data/source/projects.json";
+import projectsFallback from "../../data/source/projects.json";
 import ProjectExplorer from "./ProjectExplorer";
 import SiteHeader from "../SiteHeader";
 import SiteFooter from "../SiteFooter";
+import { backendFirst } from "../serverContent";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -11,9 +12,10 @@ export const metadata: Metadata = {
   openGraph: { url: "/projects", title: "Projects — Sanjay Gandhi", description: "Software products, experiments, and engineering projects by Sanjay Gandhi." },
 };
 
-export const dynamic = "force-static";
+export const revalidate = 120;
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const projects = await backendFirst("projects", projectsFallback);
   const visibleProjects = projects.filter((project) => project.name !== "Portfolio Website").sort((a, b) => a.priority - b.priority);
 
   return (

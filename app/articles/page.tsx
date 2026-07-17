@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import blogs from "../../data/source/blogs.json";
+import blogsFallback from "../../data/source/blogs.json";
 import ArticleExplorer from "./ArticleExplorer";
 import SiteHeader from "../SiteHeader";
 import SiteFooter from "../SiteFooter";
+import { backendFirst } from "../serverContent";
 
 export const metadata: Metadata = {
   title: "Blogs & Articles",
@@ -11,9 +12,10 @@ export const metadata: Metadata = {
   openGraph: { url: "/articles", title: "Blogs & Articles — Sanjay Gandhi", description: "Writing on software engineering, system design, interviews, and career growth by Sanjay Gandhi." },
 };
 
-export const dynamic = "force-static";
+export const revalidate = 120;
 
-export default function ArticlesPage() {
+export default async function ArticlesPage() {
+  const blogs = await backendFirst("blogs", blogsFallback);
   return (
     <main className="articles-index-page">
       <SiteHeader />

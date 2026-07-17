@@ -2,9 +2,9 @@
 """Publish PDF articles from the Obsidian Blogs folder.
 
 The source folder is read-only. PDFs are copied to a web-safe, importer-owned
-directory and represented in both the frontend cache and backend content seed.
-Repeated runs replace only records marked ``source: obsidian`` and remove stale
-PDF copies from the importer-owned directory.
+directory and represented in the frontend content cache. Repeated runs replace
+only records marked ``source: obsidian`` and remove stale PDF copies from the
+importer-owned directory.
 """
 
 from __future__ import annotations
@@ -30,10 +30,7 @@ DEFAULT_SOURCE = Path(
         "/Users/snju/Documents/Obsidian Vault/Organized Notes/Blogs",
     )
 )
-DEFAULT_TARGETS = (
-    PROJECT_ROOT / "data" / "source" / "blogs.json",
-    PROJECT_ROOT / "backend" / "content" / "blogs.json",
-)
+DEFAULT_TARGETS = (PROJECT_ROOT / "data" / "source" / "blogs.json",)
 ASSET_DIRECTORY = PROJECT_ROOT / "public" / "blogs" / "obsidian"
 PUBLIC_ASSET_PREFIX = "/blogs/obsidian"
 

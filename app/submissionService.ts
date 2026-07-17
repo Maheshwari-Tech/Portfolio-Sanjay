@@ -2,6 +2,7 @@ export type SubmissionType = "contact" | "feedback" | "recommendation";
 
 export type SubmissionPayload = {
   type: SubmissionType;
+  source_website?: string;
   title: string;
   message?: string;
   name: string;
@@ -12,7 +13,13 @@ export type SubmissionPayload = {
 
 import { apiFetch } from "./apiClient";
 
-export type SubmissionResult = { delivery: "api" | "local"; payload: SubmissionPayload & { id: string; source: string; createdAt: string } };
+export type SubmissionResult = { delivery: "api" | "local"; payload: SubmissionPayload & { id: string; createdAt: string } };
+
+export function submissionSourceWebsite() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
+  if (configured) return configured;
+  return typeof window === "undefined" ? "" : window.location.origin;
+}
 
 function saveLocally(payload: SubmissionResult["payload"]) {
   if (typeof window === "undefined") return;
@@ -28,8 +35,8 @@ function saveLocally(payload: SubmissionResult["payload"]) {
 export async function submitPortfolioEntry(input: SubmissionPayload) {
   const payload = {
     ...input,
+    source_website: input.source_website || submissionSourceWebsite(),
     id: globalThis.crypto?.randomUUID?.() ?? String(Date.now()),
-    source: "sanjay-portfolio",
     createdAt: new Date().toISOString(),
   };
 

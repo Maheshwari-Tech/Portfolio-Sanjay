@@ -76,7 +76,7 @@ export default function ProjectExplorer({ projects }: { projects: Project[] }) {
               )}
               <div className="project-result-footer">
                 <div>{project.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div>
-                <Link href={`/projects/${project.id}`}>View details ↗</Link>
+                <Link href={`/projects/${project.id}#request-demo`}>Request demo ↗</Link>
               </div>
             </div>
           </article>

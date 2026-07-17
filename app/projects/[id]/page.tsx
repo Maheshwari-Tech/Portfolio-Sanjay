@@ -2,23 +2,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import projects from "../../../data/source/projects.json";
+import projectsFallback from "../../../data/source/projects.json";
 import { siteConfig } from "../../siteConfig";
 import { technologyClassName } from "../../technologyStyles";
 import ProjectDemoRequest from "../../ProjectDemoRequest";
 import ContentInteractions from "../../ContentInteractions";
 import SiteHeader from "../../SiteHeader";
 import SiteFooter from "../../SiteFooter";
+import { backendFirst } from "../../serverContent";
 
-export const dynamicParams = false;
-export const dynamic = "force-static";
+export const dynamicParams = true;
+export const revalidate = 120;
+
+const availableProjects = () => backendFirst("projects", projectsFallback);
 
 export function generateStaticParams() {
-  return projects.map((project) => ({ id: String(project.id) }));
+  return projectsFallback.map((project) => ({ id: String(project.id) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
+  const projects = await availableProjects();
   const project = projects.find((item) => String(item.id) === id);
   if (!project) return {};
   const url = `/projects/${project.id}`;
@@ -33,6 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const projects = await availableProjects();
   const project = projects.find((item) => String(item.id) === id);
   if (!project) notFound();
   const isAssistant = project.id === 33;

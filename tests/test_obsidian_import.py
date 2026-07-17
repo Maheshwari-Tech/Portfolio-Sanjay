@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 
 
-SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "import_obsidian_blogs.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "import_obsidian_blogs.py"
 SPEC = importlib.util.spec_from_file_location("obsidian_import", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC and SPEC.loader

@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import SiteHeader from "./SiteHeader";
 import SiteFooter from "./SiteFooter";
 import { ApiUnavailableError, apiFetch, authHeaders } from "./apiClient";
+import { submissionSourceWebsite } from "./submissionService";
 
 type Area = "candidate" | "recruiter";
 
@@ -58,7 +59,7 @@ export default function MemberPortal({ area }: { area: Area }) {
       const response = await apiFetch("/submissions", {
         method: "POST",
         headers: authHeaders(),
-        body: JSON.stringify({ type: area, title: service, name, category: service, message }),
+        body: JSON.stringify({ type: area, source_website: submissionSourceWebsite(), title: service, name, category: service, message }),
       });
       if (!response.ok) throw new Error();
       setMessage("");

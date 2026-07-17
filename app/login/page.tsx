@@ -9,8 +9,10 @@ import CaptchaChallenge, { type CaptchaProvider } from "../CaptchaChallenge";
 import Wordmark from "../Wordmark";
 
 export default function LoginPage({ adminMode = false }: { adminMode?: boolean }) {
+  const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState("");
   const [name, setName] = useState("");
   const [step, setStep] = useState<"password" | "otp" | "profile">("password");
@@ -77,7 +79,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     const supabase = getSupabaseBrowserClient();
     setBusy(true);
     setStatus("Checking your password…");
-    const normalizedPhone = normalizeIndianPhone(phone);
+    const normalizedPhone = normalizeIndianPhone(`${countryCode}${phone}`);
     if (!supabase) {
       try {
         const passwordResponse = await apiFetch("/auth/password", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizedPhone,password})});
@@ -108,7 +110,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   }
 
   async function requestOtp() {
-    const normalizedPhone = normalizeIndianPhone(phone);
+    const normalizedPhone = normalizeIndianPhone(`${countryCode}${phone}`);
     if (!/^\+[1-9]\d{9,14}$/.test(normalizedPhone)) {
       setStatus("Enter a valid mobile number first.");
       return;
@@ -149,7 +151,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     setBusy(true);
     if (!supabase) {
       try {
-        const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(phone),code:otp})});
+        const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(`${countryCode}${phone}`),code:otp})});
         const data = await response.json();
         if (response.status === 428) { setStep("profile"); setStatus("Phone verified. Add your name to finish local signup."); return; }
         if (!response.ok) throw new Error(data.detail || "The code is invalid or expired.");
@@ -158,7 +160,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
       finally { setBusy(false); }
       return;
     }
-    const { data, error } = await supabase.auth.verifyOtp({ phone: normalizeIndianPhone(phone), token: otp, type: "sms" });
+    const { data, error } = await supabase.auth.verifyOtp({ phone: normalizeIndianPhone(`${countryCode}${phone}`), token: otp, type: "sms" });
     if (error || !data.session) {
       setBusy(false);
       setStatus(error?.message || "The code is invalid or expired.");
@@ -181,7 +183,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     setBusy(true);
     if (!supabase) {
       try {
-        const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(phone),code:otp,name:name.trim()})});
+        const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(`${countryCode}${phone}`),code:otp,name:name.trim()})});
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || "Could not complete signup.");
         finishLocal(data);
@@ -212,8 +214,22 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
 
         {step === "password" && (
           <form onSubmit={tryPassword}>
-            <label>Mobile number<input required type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} autoComplete="tel" placeholder="8847472124" /></label>
-            <label>Password<input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="Enter password" /></label>
+            <label>
+              Mobile number
+              <span className="phone-input-group">
+                <input required type="tel" inputMode="tel" value={countryCode} onChange={(event) => setCountryCode(`+${event.target.value.replace(/\D/g, "").slice(0, 4)}`)} autoComplete="tel-country-code" aria-label="Country code" />
+                <input required type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="XXXXX XXXXX" />
+              </span>
+            </label>
+            <label>
+              Password
+              <span className="password-input-wrap">
+                <input required type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="Enter password" />
+                <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword}>
+                  <span aria-hidden="true">👁</span>{showPassword ? "Hide" : "Show"}
+                </button>
+              </span>
+            </label>
             {captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}
             <button disabled={busy} className="button button-dark">{busy ? "Checking…" : "Login ↗"}</button>
             <button disabled={busy} type="button" className="text-link" onClick={() => void requestOtp()}>Forgot password? Login with OTP</button>

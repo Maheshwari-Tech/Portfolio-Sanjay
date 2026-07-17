@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { apiFetch } from "../apiClient";
 
 type Article = {
   id: number;
@@ -30,21 +31,36 @@ const excerpt = (article: Article) => summaries[article.id] ?? article.summary ?
   .slice(0, 190) + "…";
 
 export default function ArticleExplorer({ articles }: { articles: Article[] }) {
+  const [availableArticles, setAvailableArticles] = useState(articles);
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [visibleCount, setVisibleCount] = useState(12);
 
-  const tags = useMemo(() => Array.from(new Set(articles.flatMap((article) => article.tags))).sort(), [articles]);
+  useEffect(() => {
+    let active = true;
+    apiFetch("/content/blogs")
+      .then(response => response.ok ? response.json() : Promise.reject())
+      .then((remote: Article[]) => {
+        if (!active) return;
+        const merged = new Map(articles.map(article => [article.id, article]));
+        remote.forEach(article => merged.set(article.id, article));
+        setAvailableArticles(Array.from(merged.values()));
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [articles]);
+
+  const tags = useMemo(() => Array.from(new Set(availableArticles.flatMap((article) => article.tags))).sort(), [availableArticles]);
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
-    return articles.filter((article) => {
+    return availableArticles.filter((article) => {
       const matchesTag = activeTag === "All" || article.tags.includes(activeTag);
       const matchesQuery = !term || cleanTitle(article.title).toLowerCase().includes(term) ||
         article.content_description.toLowerCase().includes(term) ||
         article.tags.some((tag) => tag.toLowerCase().includes(term));
       return matchesTag && matchesQuery;
     });
-  }, [activeTag, articles, query]);
+  }, [activeTag, availableArticles, query]);
 
   const updateQuery = (value: string) => {
     setQuery(value);
