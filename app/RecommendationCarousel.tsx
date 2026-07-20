@@ -55,14 +55,6 @@ export default function RecommendationCarousel({ recommendations }: { recommenda
 
   return (
     <div className="recommendation-carousel">
-      <div className="recommendation-carousel-toolbar">
-        <p><strong>{String(page + 1).padStart(2, "0")}</strong> / {String(pages).padStart(2, "0")}</p>
-        <div>
-          <button type="button" onClick={() => goToPage(page - 1)} disabled={page === 0} aria-label="Previous recommendations">←</button>
-          <button type="button" onClick={() => goToPage(page + 1)} disabled={page === pages - 1} aria-label="Next recommendations">→</button>
-        </div>
-      </div>
-
       <div className="recommendations-grid" ref={trackRef} onScroll={syncPageFromScroll} aria-label="Recommendations carousel" aria-live="polite">
         {recommendations.map((recommendation, index) => (
           <article className="recommendation-card" key={recommendation.id}>
@@ -87,6 +79,17 @@ export default function RecommendationCarousel({ recommendations }: { recommenda
           <button type="button" className={index === page ? "active" : ""} onClick={() => goToPage(index)} aria-label={`Go to recommendation page ${index + 1}`} aria-current={index === page ? "page" : undefined} key={index} />
         ))}
       </div>
+
+      {pages > 1 && (
+        <div className="recommendation-actions">
+          <div className="recommendation-more-control">
+            <button type="button" onClick={() => goToPage((page + 1) % pages)} aria-label="Show more LinkedIn recommendations">
+              <span>Show More</span>
+              <span className="recommendation-control-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg></span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

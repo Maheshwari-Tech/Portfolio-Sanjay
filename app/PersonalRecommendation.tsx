@@ -52,8 +52,7 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
       </summary>
       <form className="inline-recommendation-form" onSubmit={submitRecommendation}>
         {mode === "screen" && (
-          <fieldset>
-            <legend>Choose one</legend>
+          <fieldset aria-label="Recommendation type">
             <div className="inline-recommendation-types">
               {(["Movie", "Series"] as Category[]).map((item) => (
                 <button
@@ -70,18 +69,11 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
           </fieldset>
         )}
 
-        <label>
-          <span>Short title</span>
-          <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={copy.placeholder} required maxLength={90} />
-        </label>
-        <label>
-          <span>Why? <em>optional</em></span>
-          <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Add a short note if you’d like" rows={3} maxLength={500} />
-        </label>
-        <label>
-          <span>Your name <em>optional</em></span>
-          <input value={from} onChange={(event) => setFrom(event.target.value)} placeholder="Your name" maxLength={70} />
-        </label>
+        <div className="inline-recommendation-fields">
+          <input aria-label="Recommendation title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder={copy.placeholder} required maxLength={90} />
+          <input aria-label="Your name" value={from} onChange={(event) => setFrom(event.target.value)} placeholder="Your name (optional)" maxLength={70} />
+        </div>
+        <textarea aria-label="Why you recommend it" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Why do you recommend it? (optional)" rows={2} maxLength={500} />
         <button className="inline-recommendation-submit" type="submit" disabled={sending}>{sending ? "Sending…" : "Send recommendation"} <span aria-hidden="true">↗</span></button>
         {status && <p className="inline-recommendation-status" role="status">{status}</p>}
       </form>

@@ -6,6 +6,7 @@ import { submitPortfolioEntry } from "./submissionService";
 const destination = "sanjaymaheshwari.work@gmail.com";
 
 export default function ContactFeedback() {
+  const [formMode, setFormMode] = useState<"message" | "feedback">("message");
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [topic, setTopic] = useState("Collaboration");
@@ -63,6 +64,54 @@ export default function ContactFeedback() {
 
   return (
     <div className="contact-feedback">
+      <div className="contact-form-switcher">
+        <div className="contact-form-toggle" role="tablist" aria-label="Choose contact form">
+          <button className={formMode === "message" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "message"} aria-controls="message-form-panel" onClick={() => setFormMode("message")}>
+            Send a message
+          </button>
+          <button className={formMode === "feedback" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "feedback"} aria-controls="feedback-form-panel" onClick={() => setFormMode("feedback")}>
+            Share feedback
+          </button>
+        </div>
+
+        <div className="contact-form-stage">
+        {formMode === "message" ? (
+        <form className="contact-form" id="message-form-panel" role="tabpanel" onSubmit={submitContact}>
+          <div className="form-heading">
+            <div><h3>Send a message</h3><p>For collaboration, mentorship, consultancy, teaching, talks, or a thoughtful hello.</p></div>
+          </div>
+          <label><span>Your name</span><input required value={contactName} onChange={(event) => setContactName(event.target.value)} placeholder="Name" /></label>
+          <label><span>Your email</span><input required type="email" value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} placeholder="you@example.com" /></label>
+          <label>
+            <span>What is this about?</span>
+            <select value={topic} onChange={(event) => setTopic(event.target.value)}>
+              <option>Collaboration</option><option>Hiring</option><option>Mentorship</option><option>Consultancy</option><option>Teaching</option><option>Talks</option><option>Personal</option><option>Open source</option><option>Other</option>
+            </select>
+          </label>
+          <label><span>Message</span><textarea required value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tell me a little about what you have in mind…" rows={6} /></label>
+          <button type="submit" disabled={sendingContact}>{sendingContact ? "Sending…" : "Send message"} <span>↗</span></button>
+          {contactStatus && <p className="form-status" role="status">{contactStatus}</p>}
+        </form>
+        ) : (
+        <form className="feedback-form" id="feedback-form-panel" role="tabpanel" onSubmit={submitFeedback}>
+          <div className="form-heading">
+            <div><h3>Share feedback</h3><p>Found something useful—or something I could improve?</p></div>
+          </div>
+          <label><span>Your name <em>Optional</em></span><input value={feedbackName} onChange={(event) => setFeedbackName(event.target.value)} placeholder="Anonymous is welcome" /></label>
+          <label>
+            <span>Experience</span>
+            <select value={rating} onChange={(event) => setRating(event.target.value)}>
+              <option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very good</option><option value="3">★★★ Good</option><option value="2">★★ Could improve</option><option value="1">★ Needs work</option>
+            </select>
+          </label>
+          <label><span>Feedback</span><textarea required value={feedback} onChange={(event) => setFeedback(event.target.value)} placeholder="What worked well? What would make this better?" rows={8} /></label>
+          <button type="submit" disabled={sendingFeedback}>{sendingFeedback ? "Sending…" : "Send feedback"} <span>↗</span></button>
+          {feedbackStatus && <p className="form-status" role="status">{feedbackStatus}</p>}
+        </form>
+        )}
+        </div>
+      </div>
+
       <div className="contact-options" aria-label="Direct contact options">
         <a className="contact-option contact-option-email" href={`mailto:${destination}`}>
           <span>
@@ -89,43 +138,6 @@ export default function ContactFeedback() {
             <a href="tel:+918847472124">Call +91 88474 72124 <i aria-hidden="true">↗</i></a>
           </strong>
         </div>
-      </div>
-
-      <div className="contact-form-grid">
-        <form className="contact-form" onSubmit={submitContact}>
-          <div className="form-heading">
-            <span>01</span>
-            <div><h3>Send a message</h3><p>For collaboration, mentorship, consultancy, teaching, talks, or a thoughtful hello.</p></div>
-          </div>
-          <label><span>Your name</span><input required value={contactName} onChange={(event) => setContactName(event.target.value)} placeholder="Name" /></label>
-          <label><span>Your email</span><input required type="email" value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} placeholder="you@example.com" /></label>
-          <label>
-            <span>What is this about?</span>
-            <select value={topic} onChange={(event) => setTopic(event.target.value)}>
-              <option>Collaboration</option><option>Hiring</option><option>Mentorship</option><option>Consultancy</option><option>Teaching</option><option>Talks</option><option>Personal</option><option>Open source</option><option>Other</option>
-            </select>
-          </label>
-          <label><span>Message</span><textarea required value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tell me a little about what you have in mind…" rows={6} /></label>
-          <button type="submit" disabled={sendingContact}>{sendingContact ? "Sending…" : "Send message"} <span>↗</span></button>
-          {contactStatus && <p className="form-status" role="status">{contactStatus}</p>}
-        </form>
-
-        <form className="feedback-form" onSubmit={submitFeedback}>
-          <div className="form-heading">
-            <span>02</span>
-            <div><h3>Share feedback</h3><p>Found something useful—or something I could improve?</p></div>
-          </div>
-          <label><span>Your name <em>Optional</em></span><input value={feedbackName} onChange={(event) => setFeedbackName(event.target.value)} placeholder="Anonymous is welcome" /></label>
-          <label>
-            <span>Experience</span>
-            <select value={rating} onChange={(event) => setRating(event.target.value)}>
-              <option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very good</option><option value="3">★★★ Good</option><option value="2">★★ Could improve</option><option value="1">★ Needs work</option>
-            </select>
-          </label>
-          <label><span>Feedback</span><textarea required value={feedback} onChange={(event) => setFeedback(event.target.value)} placeholder="What worked well? What would make this better?" rows={8} /></label>
-          <button type="submit" disabled={sendingFeedback}>{sendingFeedback ? "Sending…" : "Send feedback"} <span>↗</span></button>
-          {feedbackStatus && <p className="form-status" role="status">{feedbackStatus}</p>}
-        </form>
       </div>
 
     </div>

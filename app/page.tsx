@@ -13,14 +13,13 @@ import skillsFallback from "../data/source/skills.json";
 import videosFallback from "../data/source/videos.json";
 import VideoCarousel from "./VideoCarousel";
 import ContactFeedback from "./ContactFeedback";
-import PersonalRecommendation from "./PersonalRecommendation";
 import ProjectGallery from "./ProjectGallery";
 import ExperienceCarousel from "./ExperienceCarousel";
 import RecognitionCarousel from "./RecognitionCarousel";
 import { technologyClassName } from "./technologyStyles";
 import { siteConfig } from "./siteConfig";
 import MobileNavigation from "./MobileNavigation";
-import PersonalVerticalCarousel from "./PersonalVerticalCarousel";
+import BeyondTechnicalTabs from "./BeyondTechnicalTabs";
 import AccountStatus from "./AccountStatus";
 import Wordmark from "./Wordmark";
 import SiteFooter from "./SiteFooter";
@@ -84,24 +83,6 @@ const articleExcerpt = (id: number, content: string) => {
     .trim()
     .slice(0, 230) + "…";
 };
-const socialLabels: Record<string, string> = {
-  linkedin: "LinkedIn",
-  github: "GitHub",
-  youtube: "YouTube",
-  email: "Email",
-  leetcode: "LeetCode",
-  codechef: "CodeChef",
-  hackerrank: "HackerRank",
-  codeforces: "Codeforces",
-  spoj: "SPOJ",
-};
-
-const personalLabels: Record<string, { title: string; eyebrow: string }> = {
-  movies: { title: "Stories I’d happily rewatch", eyebrow: "Movies · Series" },
-  books: { title: "Ideas I return to", eyebrow: "Books" },
-  travel: { title: "Places I’d go back to", eyebrow: "Travel" },
-};
-
 export default async function Home() {
   const [portfolio, about, achievementGroups, blogs, education, experience, personalItems, projectData, reviews, skills, videos] = await Promise.all([
     backendFirst("portfolio", portfolioFallback),
@@ -123,7 +104,21 @@ export default async function Home() {
   const projects = featuredProjectIds.map((id) => projectData.find((project) => project.id === id)).filter((project) => project !== undefined);
   const allProjectTechnologies = Array.from(new Set(projectData.flatMap((project) => project.technologies))).sort();
   const liveProjects = projectData.filter((project) => project.deployed).length;
-  const projectDomains = ["Mobile", "Web apps", "Software", "AI & ML"];
+  const usedTechnologies = (names: string[]) => names.filter((name) => allProjectTechnologies.includes(name));
+  const projectAreas = [
+    { label: "AI & ML", description: "Intelligence, retrieval, automation", technologies: usedTechnologies(["AI Agents", "LLMs", "LangChain", "LangGraph", "RAG", "TensorFlow", "Scikit-Learn", "OCI Generative AI"]) },
+    { label: "Web apps", description: "Interfaces, dashboards, products", technologies: usedTechnologies(["React", "TypeScript", "Vite", "Node.js", "Express", "Chart.js", "Leaflet"]) },
+    { label: "Mobile", description: "Cross-platform product delivery", technologies: usedTechnologies(["Flutter", "Dart", "React Native", "Expo", "Android", "iOS"]) },
+    { label: "Backend & software", description: "APIs, services, real-time systems", technologies: usedTechnologies(["Python", "Go", "FastAPI", "Backend APIs", "gRPC", "WebSocket", "CLI"]) },
+  ];
+  const technologyGroups = [
+    { label: "Languages", technologies: usedTechnologies(["Python", "TypeScript", "Go", "Dart", "SQL", "JSON"]) },
+    { label: "Frameworks & libraries", technologies: usedTechnologies(["React", "React Native", "Flutter", "Expo", "Node.js", "Express", "FastAPI", "Vite", "MERN", "LangChain", "LangGraph", "Scikit-Learn", "TensorFlow", "NumPy", "Pandas", "OpenCV", "Chart.js", "Leaflet", "Jupyter Notebook"]) },
+    { label: "External tools & platforms", technologies: usedTechnologies(["Docker", "OCI", "OCI Generative AI", "Grafana", "Prometheus", "OpenTelemetry", "NATS", "Traefik", "k3s", "containerd", "WireGuard", "OPA", "SPIFFE/SPIRE", "Tree-sitter", "Llama 4", "Android", "iOS", "excel", "PDF", "pdf-parsing"]) },
+    { label: "Data & storage", technologies: usedTechnologies(["PostgreSQL", "MongoDB", "Redis", "SQLite", "pgvector", "Vector Database", "FTS", "Knowledge Graph", "Product Association Graph", "Memory"]) },
+  ];
+  const groupedTechnologies = new Set(technologyGroups.flatMap((group) => group.technologies));
+  technologyGroups.push({ label: "Concepts & patterns", technologies: allProjectTechnologies.filter((technology) => !groupedTechnologies.has(technology)) });
   const recognitionGroups = Object.entries(achievementGroups).map(([category, items]) => ({ category, label: achievementLabels[category] ?? category, items: items as Achievement[] }));
   const travelWishlist = personalItems.filter((item) => item.category === "travel_wishlist");
   const personJsonLd = {
@@ -231,7 +226,7 @@ export default async function Home() {
         </div>
         <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
           <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
-          <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy], index) => <article key={title}><span>0{index + 1}</span><h4>{title}</h4><p>{copy}</p></article>)}</div>
+          <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy]) => <article key={title}><h4>{title}</h4><p>{copy}</p></article>)}</div>
           <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span>↗</span></Link>
         </section>
       </section>
@@ -250,7 +245,22 @@ export default async function Home() {
             <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub ↗</a>
           </div>
         </div>
-        <div className="project-overview" aria-label="Project highlights"><div><strong>{projectData.length}</strong><span>Total projects</span></div><div><strong>{liveProjects}</strong><span>Live projects</span></div><div className="project-overview-domains"><span>Focus domains</span><p>{projectDomains.map((domain) => <i key={domain}>{domain}</i>)}</p></div><div className="project-overview-stack"><span>Technology map</span><p>{allProjectTechnologies.map((technology) => <i className={technologyClassName(technology)} key={technology}>{technology}</i>)}</p></div></div>
+        <div className="project-overview" aria-label="Project highlights">
+          <div className="project-overview-halves">
+            <div className="project-context-half">
+              <div className="project-overview-stats"><div><strong>{projectData.length}</strong><span>Total projects</span></div><div><strong>{liveProjects}</strong><span>Live projects</span></div></div>
+              <div className="project-area-grid">
+                {projectAreas.map((area) => <article className={area.label === "AI & ML" ? "project-area-ai" : undefined} key={area.label}><div><h3>{area.label}</h3><p>{area.description}</p></div><ul>{area.technologies.map((technology) => <li className={technologyClassName(technology)} key={technology}>{technology}</li>)}</ul></article>)}
+              </div>
+            </div>
+            <div className="project-technology-half">
+              <span className="project-half-label">Technology inventory</span>
+              <div className="project-stack-groups">
+              {technologyGroups.map((group) => <article key={group.label}><h3>{group.label}</h3><div>{group.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div></article>)}
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="projects-grid">
           {projects.map((project, index) => {
             const screenshots = "gallery" in project
@@ -259,16 +269,17 @@ export default async function Home() {
                 ? [{ src: project.image, label: "Product preview" }]
                 : [];
             const highlighted = "highlight" in project && project.highlight;
+            const galleryImages = screenshots.filter((image) => image.src !== "/images/project-concept-placeholder.svg");
 
             return (
-              <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""}`} key={project.name}>
-                <ProjectGallery images={screenshots} projectName={project.name} />
+              <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""} ${galleryImages.length === 0 ? "project-no-gallery" : ""}`} key={project.name}>
+                <ProjectGallery images={galleryImages} projectName={project.name} />
                 <div className="project-header">
-                  <div><span>{project.category}</span><h3><Link href={`/projects/${project.id}`}>{project.name}</Link></h3></div>
+                  <div><span className={highlighted ? "project-ai-kicker" : undefined}>{project.category}</span><h3><Link href={`/projects/${project.id}`}>{project.name}</Link></h3></div>
                   <span className="project-number">{highlighted ? "AI Intelligence" : "Product demo"}</span>
                 </div>
                 <p className="project-description">{project.description}</p>
-                <div className="project-feature-map" aria-label={`${project.name} capability map`}><span>Capability map</span><ul>{project.features.map((feature, featureIndex) => <li key={feature}><b>{String(featureIndex + 1).padStart(2, "0")}</b><p>{feature}</p></li>)}</ul></div>
+                <div className={`project-feature-map ${highlighted ? "ai-feature-map" : ""}`} aria-label={`${project.name} capability map`}><span>Capability map</span><ul>{project.features.map((feature) => <li key={feature}><p>{feature}</p></li>)}</ul></div>
                 <div className="project-technology-block">
                   <span>Key technologies</span>
                   <div className="project-tags">{project.technologies.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
@@ -334,7 +345,7 @@ export default async function Home() {
                 <h3><Link href={articleHref}>{cleanBlogTitle(blog.title)}</Link></h3>
                 <p className="blog-author">By {blog.author}</p>
                 <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
-                <div className="blog-tags">{blog.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                <div className="blog-tags">{blog.tags.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
                 <Link className="blog-read-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`}>
                   Read article <span>↗</span>
                 </Link>
@@ -348,11 +359,13 @@ export default async function Home() {
           <Link href="/articles">View all blogs & articles <span aria-hidden="true">↗</span></Link>
         </div>
 
-        <div className="video-heading">
-          <p className="eyebrow">Video conversations</p>
-          <h3>Stories beyond the resume.</h3>
-        </div>
-        <VideoCarousel videos={videos} />
+        <section className="video-conversations-section" aria-labelledby="video-conversations-title">
+          <div className="video-heading">
+            <p className="eyebrow">Video conversations</p>
+            <h3 id="video-conversations-title">Stories beyond the resume.</h3>
+          </div>
+          <VideoCarousel videos={videos} />
+        </section>
       </section>
 
       <section className="recognition-section" id="achievements">
@@ -361,7 +374,6 @@ export default async function Home() {
           <h2>Milestones earned through practice.</h2>
         </div>
         <RecognitionCarousel groups={recognitionGroups} />
-        <div className="recognition-more-footer"><span>{recognitionGroups.length} recognition areas, with every credential and milestone documented.</span><Link href="/recognition">See all recognition <span aria-hidden="true">↗</span></Link></div>
       </section>
 
       <section className="recommendations-section" id="recommendations">
@@ -370,12 +382,18 @@ export default async function Home() {
             <p className="eyebrow">LinkedIn recommendations</p>
             <h2>What teammates and mentors say.</h2>
           </div>
-          <span>{recommendations.length} recommendations</span>
+          <div className="recommendations-heading-actions">
+            <span>{recommendations.length} recommendations</span>
+            <a className="recommendation-linkedin-control" href="https://www.linkedin.com/in/snjumaheshwari/details/recommendations/" target="_blank" rel="noreferrer">
+              <span>Recommend me</span>
+              <span aria-hidden="true">in ↗</span>
+            </a>
+          </div>
         </div>
         <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
           <div className="recommendation-keyword-track" aria-hidden="true">
             {[...recommendationKeywords, ...recommendationKeywords].map((keyword, index) => (
-              <span key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
+              <span style={{ animationDelay: `${(index % recommendationKeywords.length) * .7}s` }} key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
             ))}
           </div>
         </div>
@@ -402,55 +420,7 @@ export default async function Home() {
           </a>
         </article>
 
-        <div className="personal-categories">
-          {["movies", "books", "travel"].map((category) => {
-            const categoryItems = personalItems.filter((item) => item.category === category);
-            const visibleCount = category === "travel" ? 2 : 3;
-
-            return (
-              <article className="personal-category" key={category}>
-                <div className="personal-category-heading">
-                  <p className="eyebrow">{personalLabels[category].eyebrow}</p>
-                  <h3>{personalLabels[category].title}</h3>
-                  <PersonalRecommendation mode={category === "movies" ? "screen" : category === "books" ? "book" : "travel"} />
-                </div>
-                {category === "travel" && (
-                  <div className="travel-wishlist">
-                    <span className="card-kicker">Wishlist</span>
-                    <div className="travel-wishlist-links">
-                      {travelWishlist.slice(0, 2).map((item) => (
-                        <a href={item.url} target="_blank" rel="noreferrer" key={item.id}>
-                          {item.title} <span aria-hidden="true">↗</span>
-                        </a>
-                      ))}
-                    </div>
-                    {travelWishlist.length > 2 && (
-                      <details className="travel-wishlist-more">
-                        <summary>Show full wishlist <span>{travelWishlist.length - 2} more ↓</span></summary>
-                        <div className="travel-wishlist-links">
-                          {travelWishlist.slice(2).map((item) => (
-                            <a href={item.url} target="_blank" rel="noreferrer" key={item.id}>
-                              {item.title} <span aria-hidden="true">↗</span>
-                            </a>
-                          ))}
-                        </div>
-                      </details>
-                    )}
-                  </div>
-                )}
-                {category === "travel" && (
-                  <div className="travel-memory-label">
-                    <span>Travel memories</span>
-                    <span>{categoryItems.length} places</span>
-                  </div>
-                )}
-                <div className="personal-items">
-                  <PersonalVerticalCarousel items={categoryItems} visibleCount={visibleCount} />
-                </div>
-              </article>
-            );
-          })}
-        </div>
+        <BeyondTechnicalTabs items={personalItems} travelWishlist={travelWishlist} />
       </section>
 
       <section className="contact-section" id="contact">
@@ -463,17 +433,6 @@ export default async function Home() {
             <a className="resume-download" href={profile.resume} download>Download resume <span>PDF ↓</span></a>
           </div>
           <ContactFeedback />
-          <div className="contact-footer">
-            <span>© 2026 {profile.name}</span>
-            <div>
-              {Object.entries(about.socialProfiles).map(([label, url]) => (
-                <a href={label === "email" ? `mailto:${url}` : url} target={label === "email" ? undefined : "_blank"} rel="noreferrer" key={label}>
-                  {socialLabels[label] ?? label}
-                </a>
-              ))}
-            </div>
-            <a href="#top">Back to top ↑</a>
-          </div>
           <SiteFooter />
         </div>
       </section>

@@ -52,7 +52,26 @@ export default function PersonalVerticalCarousel({ items, visibleCount }: { item
           {nextItems.map((item) => <PersonalCarouselCard item={item} key={item.id} />)}
         </div>
       </div>
-      {items.length > visibleCount && <span className="personal-carousel-status" aria-hidden="true">{String(start + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")} ↓</span>}
+      {items.length > visibleCount && (
+        <div className="personal-carousel-more-control">
+          <span className="personal-carousel-progress" aria-hidden="true"><i style={{ transform: `scaleX(${(start + 1) / items.length})` }} /></span>
+          <button
+            type="button"
+            disabled={animating}
+            aria-label="Show more recommendations"
+            onClick={() => {
+              setAnimating(true);
+              window.setTimeout(() => {
+                setStart((current) => (current + 1) % items.length);
+                setAnimating(false);
+              }, 700);
+            }}
+          >
+            <span>More</span>
+            <span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></svg></span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
