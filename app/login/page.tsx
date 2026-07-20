@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, normalizeIndianPhone } from "../supabaseClient";
 import { apiFetch } from "../apiClient";
@@ -22,6 +22,8 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   const [busy, setBusy] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const [trialVerificationPhone, setTrialVerificationPhone] = useState<string | null>(null);
+  const [trialValidationCode, setTrialValidationCode] = useState<string | null>(null);
   const captchaProviderValue = process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER?.toLowerCase();
   const captchaProvider = captchaProviderValue === "hcaptcha" || captchaProviderValue === "turnstile" ? captchaProviderValue as CaptchaProvider : null;
   const captchaSiteKey = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || "";
@@ -57,10 +59,10 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     window.location.href = next;
   }
 
-  function resetCaptcha() {
+  const resetCaptcha = useCallback(() => {
     setCaptchaToken(null);
     setCaptchaResetKey((value) => value + 1);
-  }
+  }, []);
 
   function captchaIsReady() {
     if (!captchaRequested) return true;
@@ -74,6 +76,101 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     }
     return true;
   }
+
+  const sendSmsOtp = useCallback(async (normalizedPhone: string) => {
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      const response = await apiFetch("/auth/request-otp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: normalizedPhone }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || "Could not create a code.");
+      setStep("otp");
+      setStatus(data.message || "SMS code sent. Enter it below to continue.");
+      return;
+    }
+    if (!captchaToken) throw new Error("Security verification expired. Complete it again before requesting an SMS code.");
+    const { error } = await supabase.auth.signInWithOtp({ phone: normalizedPhone, options: { captchaToken } });
+    resetCaptcha();
+    if (error) throw error;
+    setStep("otp");
+    setStatus("SMS code sent. Enter the six-digit code to continue.");
+  }, [captchaToken, resetCaptcha]);
+
+  async function startTrialSignupVerification() {
+    const normalizedPhone = normalizeIndianPhone(`${countryCode}${phone}`);
+    if (!/^\+[1-9]\d{9,14}$/.test(normalizedPhone)) {
+      setStatus("Enter a valid mobile number first.");
+      return;
+    }
+    if (!captchaIsReady()) return;
+    setBusy(true);
+    setStatus("Starting phone verification call…");
+    try {
+      const response = await apiFetch("/auth/twilio/start-caller-id-verification", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: normalizedPhone }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || data.message || "Could not start phone verification.");
+      if (data.status === "verified" || data.verified === true) {
+        setTrialVerificationPhone(null);
+        setTrialValidationCode(null);
+        await sendSmsOtp(normalizedPhone);
+        return;
+      }
+      if (data.status !== "pending") throw new Error(data.detail || data.message || "Phone verification could not be started.");
+      setTrialVerificationPhone(normalizedPhone);
+      setTrialValidationCode(typeof data.validation_code === "string" ? data.validation_code : null);
+      setStatus("Answer the Twilio call in English, then enter the validation code on your phone keypad.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "The phone verification service is unavailable.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!trialVerificationPhone) return;
+    let active = true;
+    let checking = false;
+    const getVerificationStatus = async () => {
+      let lastError: unknown;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const response = await apiFetch(`/auth/twilio/caller-id-verification-status?phone=${encodeURIComponent(trialVerificationPhone)}`);
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.detail || "Could not check phone verification status.");
+          return data;
+        } catch (error) {
+          lastError = error;
+          if (attempt < 2) await new Promise<void>((resolve) => window.setTimeout(resolve, 500 * 2 ** attempt));
+        }
+      }
+      throw lastError instanceof Error ? lastError : new Error("Could not check phone verification status.");
+    };
+    const checkVerification = async () => {
+      if (checking) return;
+      checking = true;
+      try {
+        const data = await getVerificationStatus();
+        if (!active || !(data.status === "verified" && data.verified === true)) return;
+        setTrialVerificationPhone(null);
+        setTrialValidationCode(null);
+        setBusy(true);
+        setStatus("Phone verified. Sending your SMS code…");
+        try {
+          await sendSmsOtp(trialVerificationPhone);
+        } catch (error) {
+          setStatus(error instanceof Error ? error.message : "Could not send the SMS code.");
+        } finally {
+          if (active) setBusy(false);
+        }
+      } catch {
+        if (active) setStatus("Still waiting for phone verification. We’ll keep checking every few seconds.");
+      } finally {
+        checking = false;
+      }
+    };
+    void checkVerification();
+    const interval = window.setInterval(() => void checkVerification(), 3000);
+    return () => { active = false; window.clearInterval(interval); };
+  }, [sendSmsOtp, trialVerificationPhone]);
 
   async function tryPassword(event: FormEvent) {
     event.preventDefault();
@@ -208,7 +305,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         <Link href="/">Back to portfolio</Link>
       </header>
       <section className="auth-shell">
-        {!adminMode && <div className="auth-mode-switch" aria-label="Account action"><button type="button" className={authMode === "signIn" ? "active" : ""} onClick={() => { setAuthMode("signIn"); setStatus(""); }}>Sign in</button><button type="button" className={authMode === "signUp" ? "active" : ""} onClick={() => { setAuthMode("signUp"); setPassword(""); setStatus(""); }}>Sign up</button></div>}
+        {!adminMode && <div className="auth-mode-switch" aria-label="Account action"><button type="button" className={authMode === "signIn" ? "active" : ""} onClick={() => { setAuthMode("signIn"); setTrialVerificationPhone(null); setTrialValidationCode(null); setStatus(""); }}>Sign in</button><button type="button" className={authMode === "signUp" ? "active" : ""} onClick={() => { setAuthMode("signUp"); setPassword(""); setStatus(""); }}>Sign up</button></div>}
         <p className="eyebrow">{adminMode ? "ADMIN ACCESS" : authMode === "signUp" ? "NEW MEMBER" : "WELCOME BACK"}</p>
         <h1>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
         {step === "password" && authMode === "signUp" && <p className="auth-intro">Use your mobile number to create an account. We’ll verify it with a one-time code.</p>}
@@ -241,7 +338,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         )}
 
         {step === "password" && authMode === "signUp" && (
-          <form onSubmit={(event) => { event.preventDefault(); void requestOtp(); }}><label>Mobile number<span className="phone-input-group"><input required type="tel" inputMode="tel" value={countryCode} onChange={(event) => setCountryCode(`+${event.target.value.replace(/\D/g, "").slice(0, 4)}`)} autoComplete="tel-country-code" aria-label="Country code" /><input required type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="XXXXX XXXXX" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}<button disabled={busy} className="button button-dark">{busy ? "Sending…" : "Send verification code ↗"}</button><button disabled={busy} type="button" className="text-link" onClick={() => { setAuthMode("signIn"); setStatus(""); }}>Already have an account? Sign in</button></form>
+          <form onSubmit={(event) => { event.preventDefault(); void startTrialSignupVerification(); }}><label>Mobile number<span className="phone-input-group"><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="tel" value={countryCode} onChange={(event) => setCountryCode(`+${event.target.value.replace(/\D/g, "").slice(0, 4)}`)} autoComplete="tel-country-code" aria-label="Country code" /><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="XXXXX XXXXX" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}{trialVerificationPhone && <div className="trial-verification" role="status"><strong>Phone verification in progress</strong><p>Answer the Twilio call and enter this code on your phone keypad:</p><output>{trialValidationCode || "Check the call for your code"}</output><small>We’re checking confirmation every 3 seconds.</small></div>}<button disabled={busy || Boolean(trialVerificationPhone)} className="button button-dark">{busy ? "Starting…" : trialVerificationPhone ? "Waiting for confirmation…" : "Verify phone by call ↗"}</button><button disabled={busy} type="button" className="text-link" onClick={() => { setAuthMode("signIn"); setTrialVerificationPhone(null); setTrialValidationCode(null); setStatus(""); }}>Already have an account? Sign in</button></form>
         )}
 
         {step === "otp" && (
