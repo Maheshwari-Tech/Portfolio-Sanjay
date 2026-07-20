@@ -202,6 +202,48 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="work-section" id="work">
+        <div className="section-heading light-heading">
+          <p className="eyebrow">Experience</p>
+          <h2>Teams I&apos;ve learned from, and systems I&apos;ve helped shape.</h2>
+        </div>
+        <ExperienceCarousel experiences={experience} />
+      </section>
+
+      <section className="about-section" id="about">
+        <div className="section-heading">
+          <p className="eyebrow">About</p>
+          <h2>Engineer by practice. Mentor by choice. Builder at heart.</h2>
+        </div>
+        <div className="about-grid">
+          <p className="about-copy" dangerouslySetInnerHTML={{ __html: about.introduction }} />
+          <div className="education-card">
+            <span className="card-kicker">Education</span>
+            <h3>{education.degree}</h3>
+            <div className="education-meta">
+              <span>{education.institution}</span>
+              <span>{education.period}</span>
+              <strong>{education.cgpa}</strong>
+            </div>
+          </div>
+        </div>
+        <div className="skills-grid" id="technologies">
+          {Object.entries(skills).map(([category, items]) => (
+            <article className="skill-card" key={category}>
+              <h3>{skillLabels[category] ?? category}</h3>
+              <div className="skill-tags">
+                {items.map((item) => <span className={technologyClassName(item)} key={item}>{item}</span>)}
+              </div>
+            </article>
+          ))}
+        </div>
+        <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
+          <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
+          <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy]) => <article key={title}><h4>{title}</h4><p>{copy}</p></article>)}</div>
+          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span aria-hidden="true">↗</span></Link>
+        </section>
+      </section>
+
       <section className="projects-section" id="projects">
         <div className="section-heading projects-heading">
           <div>
@@ -266,72 +308,6 @@ export default async function Home() {
 
       </section>
 
-      <section className="work-section" id="work">
-        <div className="section-heading light-heading">
-          <p className="eyebrow">Experience</p>
-          <h2>Teams I&apos;ve learned from, and systems I&apos;ve helped shape.</h2>
-        </div>
-        <ExperienceCarousel experiences={experience} />
-      </section>
-
-      <section className="recommendations-section" id="recommendations">
-        <div className="section-heading recommendations-heading">
-          <div>
-            <p className="eyebrow">LinkedIn recommendations</p>
-            <h2>What teammates and mentors say.</h2>
-          </div>
-          <div className="recommendations-heading-actions">
-            <span>{recommendations.length} recommendations</span>
-            <a className="recommendation-linkedin-control" href="https://www.linkedin.com/in/snjumaheshwari/details/recommendations/" target="_blank" rel="noreferrer">
-              <span>Recommend me</span>
-              <span aria-hidden="true">in ↗</span>
-            </a>
-          </div>
-        </div>
-        <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
-          <div className="recommendation-keyword-track" aria-hidden="true">
-            {[...recommendationKeywords, ...recommendationKeywords].map((keyword, index) => (
-              <span key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
-            ))}
-          </div>
-        </div>
-        <RecommendationCarousel recommendations={recommendations} />
-      </section>
-
-      <section className="about-section" id="about">
-        <div className="section-heading">
-          <p className="eyebrow">About</p>
-          <h2>Engineer by practice. Mentor by choice. Builder at heart.</h2>
-        </div>
-        <div className="about-grid">
-          <p className="about-copy" dangerouslySetInnerHTML={{ __html: about.introduction }} />
-          <div className="education-card">
-            <span className="card-kicker">Education</span>
-            <h3>{education.degree}</h3>
-            <div className="education-meta">
-              <span>{education.institution}</span>
-              <span>{education.period}</span>
-              <strong>{education.cgpa}</strong>
-            </div>
-          </div>
-        </div>
-        <div className="skills-grid" id="technologies">
-          {Object.entries(skills).map(([category, items]) => (
-            <article className="skill-card" key={category}>
-              <h3>{skillLabels[category] ?? category}</h3>
-              <div className="skill-tags">
-                {items.map((item) => <span className={technologyClassName(item)} key={item}>{item}</span>)}
-              </div>
-            </article>
-          ))}
-        </div>
-        <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
-          <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
-          <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy]) => <article key={title}><h4>{title}</h4><p>{copy}</p></article>)}</div>
-          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span aria-hidden="true">↗</span></Link>
-        </section>
-      </section>
-
       <section className="content-section" id="writing">
         <div className="section-heading content-heading">
           <div>
@@ -385,6 +361,30 @@ export default async function Home() {
           <h2>Milestones earned through practice.</h2>
         </div>
         <RecognitionCarousel groups={recognitionGroups} />
+      </section>
+
+      <section className="recommendations-section" id="recommendations">
+        <div className="section-heading recommendations-heading">
+          <div>
+            <p className="eyebrow">LinkedIn recommendations</p>
+            <h2>What teammates and mentors say.</h2>
+          </div>
+          <div className="recommendations-heading-actions">
+            <span>{recommendations.length} recommendations</span>
+            <a className="recommendation-linkedin-control" href="https://www.linkedin.com/in/snjumaheshwari/details/recommendations/" target="_blank" rel="noreferrer">
+              <span>Recommend me</span>
+              <span aria-hidden="true">in ↗</span>
+            </a>
+          </div>
+        </div>
+        <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
+          <div className="recommendation-keyword-track" aria-hidden="true">
+            {[...recommendationKeywords, ...recommendationKeywords].map((keyword, index) => (
+              <span key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
+            ))}
+          </div>
+        </div>
+        <RecommendationCarousel recommendations={recommendations} />
       </section>
 
       <section className="personal-section" id="personal">
