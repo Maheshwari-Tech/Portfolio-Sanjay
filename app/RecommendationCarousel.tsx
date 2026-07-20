@@ -23,6 +23,7 @@ export default function RecommendationCarousel({ recommendations }: { recommenda
   const trackRef = useRef<HTMLDivElement>(null);
   const [perPage, setPerPage] = useState(3);
   const [page, setPage] = useState(0);
+  const [expandedRecommendations, setExpandedRecommendations] = useState<Set<number>>(() => new Set());
   const scrollFrame = useRef<number | null>(null);
   const pages = useMemo(() => Math.max(1, Math.ceil(recommendations.length / perPage)), [perPage, recommendations.length]);
 
@@ -63,14 +64,29 @@ export default function RecommendationCarousel({ recommendations }: { recommenda
       <div className="recommendations-grid" ref={trackRef} onScroll={syncPageFromScroll} aria-label="LinkedIn recommendations" aria-describedby="recommendation-carousel-status">
         {recommendations.map((recommendation) => {
           const isLong = recommendation.comment.length > 330;
-          const excerpt = isLong ? `${recommendation.comment.slice(0, 330).trim()}…` : recommendation.comment;
+          const preferredBreak = recommendation.comment.lastIndexOf(" ", 330);
+          const excerptEnd = preferredBreak > 250 ? preferredBreak : 330;
+          const excerpt = isLong ? recommendation.comment.slice(0, excerptEnd).trimEnd() : recommendation.comment;
+          const remainder = isLong ? recommendation.comment.slice(excerptEnd).trimStart() : "";
+          const isExpanded = expandedRecommendations.has(recommendation.id);
           return (
           <article className="recommendation-card" key={recommendation.id}>
             <div className="recommendation-topline">
               <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
             </div>
-            <blockquote>“{excerpt}”</blockquote>
-            {isLong && <details className="recommendation-full"><summary>Read full recommendation</summary><p>{recommendation.comment}</p></details>}
+            <blockquote className="recommendation-quote">
+              <span>“{excerpt}{isLong && (isExpanded ? ` ${remainder}` : "…")}”</span>
+              {isLong && <button
+                aria-expanded={isExpanded}
+                type="button"
+                onClick={() => setExpandedRecommendations((current) => {
+                  const next = new Set(current);
+                  if (next.has(recommendation.id)) next.delete(recommendation.id);
+                  else next.add(recommendation.id);
+                  return next;
+                })}
+              >{isExpanded ? "Show less" : "Read full recommendation"}</button>}
+            </blockquote>
             <div className="recommendation-person">
               <div>
                 <a href={recommendation.socialLink} target="_blank" rel="noreferrer">{recommendation.name} <span aria-hidden="true">↗</span></a>

@@ -30,7 +30,7 @@ export default function RecognitionCarousel({ groups }: { groups: RecognitionGro
         <h3>{group.label}</h3>
         <ul>{group.items.map((item) => {
           const value = typeof item === "string" ? { text: item } : item;
-          return <li key={value.text}>
+          return <li key={value.text} tabIndex={value.learning ? 0 : undefined}>
             {value.url ? <a className="recognition-item-link" href={value.url} target="_blank" rel="noreferrer">{value.text} <span aria-hidden="true">↗</span></a> : <p>{value.text}</p>}
             {value.learning && <p className="recognition-slide-learning">{value.learning}</p>}
           </li>;

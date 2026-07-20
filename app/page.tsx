@@ -99,6 +99,9 @@ export default async function Home() {
     backendFirst("videos", videosFallback),
   ]);
   const { profile, stats } = portfolio;
+  const primaryStatIndexes = new Set([0, 1, 2, 6]);
+  const primaryStats = stats.filter((_, index) => primaryStatIndexes.has(index));
+  const supportingStats = stats.filter((_, index) => !primaryStatIndexes.has(index));
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
   const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
   const featuredProjectIds = [29, 15, 25];
@@ -134,10 +137,6 @@ export default async function Home() {
     knowsAbout: ["Distributed systems", "Cloud architecture", "Generative AI", "LangChain", "LangGraph", "RAG", "Technical leadership"],
     worksFor: { "@type": "Organization", name: "Oracle" },
   };
-  const primaryStatIndexes = new Set([0, 1, 2, 6]);
-  const primaryStats = stats.filter((_, index) => primaryStatIndexes.has(index));
-  const supportingStats = stats.filter((_, index) => !primaryStatIndexes.has(index));
-
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
@@ -162,11 +161,6 @@ export default async function Home() {
           </p>
           <h1>{profile.headline}</h1>
           <p className="hero-summary">{profile.summary}</p>
-          <Link className="hero-ai-proof" href="/projects/29">
-            <span>Applied AI</span>
-            <strong>15 AI endpoints across 8 intelligence workflows</strong>
-            <i aria-hidden="true">↗</i>
-          </Link>
           <div className="hero-actions">
             <a className="button button-dark" href="#work">Professional experience</a>
             <a className="button button-outline" href="#projects">Key projects</a>
@@ -198,12 +192,14 @@ export default async function Home() {
             <span>{stat.label}</span>
           </div>
         ))}
-        <details className="stats-more">
-          <summary>More career highlights <span aria-hidden="true">+</span></summary>
-          <div>
-            {supportingStats.map((stat) => <p key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></p>)}
-          </div>
-        </details>
+        <div className="stats-supporting" aria-label="Additional career highlights">
+          {supportingStats.map((stat) => (
+            <div className="stat-supporting" key={stat.label}>
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="projects-section" id="projects">
@@ -238,7 +234,7 @@ export default async function Home() {
                 <div className="project-technology-block">
                   <span>Core technologies</span>
                   <div className="project-tags">{project.technologies.slice(0, 6).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View full architecture <span aria-hidden="true">↗</span></Link>
+                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View details <span aria-hidden="true">↗</span></Link>
                 </div>
               </article>
             );
@@ -294,8 +290,8 @@ export default async function Home() {
         </div>
         <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
           <div className="recommendation-keyword-track" aria-hidden="true">
-            {recommendationKeywords.map((keyword) => (
-              <span key={keyword}><i>✦</i>{keyword}</span>
+            {[...recommendationKeywords, ...recommendationKeywords].map((keyword, index) => (
+              <span key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
             ))}
           </div>
         </div>

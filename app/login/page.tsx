@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, normalizeIndianPhone } from "../supabaseClient";
 import { apiFetch } from "../apiClient";
 import CaptchaChallenge, { type CaptchaProvider } from "../CaptchaChallenge";
+import CountryCodePicker from "../CountryCodePicker";
 import Wordmark from "../Wordmark";
 
 export default function LoginPage({ adminMode = false }: { adminMode?: boolean }) {
@@ -25,6 +26,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   const [trialVerificationPhone, setTrialVerificationPhone] = useState<string | null>(null);
   const [trialValidationCode, setTrialValidationCode] = useState<string | null>(null);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
+  const authTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const captchaProviderValue = process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER?.toLowerCase();
   const captchaProvider = captchaProviderValue === "hcaptcha" || captchaProviderValue === "turnstile" ? captchaProviderValue as CaptchaProvider : null;
   const captchaSiteKey = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || "";
@@ -32,6 +34,26 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   const captchaConfigured = Boolean(captchaProvider && captchaSiteKey);
   const requestedNext = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
   const next = requestedNext?.startsWith("/") ? requestedNext : adminMode ? "/admin" : "/";
+
+  const selectAuthMode = (mode: "signIn" | "signUp") => {
+    setAuthMode(mode);
+    setStep("password");
+    setStatus("");
+    if (mode === "signIn") {
+      setTrialVerificationPhone(null);
+      setTrialValidationCode(null);
+    } else {
+      setPassword("");
+    }
+  };
+
+  const handleAuthTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? 1 : event.key === "ArrowRight" ? (index + 1) % 2 : (index + 1) % 2;
+    selectAuthMode(nextIndex === 0 ? "signIn" : "signUp");
+    authTabRefs.current[nextIndex]?.focus();
+  };
 
   useEffect(() => {
     stepHeadingRef.current?.focus();
@@ -310,7 +332,8 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         <Link href="/">Back to portfolio</Link>
       </header>
       <section className="auth-shell">
-        {!adminMode && <div className="auth-mode-switch" aria-label="Account action"><button type="button" aria-pressed={authMode === "signIn"} className={authMode === "signIn" ? "active" : ""} onClick={() => { setAuthMode("signIn"); setTrialVerificationPhone(null); setTrialValidationCode(null); setStatus(""); }}>Sign in</button><button type="button" aria-pressed={authMode === "signUp"} className={authMode === "signUp" ? "active" : ""} onClick={() => { setAuthMode("signUp"); setPassword(""); setStatus(""); }}>Sign up</button></div>}
+        {!adminMode && step === "password" && <div className="auth-mode-switch" role="tablist" aria-label="Choose account action"><button ref={(element) => { authTabRefs.current[0] = element; }} id="sign-in-tab" type="button" role="tab" aria-selected={authMode === "signIn"} aria-controls="sign-in-panel" tabIndex={authMode === "signIn" ? 0 : -1} className={authMode === "signIn" ? "active" : ""} onKeyDown={(event) => handleAuthTabKey(event, 0)} onClick={() => selectAuthMode("signIn")}>Sign in</button><button ref={(element) => { authTabRefs.current[1] = element; }} id="sign-up-tab" type="button" role="tab" aria-selected={authMode === "signUp"} aria-controls="sign-up-panel" tabIndex={authMode === "signUp" ? 0 : -1} className={authMode === "signUp" ? "active" : ""} onKeyDown={(event) => handleAuthTabKey(event, 1)} onClick={() => selectAuthMode("signUp")}>Sign up</button></div>}
+        <div className="auth-form-stage" id={!adminMode && step === "password" ? authMode === "signIn" ? "sign-in-panel" : "sign-up-panel" : undefined} role={!adminMode && step === "password" ? "tabpanel" : undefined} aria-labelledby={!adminMode && step === "password" ? authMode === "signIn" ? "sign-in-tab" : "sign-up-tab" : undefined}>
         <p className="eyebrow">{adminMode ? "ADMIN ACCESS" : authMode === "signUp" ? "NEW MEMBER" : "WELCOME BACK"}</p>
         <h1 ref={stepHeadingRef} tabIndex={-1}>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
         {step === "password" && authMode === "signUp" && <p className="auth-intro">Use your mobile number to create an account. We’ll verify it with a one-time code.</p>}
@@ -322,8 +345,8 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
             <label>
               Mobile number
               <span className="phone-input-group">
-                <input required type="tel" inputMode="tel" value={countryCode} onChange={(event) => setCountryCode(`+${event.target.value.replace(/\D/g, "").slice(0, 4)}`)} autoComplete="tel-country-code" aria-label="Country code" />
-                <input required type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="XXXXX XXXXX" />
+                <CountryCodePicker value={countryCode} onChange={setCountryCode} />
+                <input required type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="Mobile number" />
               </span>
             </label>
             <label>
@@ -338,12 +361,12 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
             {captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}
             <button disabled={busy} className="button button-dark">{busy ? "Checking…" : "Login ↗"}</button>
             <button disabled={busy} type="button" className="text-link" onClick={() => void requestOtp()}>Forgot password? Login with OTP</button>
-            {!adminMode && <button disabled={busy} type="button" className="text-link" onClick={() => { setAuthMode("signUp"); setStatus(""); }}>New here? Create an account</button>}
+            {!adminMode && <button disabled={busy} type="button" className="text-link" onClick={() => selectAuthMode("signUp")}>New here? Create an account</button>}
           </form>
         )}
 
         {step === "password" && authMode === "signUp" && (
-          <form onSubmit={(event) => { event.preventDefault(); void startTrialSignupVerification(); }}><label>Mobile number<span className="phone-input-group"><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="tel" value={countryCode} onChange={(event) => setCountryCode(`+${event.target.value.replace(/\D/g, "").slice(0, 4)}`)} autoComplete="tel-country-code" aria-label="Country code" /><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="XXXXX XXXXX" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}{trialVerificationPhone && <div className="trial-verification" role="status"><strong>Phone verification in progress</strong><p>Answer the Twilio call and enter this code on your phone keypad:</p><output>{trialValidationCode || "Check the call for your code"}</output><small>We’re checking confirmation every 3 seconds.</small></div>}<button disabled={busy || Boolean(trialVerificationPhone)} className="button button-dark">{busy ? "Starting…" : trialVerificationPhone ? "Waiting for confirmation…" : "Verify phone by call ↗"}</button><button disabled={busy} type="button" className="text-link" onClick={() => { setAuthMode("signIn"); setTrialVerificationPhone(null); setTrialValidationCode(null); setStatus(""); }}>Already have an account? Sign in</button></form>
+          <form onSubmit={(event) => { event.preventDefault(); void startTrialSignupVerification(); }}><label>Mobile number<span className="phone-input-group"><CountryCodePicker value={countryCode} onChange={setCountryCode} disabled={Boolean(trialVerificationPhone)} /><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="Mobile number" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}{trialVerificationPhone && <div className="trial-verification" role="status"><strong>Phone verification in progress</strong><p>Answer the Twilio call and enter this code on your phone keypad:</p><output>{trialValidationCode || "Check the call for your code"}</output><small>We’re checking confirmation every 3 seconds.</small></div>}<button disabled={busy || Boolean(trialVerificationPhone)} className="button button-dark">{busy ? "Starting…" : trialVerificationPhone ? "Waiting for confirmation…" : "Verify phone by call ↗"}</button><button disabled={busy} type="button" className="text-link" onClick={() => selectAuthMode("signIn")}>Already have an account? Sign in</button></form>
         )}
 
         {step === "otp" && (
@@ -361,6 +384,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
           </form>
         )}
         {status && <p className="form-status" role="status" aria-live="polite">{status}</p>}
+        </div>
       </section>
     </main>
   );
