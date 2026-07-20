@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../apiClient";
+import { submitPortfolioEntry } from "../submissionService";
 
 type Article = {
   id: number;
@@ -35,6 +36,9 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [visibleCount, setVisibleCount] = useState(12);
+  const [subscriberEmail, setSubscriberEmail] = useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -72,6 +76,19 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
     setVisibleCount(12);
   };
 
+  const subscribe = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubscribing(true);
+    setSubscriptionStatus("Subscribing…");
+    const result = await submitPortfolioEntry({ type: "subscription", title: "Blog updates subscription", category: "Blog updates", name: "Blog reader", email: subscriberEmail.trim(), message: "Requested updates from the blog archive." });
+    setSubscriberEmail("");
+    setSubscriptionStatus(result.delivery === "api" ? "You’re on the list. Thanks for subscribing." : "The subscription service is offline. Your request is saved on this device.");
+    setSubscribing(false);
+  };
+
+  const featured = filtered[0];
+  const articlesToShow = filtered.slice(featured ? 1 : 0, visibleCount + 1);
+
   return (
     <section className="article-explorer" aria-label="Browse blogs and articles">
       <div className="article-search-row">
@@ -90,8 +107,10 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
         ))}
       </div>
 
+      {featured && <article className="featured-article"><div><span className="article-kicker">Featured note</span><span>{featured.date}</span></div><p>{featured.tags[0] || "Engineering"}</p><h2>{cleanTitle(featured.title)}</h2><p>{excerpt(featured)}</p><Link href={featured.href ?? `/articles/${featured.id}`}>Read the article <span>↗</span></Link></article>}
+
       <div className="article-results">
-        {filtered.slice(0, visibleCount).map((article) => (
+        {articlesToShow.map((article) => (
           <article key={article.id}>
             <Link className="article-card-link" href={article.href ?? `/articles/${article.id}`} aria-label={`Read ${cleanTitle(article.title)}`} />
             <div className="article-result-meta"><span>{article.date}</span><span>{article.tags[0]}</span></div>
@@ -106,11 +125,12 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
       </div>
 
       {filtered.length === 0 && <p className="article-empty">No articles match this search yet.</p>}
-      {visibleCount < filtered.length && (
+      {visibleCount + 1 < filtered.length && (
         <button className="show-more-articles" type="button" onClick={() => setVisibleCount((count) => count + 12)}>
           Show more articles ↓
         </button>
       )}
+      <section className="article-subscribe" aria-labelledby="subscribe-title"><div><p className="eyebrow">Stay updated</p><h2 id="subscribe-title">Notes worth saving for later.</h2></div><div><p>Get occasional updates when a new piece on engineering, systems, interviews, or career growth is published.</p><form onSubmit={subscribe}><label><span>Email address</span><input required type="email" value={subscriberEmail} onChange={(event) => setSubscriberEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" /></label><button disabled={subscribing}>{subscribing ? "Subscribing…" : "Subscribe ↗"}</button></form>{subscriptionStatus && <p className="subscription-status" role="status">{subscriptionStatus}</p>}</div></section>
     </section>
   );
 }

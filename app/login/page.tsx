@@ -9,6 +9,7 @@ import CaptchaChallenge, { type CaptchaProvider } from "../CaptchaChallenge";
 import Wordmark from "../Wordmark";
 
 export default function LoginPage({ adminMode = false }: { adminMode?: boolean }) {
+  const [authMode, setAuthMode] = useState<"signIn" | "signUp">("signIn");
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -117,14 +118,14 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     }
     const supabase = getSupabaseBrowserClient();
     setBusy(true);
-    setStatus("Requesting a one-time code…");
+    setStatus(authMode === "signUp" ? "Sending your verification code…" : "Requesting a one-time code…");
     if (!supabase) {
       try {
         const response = await apiFetch("/auth/request-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizedPhone})});
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || "Could not create a code.");
         setStep("otp");
-        setStatus(data.message || "A sign-in code was generated.");
+        setStatus(data.message || (authMode === "signUp" ? "Verification code sent. Enter it below to create your account." : "A sign-in code was generated."));
       } catch (error) {
         setStatus(error instanceof Error ? error.message : "The login service is unavailable.");
       } finally { setBusy(false); }
@@ -142,7 +143,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
       return;
     }
     setStep("otp");
-    setStatus("Code sent. It expires in 30 minutes and can be used once.");
+    setStatus(authMode === "signUp" ? "Verification code sent. It expires in 30 minutes and can be used once." : "Code sent. It expires in 30 minutes and can be used once.");
   }
 
   async function verifyOtp(event: FormEvent) {
@@ -167,7 +168,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
       return;
     }
 
-    if (!data.user?.user_metadata?.name) {
+    if (authMode === "signUp" || !data.user?.user_metadata?.name) {
       setVerifiedSession(data.session);
       setStep("profile");
       setBusy(false);
@@ -207,12 +208,14 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         <Link href="/">Back to portfolio</Link>
       </header>
       <section className="auth-shell">
-        <p className="eyebrow">{adminMode ? "ADMIN ACCESS" : "SIGN IN"}</p>
-        <h1>{step === "password" ? adminMode ? "Admin sign in." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
+        {!adminMode && <div className="auth-mode-switch" aria-label="Account action"><button type="button" className={authMode === "signIn" ? "active" : ""} onClick={() => { setAuthMode("signIn"); setStatus(""); }}>Sign in</button><button type="button" className={authMode === "signUp" ? "active" : ""} onClick={() => { setAuthMode("signUp"); setPassword(""); setStatus(""); }}>Sign up</button></div>}
+        <p className="eyebrow">{adminMode ? "ADMIN ACCESS" : authMode === "signUp" ? "NEW MEMBER" : "WELCOME BACK"}</p>
+        <h1>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
+        {step === "password" && authMode === "signUp" && <p className="auth-intro">Use your mobile number to create an account. We’ll verify it with a one-time code.</p>}
         {step === "otp" && <p>Enter the six-digit code to continue.</p>}
         {step === "profile" && <p>Add your name to complete your profile.</p>}
 
-        {step === "password" && (
+        {step === "password" && authMode === "signIn" && (
           <form onSubmit={tryPassword}>
             <label>
               Mobile number
@@ -225,15 +228,20 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
               Password
               <span className="password-input-wrap">
                 <input required type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="Enter password" />
-                <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword}>
-                  <span aria-hidden="true">👁</span>{showPassword ? "Hide" : "Show"}
+                <button type="button" className="password-toggle" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} title={showPassword ? "Hide password" : "Show password"}>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{showPassword ? <><path d="M2.5 12s3.4-5.5 9.5-5.5S21.5 12 21.5 12 18.1 17.5 12 17.5 2.5 12 2.5 12Z" /><circle cx="12" cy="12" r="2.5" /></> : <><path d="m3 3 18 18" /><path d="M10.6 6.6A10.7 10.7 0 0 1 12 6.5c6.1 0 9.5 5.5 9.5 5.5a17.3 17.3 0 0 1-3.1 3.6" /><path d="M6.3 8.1A17.3 17.3 0 0 0 2.5 12s3.4 5.5 9.5 5.5c1.2 0 2.3-.2 3.3-.6" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></>}</svg><span>{showPassword ? "Hide" : "Show"}</span>
                 </button>
               </span>
             </label>
             {captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}
             <button disabled={busy} className="button button-dark">{busy ? "Checking…" : "Login ↗"}</button>
             <button disabled={busy} type="button" className="text-link" onClick={() => void requestOtp()}>Forgot password? Login with OTP</button>
+            {!adminMode && <button disabled={busy} type="button" className="text-link" onClick={() => { setAuthMode("signUp"); setStatus(""); }}>New here? Create an account</button>}
           </form>
+        )}
+
+        {step === "password" && authMode === "signUp" && (
+          <form onSubmit={(event) => { event.preventDefault(); void requestOtp(); }}><label>Mobile number<span className="phone-input-group"><input required type="tel" inputMode="tel" value={countryCode} onChange={(event) => setCountryCode(`+${event.target.value.replace(/\D/g, "").slice(0, 4)}`)} autoComplete="tel-country-code" aria-label="Country code" /><input required type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="XXXXX XXXXX" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}<button disabled={busy} className="button button-dark">{busy ? "Sending…" : "Send verification code ↗"}</button><button disabled={busy} type="button" className="text-link" onClick={() => { setAuthMode("signIn"); setStatus(""); }}>Already have an account? Sign in</button></form>
         )}
 
         {step === "otp" && (

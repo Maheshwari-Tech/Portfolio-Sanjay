@@ -1,4 +1,4 @@
-export type SubmissionType = "contact" | "feedback" | "recommendation";
+export type SubmissionType = "contact" | "feedback" | "recommendation" | "subscription";
 
 export type SubmissionPayload = {
   type: SubmissionType;
