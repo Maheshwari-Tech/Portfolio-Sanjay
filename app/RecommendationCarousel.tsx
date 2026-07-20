@@ -56,7 +56,7 @@ export default function RecommendationCarousel({ recommendations }: { recommenda
   return (
     <div className="recommendation-carousel">
       <div className="recommendation-carousel-toolbar">
-        <p><strong>{String(page + 1).padStart(2, "0")}</strong> / {String(pages).padStart(2, "0")} <span>· {perPage} per page</span></p>
+        <p><strong>{String(page + 1).padStart(2, "0")}</strong> / {String(pages).padStart(2, "0")}</p>
         <div>
           <button type="button" onClick={() => goToPage(page - 1)} disabled={page === 0} aria-label="Previous recommendations">←</button>
           <button type="button" onClick={() => goToPage(page + 1)} disabled={page === pages - 1} aria-label="Next recommendations">→</button>

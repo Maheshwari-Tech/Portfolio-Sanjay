@@ -15,6 +15,8 @@ import VideoCarousel from "./VideoCarousel";
 import ContactFeedback from "./ContactFeedback";
 import PersonalRecommendation from "./PersonalRecommendation";
 import ProjectGallery from "./ProjectGallery";
+import ExperienceCarousel from "./ExperienceCarousel";
+import RecognitionCarousel from "./RecognitionCarousel";
 import { technologyClassName } from "./technologyStyles";
 import { siteConfig } from "./siteConfig";
 import MobileNavigation from "./MobileNavigation";
@@ -117,8 +119,12 @@ export default async function Home() {
   const { profile, stats } = portfolio;
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
   const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
-  const featuredProjectIds = [29, 15, 25, 17, 26];
+  const featuredProjectIds = [29, 15, 25];
   const projects = featuredProjectIds.map((id) => projectData.find((project) => project.id === id)).filter((project) => project !== undefined);
+  const allProjectTechnologies = Array.from(new Set(projectData.flatMap((project) => project.technologies))).sort();
+  const liveProjects = projectData.filter((project) => project.deployed).length;
+  const projectDomains = ["Mobile", "Web apps", "Software", "AI & ML"];
+  const recognitionGroups = Object.entries(achievementGroups).map(([category, items]) => ({ category, label: achievementLabels[category] ?? category, items: items as Achievement[] }));
   const travelWishlist = personalItems.filter((item) => item.category === "travel_wishlist");
   const personJsonLd = {
     "@context": "https://schema.org",
@@ -193,37 +199,7 @@ export default async function Home() {
           <p className="eyebrow">Experience</p>
           <h2>Teams I&apos;ve learned from, and systems I&apos;ve helped shape.</h2>
         </div>
-        <div className="experience-list">
-          {experience.map((item) => (
-            <article className="experience-row" key={item.company}>
-              <div className="experience-brand">
-                <div className="experience-logo-wrap">
-                  <img src={item.logo} alt={`${item.company} logo`} className="experience-logo" />
-                </div>
-                <h3>{item.company}</h3>
-                <p>{item.role}</p>
-                <div className="experience-time"><time>{item.period}</time><span>{item.duration}</span></div>
-              </div>
-              <div className="experience-copy">
-                <ul>
-                  {item.details.map((detail) => <li key={detail} dangerouslySetInnerHTML={{ __html: detail }} />)}
-                </ul>
-                <div className="experience-tag-section experience-technology-section">
-                  <span className="experience-tag-label">Technologies</span>
-                  <div className="experience-meta">
-                    {item.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}
-                  </div>
-                </div>
-                <div className="experience-tag-section experience-learning-section">
-                  <span className="experience-tag-label">Key Learnings</span>
-                  <div className="experience-skills">
-                    {item.keySkills.map((skill) => <span key={skill}>{skill}</span>)}
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        <ExperienceCarousel experiences={experience} />
       </section>
 
       <section className="about-section" id="about">
@@ -274,6 +250,7 @@ export default async function Home() {
             <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub ↗</a>
           </div>
         </div>
+        <div className="project-overview" aria-label="Project highlights"><div><strong>{projectData.length}</strong><span>Total projects</span></div><div><strong>{liveProjects}</strong><span>Live projects</span></div><div className="project-overview-domains"><span>Focus domains</span><p>{projectDomains.map((domain) => <i key={domain}>{domain}</i>)}</p></div><div className="project-overview-stack"><span>Technology map</span><p>{allProjectTechnologies.map((technology) => <i className={technologyClassName(technology)} key={technology}>{technology}</i>)}</p></div></div>
         <div className="projects-grid">
           {projects.map((project, index) => {
             const screenshots = "gallery" in project
@@ -291,9 +268,7 @@ export default async function Home() {
                   <span className="project-number">{highlighted ? "AI Intelligence" : "Product demo"}</span>
                 </div>
                 <p className="project-description">{project.description}</p>
-                <ul className="project-highlights">
-                  {project.features.slice(0, highlighted ? 6 : 3).map((feature) => <li key={feature}>{feature}</li>)}
-                </ul>
+                <div className="project-feature-map" aria-label={`${project.name} capability map`}><span>Capability map</span><ul>{project.features.map((feature, featureIndex) => <li key={feature}><b>{String(featureIndex + 1).padStart(2, "0")}</b><p>{feature}</p></li>)}</ul></div>
                 <div className="project-technology-block">
                   <span>Key technologies</span>
                   <div className="project-tags">{project.technologies.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
@@ -344,9 +319,10 @@ export default async function Home() {
             </Link>
           </div>
         </div>
+        <div className="writing-overview" aria-label="Writing archive highlights"><strong>{blogs.length}<span>published notes</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div><p>System design, interviews, engineering decisions, and career growth—collected as practical working notes.</p></div>
 
         <div className="blog-grid">
-          {blogs.map((blog, index) => {
+          {blogs.slice(0, 3).map((blog, index) => {
             const articleHref = "href" in blog && typeof blog.href === "string" ? blog.href : `/articles/${blog.id}`;
             return (
               <article className={`blog-card ${index === 0 ? "blog-card-featured" : ""}`} key={blog.id}>
@@ -384,29 +360,8 @@ export default async function Home() {
           <p className="eyebrow">Recognition</p>
           <h2>Milestones earned through practice.</h2>
         </div>
-        <div className="achievement-groups">
-          {Object.entries(achievementGroups).map(([category, items]) => (
-            <article className="achievement-group" key={category}>
-              <h3>{achievementLabels[category] ?? category}</h3>
-              <ol className="achievement-list">
-                {(items as Achievement[]).map((achievement, index) => {
-                  const text = typeof achievement === "string" ? achievement : achievement.text;
-                  const url = typeof achievement === "string" ? undefined : achievement.url;
-                  const learning = typeof achievement === "string" ? undefined : achievement.learning;
-                  return (
-                    <li key={text} tabIndex={0}>
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <div className="achievement-copy">
-                        {url ? <a href={url} target="_blank" rel="noreferrer">{text} ↗</a> : <p>{text}</p>}
-                        {learning && <p className="achievement-learning"><strong>Key learning</strong>{learning}</p>}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
-            </article>
-          ))}
-        </div>
+        <RecognitionCarousel groups={recognitionGroups} />
+        <div className="recognition-more-footer"><span>{recognitionGroups.length} recognition areas, with every credential and milestone documented.</span><Link href="/recognition">See all recognition <span aria-hidden="true">↗</span></Link></div>
       </section>
 
       <section className="recommendations-section" id="recommendations">
