@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useState } from "react";
+import Image from "next/image";
 
 type Video = {
   id: number;
@@ -25,7 +26,7 @@ export default function VideoCarousel({ videos }: { videos: Video[] }) {
       <article className="video-slide">
         <a href={current.url} target="_blank" rel="noreferrer">
           <div className="video-image-wrap">
-            <img src={current.thumbnail} alt="" className="video-image" />
+            <Image src={current.thumbnail} alt="" className="video-image" fill sizes="(max-width: 720px) 90vw, 55vw" />
             <span aria-hidden="true">▶</span>
           </div>
           <div className="video-slide-copy">

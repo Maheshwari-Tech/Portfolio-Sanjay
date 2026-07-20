@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, normalizeIndianPhone } from "../supabaseClient";
 import { apiFetch } from "../apiClient";
@@ -24,6 +24,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const [trialVerificationPhone, setTrialVerificationPhone] = useState<string | null>(null);
   const [trialValidationCode, setTrialValidationCode] = useState<string | null>(null);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   const captchaProviderValue = process.env.NEXT_PUBLIC_CAPTCHA_PROVIDER?.toLowerCase();
   const captchaProvider = captchaProviderValue === "hcaptcha" || captchaProviderValue === "turnstile" ? captchaProviderValue as CaptchaProvider : null;
   const captchaSiteKey = process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || "";
@@ -31,6 +32,10 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   const captchaConfigured = Boolean(captchaProvider && captchaSiteKey);
   const requestedNext = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("next") : null;
   const next = requestedNext?.startsWith("/") ? requestedNext : adminMode ? "/admin" : "/";
+
+  useEffect(() => {
+    stepHeadingRef.current?.focus();
+  }, [authMode, step]);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "development" || captchaProviderValue !== "hcaptcha") return;
@@ -305,9 +310,9 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         <Link href="/">Back to portfolio</Link>
       </header>
       <section className="auth-shell">
-        {!adminMode && <div className="auth-mode-switch" aria-label="Account action"><button type="button" className={authMode === "signIn" ? "active" : ""} onClick={() => { setAuthMode("signIn"); setTrialVerificationPhone(null); setTrialValidationCode(null); setStatus(""); }}>Sign in</button><button type="button" className={authMode === "signUp" ? "active" : ""} onClick={() => { setAuthMode("signUp"); setPassword(""); setStatus(""); }}>Sign up</button></div>}
+        {!adminMode && <div className="auth-mode-switch" aria-label="Account action"><button type="button" aria-pressed={authMode === "signIn"} className={authMode === "signIn" ? "active" : ""} onClick={() => { setAuthMode("signIn"); setTrialVerificationPhone(null); setTrialValidationCode(null); setStatus(""); }}>Sign in</button><button type="button" aria-pressed={authMode === "signUp"} className={authMode === "signUp" ? "active" : ""} onClick={() => { setAuthMode("signUp"); setPassword(""); setStatus(""); }}>Sign up</button></div>}
         <p className="eyebrow">{adminMode ? "ADMIN ACCESS" : authMode === "signUp" ? "NEW MEMBER" : "WELCOME BACK"}</p>
-        <h1>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
+        <h1 ref={stepHeadingRef} tabIndex={-1}>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
         {step === "password" && authMode === "signUp" && <p className="auth-intro">Use your mobile number to create an account. We’ll verify it with a one-time code.</p>}
         {step === "otp" && <p>Enter the six-digit code to continue.</p>}
         {step === "profile" && <p>Add your name to complete your profile.</p>}
@@ -355,7 +360,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
             <button disabled={busy} className="button button-dark">Create profile ↗</button>
           </form>
         )}
-        {status && <p className="form-status" aria-live="polite">{status}</p>}
+        {status && <p className="form-status" role="status" aria-live="polite">{status}</p>}
       </section>
     </main>
   );

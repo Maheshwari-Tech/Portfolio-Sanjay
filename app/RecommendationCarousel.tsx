@@ -13,16 +13,17 @@ type Recommendation = {
 };
 
 const visibleCards = () => {
-  if (typeof window === "undefined") return 4;
+  if (typeof window === "undefined") return 3;
   if (window.innerWidth < 720) return 1;
   if (window.innerWidth < 1100) return 2;
-  return 4;
+  return 3;
 };
 
 export default function RecommendationCarousel({ recommendations }: { recommendations: Recommendation[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [perPage, setPerPage] = useState(4);
+  const [perPage, setPerPage] = useState(3);
   const [page, setPage] = useState(0);
+  const scrollFrame = useRef<number | null>(null);
   const pages = useMemo(() => Math.max(1, Math.ceil(recommendations.length / perPage)), [perPage, recommendations.length]);
 
   useEffect(() => {
@@ -44,35 +45,45 @@ export default function RecommendationCarousel({ recommendations }: { recommenda
   };
 
   const syncPageFromScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
-    const cards = Array.from(track.querySelectorAll<HTMLElement>(".recommendation-card"));
-    const nearestIndex = cards.reduce((nearest, card, index) => (
-      Math.abs(card.offsetLeft - track.scrollLeft) < Math.abs(cards[nearest].offsetLeft - track.scrollLeft) ? index : nearest
-    ), 0);
-    setPage(Math.min(pages - 1, Math.floor(nearestIndex / perPage)));
+    if (scrollFrame.current !== null) return;
+    scrollFrame.current = window.requestAnimationFrame(() => {
+      const track = trackRef.current;
+      scrollFrame.current = null;
+      if (!track) return;
+      const cards = Array.from(track.querySelectorAll<HTMLElement>(".recommendation-card"));
+      const nearestIndex = cards.reduce((nearest, card, index) => (
+        Math.abs(card.offsetLeft - track.scrollLeft) < Math.abs(cards[nearest].offsetLeft - track.scrollLeft) ? index : nearest
+      ), 0);
+      setPage(Math.min(pages - 1, Math.floor(nearestIndex / perPage)));
+    });
   };
 
   return (
     <div className="recommendation-carousel">
-      <div className="recommendations-grid" ref={trackRef} onScroll={syncPageFromScroll} aria-label="Recommendations carousel" aria-live="polite">
-        {recommendations.map((recommendation, index) => (
+      <div className="recommendations-grid" ref={trackRef} onScroll={syncPageFromScroll} aria-label="LinkedIn recommendations" aria-describedby="recommendation-carousel-status">
+        {recommendations.map((recommendation) => {
+          const isLong = recommendation.comment.length > 330;
+          const excerpt = isLong ? `${recommendation.comment.slice(0, 330).trim()}…` : recommendation.comment;
+          return (
           <article className="recommendation-card" key={recommendation.id}>
             <div className="recommendation-topline">
-              <span>{String(index + 1).padStart(2, "0")}</span>
               <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
             </div>
-            <blockquote>“{recommendation.comment}”</blockquote>
+            <blockquote>“{excerpt}”</blockquote>
+            {isLong && <details className="recommendation-full"><summary>Read full recommendation</summary><p>{recommendation.comment}</p></details>}
             <div className="recommendation-person">
               <div>
-                <a href={recommendation.socialLink} target="_blank" rel="noreferrer">{recommendation.name} ↗</a>
+                <a href={recommendation.socialLink} target="_blank" rel="noreferrer">{recommendation.name} <span aria-hidden="true">↗</span></a>
                 <p dangerouslySetInnerHTML={{ __html: recommendation.context }} />
               </div>
               <time>{recommendation.date}</time>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
+
+      <p className="sr-only" id="recommendation-carousel-status" aria-live="polite">Showing recommendation page {page + 1} of {pages}.</p>
 
       <div className="recommendation-carousel-dots" aria-label="Choose recommendation page">
         {Array.from({ length: pages }, (_, index) => (

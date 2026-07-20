@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 type PreviewImage = {
   src: string;
@@ -26,7 +27,7 @@ export default function ProjectGallery({ images, projectName }: ProjectGalleryPr
   return (
     <div className="project-gallery" aria-label={`${projectName} product screenshots`}>
       <figure className={`project-gallery-frame ${activeImage.portrait ? "portrait" : ""}`}>
-        <img src={activeImage.src} alt={`${projectName} — ${activeImage.label}`} />
+        <Image src={activeImage.src} alt={`${projectName} — ${activeImage.label}`} fill sizes="(max-width: 900px) 90vw, 46vw" />
         <figcaption>
           <span>{activeImage.label}</span>
           <span>{String(activeIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</span>

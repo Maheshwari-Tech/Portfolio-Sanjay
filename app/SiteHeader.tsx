@@ -1,11 +1,11 @@
 import AccountStatus from "./AccountStatus";
-import Link from "next/link";
+import MobileNavigation from "./MobileNavigation";
 import Wordmark from "./Wordmark";
 
 export default function SiteHeader() {
-  return <header className="site-subheader">
+  return <><a className="skip-link" href="#main-content">Skip to main content</a><header className="site-header site-header-subpage">
     <Wordmark />
-    <nav aria-label="Site navigation"><Link href="/projects">Projects</Link><Link href="/articles">Blogs</Link><Link href="/certificates">Certificates</Link><Link href="/candidates">Candidates</Link><Link href="/recruiters">Recruiters</Link></nav>
+    <MobileNavigation />
     <AccountStatus />
-  </header>;
+  </header></>;
 }

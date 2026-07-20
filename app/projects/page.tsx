@@ -16,18 +16,19 @@ export const revalidate = 120;
 
 export default async function ProjectsPage() {
   const projects = await backendFirst("projects", projectsFallback);
-  const visibleProjects = projects.filter((project) => project.name !== "Portfolio Website").sort((a, b) => a.priority - b.priority);
+  const visibleProjects = [...projects].sort((a, b) => a.priority - b.priority);
 
   return (
-    <main className="projects-index-page">
+    <>
       <SiteHeader />
-      <section className="projects-index-hero">
+      <main className="projects-index-page" id="main-content"><section className="projects-index-hero">
         <p className="eyebrow">Built from curiosity</p>
         <h1>Projects.</h1>
         <p>A complete collection of products, tools, and experiments across finance, communities, gaming, education, builders, and AI.</p>
       </section>
       <ProjectExplorer projects={visibleProjects} />
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

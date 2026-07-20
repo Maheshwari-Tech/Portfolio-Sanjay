@@ -52,12 +52,12 @@ export default function ProjectExplorer({ projects }: { projects: Project[] }) {
           <span>Search projects</span>
           <input value={query} onChange={(event) => updateQuery(event.target.value)} placeholder="Search by project, technology, or feature…" />
         </label>
-        <span>{filtered.length} {filtered.length === 1 ? "project" : "projects"}</span>
+        <span role="status" aria-live="polite">{filtered.length} {filtered.length === 1 ? "project" : "projects"}</span>
       </div>
 
       <div className="project-filters" aria-label="Filter projects by category">
         {["All", ...categories].map((item) => (
-          <button className={category === item ? "active" : ""} key={item} type="button" onClick={() => updateCategory(item)}>{item}</button>
+          <button className={category === item ? "active" : ""} aria-pressed={category === item} key={item} type="button" onClick={() => updateCategory(item)}>{item}</button>
         ))}
       </div>
 

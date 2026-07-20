@@ -7,7 +7,7 @@ export default function CursorSpotlight() {
 
   useEffect(() => {
     const spotlight = spotlightRef.current;
-    if (!spotlight || window.matchMedia("(pointer: coarse)").matches) return;
+    if (!spotlight || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame = 0;
     const move = (event: PointerEvent) => {

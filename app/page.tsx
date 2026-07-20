@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import Image from "next/image";
 import portfolioFallback from "../data/portfolio.json";
 import aboutFallback from "../data/source/about.json";
 import achievementGroupsFallback from "../data/source/achievements.json";
@@ -133,16 +134,21 @@ export default async function Home() {
     knowsAbout: ["Distributed systems", "Cloud architecture", "Generative AI", "LangChain", "LangGraph", "RAG", "Technical leadership"],
     worksFor: { "@type": "Organization", name: "Oracle" },
   };
+  const primaryStatIndexes = new Set([0, 1, 2, 6]);
+  const primaryStats = stats.filter((_, index) => primaryStatIndexes.has(index));
+  const supportingStats = stats.filter((_, index) => !primaryStatIndexes.has(index));
 
   return (
-    <main>
+    <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <header className="site-header">
         <Wordmark href="#top" label={`${profile.name}, home`} initials={profile.shortName} />
         <MobileNavigation resume={profile.resume} />
         <AccountStatus />
       </header>
 
+      <main id="main-content">
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow hero-eyebrow">
@@ -156,6 +162,11 @@ export default async function Home() {
           </p>
           <h1>{profile.headline}</h1>
           <p className="hero-summary">{profile.summary}</p>
+          <Link className="hero-ai-proof" href="/projects/29">
+            <span>Applied AI</span>
+            <strong>15 AI endpoints across 8 intelligence workflows</strong>
+            <i aria-hidden="true">↗</i>
+          </Link>
           <div className="hero-actions">
             <a className="button button-dark" href="#work">Professional experience</a>
             <a className="button button-outline" href="#projects">Key projects</a>
@@ -167,7 +178,7 @@ export default async function Home() {
         <aside className="hero-aside" aria-label="Profile and current status">
           <span className="portrait-name">{profile.name}</span>
           <div className="portrait-wrap">
-            <img src={profile.image} alt={profile.name} className="portrait" />
+            <Image src={profile.image} alt={profile.name} className="portrait" width={512} height={512} priority sizes="(max-width: 720px) 80vw, 350px" />
             <span className="portrait-tag">Tech Lead</span>
           </div>
           <div className="hero-card">
@@ -181,12 +192,82 @@ export default async function Home() {
       </section>
 
       <section className="stats" aria-label="Career highlights">
-        {stats.map((stat) => (
+        {primaryStats.map((stat) => (
           <div className="stat" key={stat.label}>
             <strong>{stat.value}</strong>
             <span>{stat.label}</span>
           </div>
         ))}
+        <details className="stats-more">
+          <summary>More career highlights <span aria-hidden="true">+</span></summary>
+          <div>
+            {supportingStats.map((stat) => <p key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></p>)}
+          </div>
+        </details>
+      </section>
+
+      <section className="projects-section" id="projects">
+        <div className="section-heading projects-heading">
+          <div>
+            <p className="eyebrow">Key projects</p>
+            <h2>Ideas, made useful.</h2>
+          </div>
+          <div className="projects-actions">
+            <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div className="projects-grid">
+          {projects.map((project, index) => {
+            const screenshots = "gallery" in project
+              ? project.gallery ?? []
+              : project.image
+                ? [{ src: project.image, label: "Product preview" }]
+                : [];
+            const highlighted = "highlight" in project && project.highlight;
+            const galleryImages = screenshots.filter((image) => image.src !== "/images/project-concept-placeholder.svg");
+
+            return (
+              <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""} ${galleryImages.length === 0 ? "project-no-gallery" : ""}`} key={project.name}>
+                <ProjectGallery images={galleryImages} projectName={project.name} />
+                <div className="project-header">
+                  <div><span className={highlighted ? "project-ai-kicker" : undefined}>{project.category}</span><h3><Link href={`/projects/${project.id}`}>{project.name}</Link></h3></div>
+                  <span className="project-number">{project.deployed ? "Live project" : highlighted ? "AI Intelligence" : "Product build"}</span>
+                </div>
+                <p className="project-description">{project.description}</p>
+                <div className={`project-feature-map ${highlighted ? "ai-feature-map" : ""}`} aria-label={`${project.name} primary capabilities`}><span>Primary capabilities</span><ul>{project.features.slice(0, 3).map((feature) => <li key={feature}><p>{feature}</p></li>)}</ul></div>
+                <div className="project-technology-block">
+                  <span>Core technologies</span>
+                  <div className="project-tags">{project.technologies.slice(0, 6).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
+                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View full architecture <span aria-hidden="true">↗</span></Link>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <details className="project-overview" aria-label="Project technology map">
+          <summary>Explore project domains and complete technology inventory <span aria-hidden="true">+</span></summary>
+          <div className="project-overview-halves">
+            <div className="project-context-half">
+              <div className="project-overview-stats"><div><strong>{projectData.length}</strong><span>Total projects</span></div><div><strong>{liveProjects}</strong><span>Live projects</span></div></div>
+              <div className="project-area-grid">
+                {projectAreas.map((area) => <article className={area.label === "AI & ML" ? "project-area-ai" : undefined} key={area.label}><div><h3>{area.label}</h3><p>{area.description}</p></div><ul>{area.technologies.map((technology) => <li className={technologyClassName(technology)} key={technology}>{technology}</li>)}</ul></article>)}
+              </div>
+            </div>
+            <div className="project-technology-half">
+              <span className="project-half-label">Technology inventory</span>
+              <div className="project-stack-groups">
+              {technologyGroups.map((group) => <article key={group.label}><h3>{group.label}</h3><div>{group.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div></article>)}
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <div className="projects-more-footer">
+          <span>More products, experiments, and engineering tools.</span>
+          <Link href="/projects">View all projects <span aria-hidden="true">↗</span></Link>
+        </div>
+
       </section>
 
       <section className="work-section" id="work">
@@ -195,6 +276,30 @@ export default async function Home() {
           <h2>Teams I&apos;ve learned from, and systems I&apos;ve helped shape.</h2>
         </div>
         <ExperienceCarousel experiences={experience} />
+      </section>
+
+      <section className="recommendations-section" id="recommendations">
+        <div className="section-heading recommendations-heading">
+          <div>
+            <p className="eyebrow">LinkedIn recommendations</p>
+            <h2>What teammates and mentors say.</h2>
+          </div>
+          <div className="recommendations-heading-actions">
+            <span>{recommendations.length} recommendations</span>
+            <a className="recommendation-linkedin-control" href="https://www.linkedin.com/in/snjumaheshwari/details/recommendations/" target="_blank" rel="noreferrer">
+              <span>Recommend me</span>
+              <span aria-hidden="true">in ↗</span>
+            </a>
+          </div>
+        </div>
+        <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
+          <div className="recommendation-keyword-track" aria-hidden="true">
+            {recommendationKeywords.map((keyword) => (
+              <span key={keyword}><i>✦</i>{keyword}</span>
+            ))}
+          </div>
+        </div>
+        <RecommendationCarousel recommendations={recommendations} />
       </section>
 
       <section className="about-section" id="about">
@@ -227,93 +332,8 @@ export default async function Home() {
         <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
           <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
           <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy]) => <article key={title}><h4>{title}</h4><p>{copy}</p></article>)}</div>
-          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span>↗</span></Link>
+          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span aria-hidden="true">↗</span></Link>
         </section>
-      </section>
-
-      <section className="projects-section" id="projects">
-        <div className="section-heading projects-heading">
-          <div>
-            <p className="eyebrow">Key projects</p>
-            <h2>Ideas, made useful.</h2>
-          </div>
-          <div className="projects-actions">
-            <Link className="projects-more-link" href="/projects">
-              <span>Explore the complete archive</span>
-              <strong>Many more projects ↗</strong>
-            </Link>
-            <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub ↗</a>
-          </div>
-        </div>
-        <div className="project-overview" aria-label="Project highlights">
-          <div className="project-overview-halves">
-            <div className="project-context-half">
-              <div className="project-overview-stats"><div><strong>{projectData.length}</strong><span>Total projects</span></div><div><strong>{liveProjects}</strong><span>Live projects</span></div></div>
-              <div className="project-area-grid">
-                {projectAreas.map((area) => <article className={area.label === "AI & ML" ? "project-area-ai" : undefined} key={area.label}><div><h3>{area.label}</h3><p>{area.description}</p></div><ul>{area.technologies.map((technology) => <li className={technologyClassName(technology)} key={technology}>{technology}</li>)}</ul></article>)}
-              </div>
-            </div>
-            <div className="project-technology-half">
-              <span className="project-half-label">Technology inventory</span>
-              <div className="project-stack-groups">
-              {technologyGroups.map((group) => <article key={group.label}><h3>{group.label}</h3><div>{group.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div></article>)}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="projects-grid">
-          {projects.map((project, index) => {
-            const screenshots = "gallery" in project
-              ? project.gallery ?? []
-              : project.image
-                ? [{ src: project.image, label: "Product preview" }]
-                : [];
-            const highlighted = "highlight" in project && project.highlight;
-            const galleryImages = screenshots.filter((image) => image.src !== "/images/project-concept-placeholder.svg");
-
-            return (
-              <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""} ${galleryImages.length === 0 ? "project-no-gallery" : ""}`} key={project.name}>
-                <ProjectGallery images={galleryImages} projectName={project.name} />
-                <div className="project-header">
-                  <div><span className={highlighted ? "project-ai-kicker" : undefined}>{project.category}</span><h3><Link href={`/projects/${project.id}`}>{project.name}</Link></h3></div>
-                  <span className="project-number">{highlighted ? "AI Intelligence" : "Product demo"}</span>
-                </div>
-                <p className="project-description">{project.description}</p>
-                <div className={`project-feature-map ${highlighted ? "ai-feature-map" : ""}`} aria-label={`${project.name} capability map`}><span>Capability map</span><ul>{project.features.map((feature) => <li key={feature}><p>{feature}</p></li>)}</ul></div>
-                <div className="project-technology-block">
-                  <span>Key technologies</span>
-                  <div className="project-tags">{project.technologies.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                  <Link className="project-detail-link" href={`/projects/${project.id}#request-demo`}>Request demo ↗</Link>
-                </div>
-                {"aiCapabilities" in project && project.aiCapabilities && (
-                  <div className="project-capabilities">
-                    <div>
-                      <span>AI intelligence service</span>
-                      <strong>{project.aiApiSummary}</strong>
-                    </div>
-                    <ul>
-                      {project.aiCapabilities.map((capability) => {
-                        const [capabilityTitle, capabilityFlow] = capability.split(" · ");
-                        return (
-                          <li key={capability}>
-                            <strong>{capabilityTitle}</strong>
-                            {capabilityFlow && <code>{capabilityFlow}</code>}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="projects-more-footer">
-          <span>More products, experiments, and engineering tools.</span>
-          <Link href="/projects">View all projects <span aria-hidden="true">↗</span></Link>
-        </div>
-
       </section>
 
       <section className="content-section" id="writing">
@@ -324,10 +344,6 @@ export default async function Home() {
           </div>
           <div className="content-intro">
             <p>Practical thoughts on interviews, system design, engineering choices, and career growth.</p>
-            <Link className="articles-more-link" href="/articles">
-              <span>Explore the complete archive</span>
-              <strong>Many more blogs & articles ↗</strong>
-            </Link>
           </div>
         </div>
         <div className="writing-overview" aria-label="Writing archive highlights"><strong>{blogs.length}<span>published notes</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div><p>System design, interviews, engineering decisions, and career growth—collected as practical working notes.</p></div>
@@ -340,14 +356,13 @@ export default async function Home() {
                 <div className="blog-meta">
                   <span>{blog.date}</span>
                   <span>{blog.tags[0]}</span>
-                  <span>0{index + 1}</span>
                 </div>
                 <h3><Link href={articleHref}>{cleanBlogTitle(blog.title)}</Link></h3>
                 <p className="blog-author">By {blog.author}</p>
                 <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
                 <div className="blog-tags">{blog.tags.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
                 <Link className="blog-read-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`}>
-                  Read article <span>↗</span>
+                  Read article <span aria-hidden="true">↗</span>
                 </Link>
               </article>
             );
@@ -374,30 +389,6 @@ export default async function Home() {
           <h2>Milestones earned through practice.</h2>
         </div>
         <RecognitionCarousel groups={recognitionGroups} />
-      </section>
-
-      <section className="recommendations-section" id="recommendations">
-        <div className="section-heading recommendations-heading">
-          <div>
-            <p className="eyebrow">LinkedIn recommendations</p>
-            <h2>What teammates and mentors say.</h2>
-          </div>
-          <div className="recommendations-heading-actions">
-            <span>{recommendations.length} recommendations</span>
-            <a className="recommendation-linkedin-control" href="https://www.linkedin.com/in/snjumaheshwari/details/recommendations/" target="_blank" rel="noreferrer">
-              <span>Recommend me</span>
-              <span aria-hidden="true">in ↗</span>
-            </a>
-          </div>
-        </div>
-        <div className="recommendation-keyword-slider" aria-label={`Themes from recommendations: ${recommendationKeywords.join(", ")}`}>
-          <div className="recommendation-keyword-track" aria-hidden="true">
-            {[...recommendationKeywords, ...recommendationKeywords].map((keyword, index) => (
-              <span style={{ animationDelay: `${(index % recommendationKeywords.length) * .7}s` }} key={`${keyword}-${index}`}><i>✦</i>{keyword}</span>
-            ))}
-          </div>
-        </div>
-        <RecommendationCarousel recommendations={recommendations} />
       </section>
 
       <section className="personal-section" id="personal">
@@ -433,9 +424,10 @@ export default async function Home() {
             <a className="resume-download" href={profile.resume} download>Download resume <span>PDF ↓</span></a>
           </div>
           <ContactFeedback />
-          <SiteFooter />
         </div>
       </section>
-    </main>
+      </main>
+      <SiteFooter />
+    </>
   );
 }

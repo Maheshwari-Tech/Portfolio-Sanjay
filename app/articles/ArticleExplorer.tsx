@@ -96,12 +96,12 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
           <span>Search articles</span>
           <input value={query} onChange={(event) => updateQuery(event.target.value)} placeholder="Search by title, topic, or keyword…" />
         </label>
-        <span>{filtered.length} {filtered.length === 1 ? "article" : "articles"}</span>
+        <span role="status" aria-live="polite">{filtered.length} {filtered.length === 1 ? "article" : "articles"}</span>
       </div>
 
       <div className="article-filters" aria-label="Filter articles by topic">
         {["All", ...tags].map((tag) => (
-          <button className={activeTag === tag ? "active" : ""} key={tag} onClick={() => updateTag(tag)} type="button">
+          <button className={activeTag === tag ? "active" : ""} aria-pressed={activeTag === tag} key={tag} onClick={() => updateTag(tag)} type="button">
             {tag}
           </button>
         ))}
@@ -112,13 +112,12 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
       <div className="article-results">
         {articlesToShow.map((article) => (
           <article key={article.id}>
-            <Link className="article-card-link" href={article.href ?? `/articles/${article.id}`} aria-label={`Read ${cleanTitle(article.title)}`} />
             <div className="article-result-meta"><span>{article.date}</span><span>{article.tags[0]}</span></div>
             <h2>{cleanTitle(article.title)}</h2>
             <p>{excerpt(article)}</p>
             <div className="article-result-footer">
               <span>{article.tags.join(" · ")}</span>
-              <Link href={article.href ?? `/articles/${article.id}`}>Read article ↗</Link>
+              <Link href={article.href ?? `/articles/${article.id}`}>Read article <span aria-hidden="true">↗</span></Link>
             </div>
           </article>
         ))}

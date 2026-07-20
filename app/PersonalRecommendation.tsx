@@ -20,6 +20,8 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
   const [from, setFrom] = useState("");
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const formId = `${mode}-recommendation-form`;
 
   async function submitRecommendation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,12 +47,12 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
   }
 
   return (
-    <details className="inline-recommendation" id={`${mode}-recommendation`}>
-      <summary>
+    <div className={`inline-recommendation${expanded ? " is-open" : ""}`} id={`${mode}-recommendation`}>
+      <button className="inline-recommendation-toggle" type="button" aria-expanded={expanded} aria-controls={formId} onClick={() => setExpanded((current) => !current)}>
         <span>{copy.button}</span>
-        <span aria-hidden="true">+</span>
-      </summary>
-      <form className="inline-recommendation-form" onSubmit={submitRecommendation}>
+        <span aria-hidden="true">{expanded ? "×" : "+"}</span>
+      </button>
+      <form className="inline-recommendation-form" id={formId} aria-hidden={!expanded} onSubmit={submitRecommendation}>
         {mode === "screen" && (
           <fieldset aria-label="Recommendation type">
             <div className="inline-recommendation-types">
@@ -59,6 +61,7 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
                   className={category === item ? "active" : ""}
                   type="button"
                   aria-pressed={category === item}
+                  tabIndex={expanded ? 0 : -1}
                   onClick={() => setCategory(item)}
                   key={item}
                 >
@@ -70,13 +73,13 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
         )}
 
         <div className="inline-recommendation-fields">
-          <input aria-label="Recommendation title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder={copy.placeholder} required maxLength={90} />
-          <input aria-label="Your name" value={from} onChange={(event) => setFrom(event.target.value)} placeholder="Your name (optional)" maxLength={70} />
+          <label className="floating-field"><span>{copy.placeholder}</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={copy.placeholder} required maxLength={90} tabIndex={expanded ? 0 : -1} /></label>
+          <label className="floating-field"><span>Your name <em>Optional</em></span><input value={from} onChange={(event) => setFrom(event.target.value)} placeholder="Your name (optional)" maxLength={70} tabIndex={expanded ? 0 : -1} /></label>
         </div>
-        <textarea aria-label="Why you recommend it" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Why do you recommend it? (optional)" rows={2} maxLength={500} />
-        <button className="inline-recommendation-submit" type="submit" disabled={sending}>{sending ? "Sending…" : "Send recommendation"} <span aria-hidden="true">↗</span></button>
-        {status && <p className="inline-recommendation-status" role="status">{status}</p>}
+        <label className="floating-field"><span>Why you recommend it <em>Optional</em></span><textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Why do you recommend it? (optional)" rows={2} maxLength={500} tabIndex={expanded ? 0 : -1} /></label>
+        <button className="inline-recommendation-submit" type="submit" disabled={sending} tabIndex={expanded ? 0 : -1}>{sending ? "Sending…" : "Send recommendation"} <span aria-hidden="true">↗</span></button>
+        <p className="inline-recommendation-status" role="status">{status || " "}</p>
       </form>
-    </details>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, KeyboardEvent, useRef, useState } from "react";
 import { submitPortfolioEntry } from "./submissionService";
 
 const destination = "sanjaymaheshwari.work@gmail.com";
@@ -18,6 +18,19 @@ export default function ContactFeedback() {
   const [feedbackStatus, setFeedbackStatus] = useState("");
   const [sendingContact, setSendingContact] = useState(false);
   const [sendingFeedback, setSendingFeedback] = useState(false);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const modes = ["message", "feedback"] as const;
+  const selectMode = (index: number) => {
+    const nextIndex = (index + modes.length) % modes.length;
+    setFormMode(modes[nextIndex]);
+    tabRefs.current[nextIndex]?.focus();
+  };
+  const handleTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (event.key === "ArrowRight") { event.preventDefault(); selectMode(index + 1); }
+    if (event.key === "ArrowLeft") { event.preventDefault(); selectMode(index - 1); }
+    if (event.key === "Home") { event.preventDefault(); selectMode(0); }
+    if (event.key === "End") { event.preventDefault(); selectMode(modes.length - 1); }
+  };
 
   const submitContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,7 +46,7 @@ export default function ContactFeedback() {
         email: contactEmail.trim(),
       });
       setMessage("");
-      setContactStatus(result.delivery === "api" ? "Sent. Thanks for reaching out!" : "The service is offline. Your message is saved on this device; please use the email option above for immediate delivery.");
+      setContactStatus(result.delivery === "api" ? "Sent. Thanks for reaching out!" : "The service is offline. Your message is saved on this device; please use the email option below for immediate delivery.");
     } catch {
       setContactStatus("Could not send yet—the API is not available. Please try again later.");
     } finally {
@@ -66,17 +79,17 @@ export default function ContactFeedback() {
     <div className="contact-feedback">
       <div className="contact-form-switcher">
         <div className="contact-form-toggle" role="tablist" aria-label="Choose contact form">
-          <button className={formMode === "message" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "message"} aria-controls="message-form-panel" onClick={() => setFormMode("message")}>
+          <button ref={(element) => { tabRefs.current[0] = element; }} id="message-form-tab" className={formMode === "message" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "message"} aria-controls="message-form-panel" tabIndex={formMode === "message" ? 0 : -1} onKeyDown={(event) => handleTabKey(event, 0)} onClick={() => setFormMode("message")}>
             Send a message
           </button>
-          <button className={formMode === "feedback" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "feedback"} aria-controls="feedback-form-panel" onClick={() => setFormMode("feedback")}>
+          <button ref={(element) => { tabRefs.current[1] = element; }} id="feedback-form-tab" className={formMode === "feedback" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "feedback"} aria-controls="feedback-form-panel" tabIndex={formMode === "feedback" ? 0 : -1} onKeyDown={(event) => handleTabKey(event, 1)} onClick={() => setFormMode("feedback")}>
             Share feedback
           </button>
         </div>
 
         <div className="contact-form-stage">
         {formMode === "message" ? (
-        <form className="contact-form" id="message-form-panel" role="tabpanel" onSubmit={submitContact}>
+        <div id="message-form-panel" role="tabpanel" aria-labelledby="message-form-tab" tabIndex={0}><form className="contact-form" onSubmit={submitContact}>
           <div className="form-heading">
             <div><h3>Send a message</h3><p>For collaboration, mentorship, consultancy, teaching, talks, or a thoughtful hello.</p></div>
           </div>
@@ -91,9 +104,9 @@ export default function ContactFeedback() {
           <label><span>Message</span><textarea required value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tell me a little about what you have in mind…" rows={6} /></label>
           <button type="submit" disabled={sendingContact}>{sendingContact ? "Sending…" : "Send message"} <span>↗</span></button>
           {contactStatus && <p className="form-status" role="status">{contactStatus}</p>}
-        </form>
+        </form></div>
         ) : (
-        <form className="feedback-form" id="feedback-form-panel" role="tabpanel" onSubmit={submitFeedback}>
+        <div id="feedback-form-panel" role="tabpanel" aria-labelledby="feedback-form-tab" tabIndex={0}><form className="feedback-form" onSubmit={submitFeedback}>
           <div className="form-heading">
             <div><h3>Share feedback</h3><p>Found something useful—or something I could improve?</p></div>
           </div>
@@ -107,7 +120,7 @@ export default function ContactFeedback() {
           <label><span>Feedback</span><textarea required value={feedback} onChange={(event) => setFeedback(event.target.value)} placeholder="What worked well? What would make this better?" rows={8} /></label>
           <button type="submit" disabled={sendingFeedback}>{sendingFeedback ? "Sending…" : "Send feedback"} <span>↗</span></button>
           {feedbackStatus && <p className="form-status" role="status">{feedbackStatus}</p>}
-        </form>
+        </form></div>
         )}
         </div>
       </div>

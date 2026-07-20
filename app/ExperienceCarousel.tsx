@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { technologyClassName } from "./technologyStyles";
 
 type Experience = { company: string; role: string; period: string; duration: string; logo: string; technologies: string[]; keySkills: string[]; details: string[] };
@@ -16,7 +17,7 @@ export default function ExperienceCarousel({ experiences }: { experiences: Exper
     <div className="experience-carousel-track" key={start}>
       {visible.map((item, index) => <article className={`experience-slide ${index % 2 ? "experience-slide-reverse" : ""}`} key={item.company}>
         <div className="experience-slide-brand">
-          <img src={item.logo} alt={`${item.company} logo`} />
+          <Image src={item.logo} alt={`${item.company} logo`} width={180} height={180} sizes="180px" />
           <span>{item.period}</span><h3>{item.company}</h3><p>{item.role}</p><small>{item.duration}</small>
         </div>
         <div className="experience-slide-copy">
