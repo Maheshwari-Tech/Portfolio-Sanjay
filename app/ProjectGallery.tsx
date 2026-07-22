@@ -1,7 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
 
 type PreviewImage = {
@@ -16,32 +12,21 @@ type ProjectGalleryProps = {
 };
 
 export default function ProjectGallery({ images, projectName }: ProjectGalleryProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeImage = images[activeIndex];
-
-  if (!activeImage) return null;
-
-  const showPrevious = () => setActiveIndex((current) => (current - 1 + images.length) % images.length);
-  const showNext = () => setActiveIndex((current) => (current + 1) % images.length);
+  if (!images.length) return null;
 
   return (
-    <div className="project-gallery" aria-label={`${projectName} product screenshots`}>
-      <figure className={`project-gallery-frame ${activeImage.portrait ? "portrait" : ""}`}>
-        <Image src={activeImage.src} alt={`${projectName} — ${activeImage.label}`} fill sizes="(max-width: 900px) 90vw, 46vw" />
-        <figcaption>
-          <span>{activeImage.label}</span>
-          <span>{String(activeIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}</span>
-        </figcaption>
-      </figure>
-      {images.length > 1 && (
-        <div className="project-gallery-controls">
-          <button type="button" onClick={showPrevious} aria-label={`Previous ${projectName} screenshot`}>←</button>
-          <div aria-label={`Screenshot ${activeIndex + 1} of ${images.length}`}>
-            {images.map((image, index) => <span className={index === activeIndex ? "active" : ""} key={image.src} />)}
-          </div>
-          <button type="button" onClick={showNext} aria-label={`Next ${projectName} screenshot`}>→</button>
-        </div>
-      )}
+    <div className="project-gallery project-gallery-grid" data-image-count={images.length} aria-label={`${projectName} product screenshots`}>
+      {images.map((image) => (
+        <figure className={`project-gallery-frame ${image.portrait ? "portrait" : ""}`} key={image.src}>
+          <Image
+            src={image.src}
+            alt={`${projectName} — ${image.label}`}
+            fill
+            sizes={images.length > 1 ? "(max-width: 900px) 45vw, 23vw" : "(max-width: 900px) 90vw, 46vw"}
+          />
+          <figcaption><span>{image.label}</span></figcaption>
+        </figure>
+      ))}
     </div>
   );
 }

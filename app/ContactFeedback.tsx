@@ -76,7 +76,7 @@ export default function ContactFeedback() {
   };
 
   return (
-    <div className="contact-feedback">
+    <div className="contact-feedback" data-mode={formMode}>
       <div className="contact-form-switcher">
         <div className="contact-form-toggle" role="tablist" aria-label="Choose contact form">
           <button ref={(element) => { tabRefs.current[0] = element; }} id="message-form-tab" className={formMode === "message" ? "active" : ""} type="button" role="tab" aria-selected={formMode === "message"} aria-controls="message-form-panel" tabIndex={formMode === "message" ? 0 : -1} onKeyDown={(event) => handleTabKey(event, 0)} onClick={() => setFormMode("message")}>
@@ -102,7 +102,7 @@ export default function ContactFeedback() {
             </select>
           </label>
           <label><span>Message</span><textarea required value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tell me a little about what you have in mind…" rows={6} /></label>
-          <button type="submit" disabled={sendingContact}>{sendingContact ? "Sending…" : "Send message"} <span>↗</span></button>
+          <button type="submit" disabled={sendingContact}>{sendingContact ? "Sending…" : "Send message"}</button>
           {contactStatus && <p className="form-status" role="status">{contactStatus}</p>}
         </form></div>
         ) : (
@@ -118,7 +118,7 @@ export default function ContactFeedback() {
             </select>
           </label>
           <label><span>Feedback</span><textarea required value={feedback} onChange={(event) => setFeedback(event.target.value)} placeholder="What worked well? What would make this better?" rows={8} /></label>
-          <button type="submit" disabled={sendingFeedback}>{sendingFeedback ? "Sending…" : "Send feedback"} <span>↗</span></button>
+          <button type="submit" disabled={sendingFeedback}>{sendingFeedback ? "Sending…" : "Send feedback"}</button>
           {feedbackStatus && <p className="form-status" role="status">{feedbackStatus}</p>}
         </form></div>
         )}
@@ -133,11 +133,11 @@ export default function ContactFeedback() {
             </b>
             Email
           </span>
-          <strong>{destination}</strong><small>↗</small>
+          <strong>{destination}</strong>
         </a>
         <a className="contact-option contact-option-linkedin" href="https://www.linkedin.com/in/snjumaheshwari" target="_blank" rel="noreferrer">
           <span><b className="contact-symbol contact-symbol-linkedin" aria-hidden="true">in</b> LinkedIn</span>
-          <strong>Connect professionally</strong><small>↗</small>
+          <strong>Connect professionally</strong>
         </a>
         <div className="contact-option contact-option-paired contact-option-whatsapp">
           <span>
@@ -147,8 +147,8 @@ export default function ContactFeedback() {
             WhatsApp / phone
           </span>
           <strong>
-            <a href="https://wa.me/918847472124" target="_blank" rel="noreferrer">WhatsApp <i aria-hidden="true">↗</i></a>
-            <a href="tel:+918847472124">Call +91 88474 72124 <i aria-hidden="true">↗</i></a>
+            <a href="https://wa.me/918847472124" target="_blank" rel="noreferrer">WhatsApp</a>
+            <a href="tel:+918847472124">Call +91 88474 72124</a>
           </strong>
         </div>
       </div>

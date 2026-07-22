@@ -201,10 +201,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         ) : visualAsset ? (
           <div className="visual-article">
             <object type={isPdf ? "application/pdf" : "image/svg+xml"} data={visualAsset} title={cleanTitle(article.title)}>
-              <a href={visualAsset} target="_blank" rel="noreferrer">Open the visual article ↗</a>
+              <a href={visualAsset} target="_blank" rel="noreferrer">Open the visual article</a>
             </object>
             <div className="visual-article-actions">
-              <a href={visualAsset} target="_blank" rel="noreferrer">Open full screen ↗</a>
+              <a href={visualAsset} target="_blank" rel="noreferrer">Open full screen</a>
               {isPdf && <a href={visualAsset} download>Download PDF ↓</a>}
               {!isPdf && asset?.pdf && <a href={asset.pdf} download>Download PDF ↓</a>}
             </div>
@@ -220,7 +220,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             <Link href={item.href ?? `/articles/${item.id}`} key={item.id}>
               <span>{item.date}</span>
               <strong>{cleanTitle(item.title)}</strong>
-              <span>↗</span>
             </Link>
           ))}
         </div>

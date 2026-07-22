@@ -52,7 +52,7 @@
     "details": [
       "Built statistical and ML-powered systems in Amazon Finance Automation to detect invoice fraud, duplicates, and anomalies at scale.",
       "Supported a finance ingestion surface receiving <strong>1 lakh+ invoice create/update requests every day</strong> across retail, non-retail, and corporate workflows.",
-      "Implemented <strong>3 anomaly-detection rules</strong> using Isolation Forest, identifying over <strong>100M USD</strong> in anomalies.",
+      "Implemented <strong>3 anomaly-detection rules</strong> using Isolation Forest, identifying over <strong>100M USD</strong> in anomalies within <strong>1 month</strong>.",
       "Reduced anomaly reporting latency from <strong>24 hours</strong> to near real time through Gandalf-Veritas integration.",
       "Built APIs and monitoring dashboards and used AWS CDK for infrastructure and CI/CD pipelines.",
       "Developed microservices using Java, Kotlin, TypeScript, Python, ML, Elasticsearch, DynamoDB, Coral, Smithy, and AWS."

@@ -359,20 +359,20 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
               </span>
             </label>
             {captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}
-            <button disabled={busy} className="button button-dark">{busy ? "Checking…" : "Login ↗"}</button>
+            <button disabled={busy} className="button button-dark">{busy ? "Checking…" : "Login"}</button>
             <button disabled={busy} type="button" className="text-link" onClick={() => void requestOtp()}>Forgot password? Login with OTP</button>
             {!adminMode && <button disabled={busy} type="button" className="text-link" onClick={() => selectAuthMode("signUp")}>New here? Create an account</button>}
           </form>
         )}
 
         {step === "password" && authMode === "signUp" && (
-          <form onSubmit={(event) => { event.preventDefault(); void startTrialSignupVerification(); }}><label>Mobile number<span className="phone-input-group"><CountryCodePicker value={countryCode} onChange={setCountryCode} disabled={Boolean(trialVerificationPhone)} /><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="Mobile number" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}{trialVerificationPhone && <div className="trial-verification" role="status"><strong>Phone verification in progress</strong><p>Answer the Twilio call and enter this code on your phone keypad:</p><output>{trialValidationCode || "Check the call for your code"}</output><small>We’re checking confirmation every 3 seconds.</small></div>}<button disabled={busy || Boolean(trialVerificationPhone)} className="button button-dark">{busy ? "Starting…" : trialVerificationPhone ? "Waiting for confirmation…" : "Verify phone by call ↗"}</button><button disabled={busy} type="button" className="text-link" onClick={() => selectAuthMode("signIn")}>Already have an account? Sign in</button></form>
+          <form onSubmit={(event) => { event.preventDefault(); void startTrialSignupVerification(); }}><label>Mobile number<span className="phone-input-group"><CountryCodePicker value={countryCode} onChange={setCountryCode} disabled={Boolean(trialVerificationPhone)} /><input required disabled={Boolean(trialVerificationPhone)} type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="Mobile number" /></span></label>{captchaConfigured && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}{trialVerificationPhone && <div className="trial-verification" role="status"><strong>Phone verification in progress</strong><p>Answer the Twilio call and enter this code on your phone keypad:</p><output>{trialValidationCode || "Check the call for your code"}</output><small>We’re checking confirmation every 3 seconds.</small></div>}<button disabled={busy || Boolean(trialVerificationPhone)} className="button button-dark">{busy ? "Starting…" : trialVerificationPhone ? "Waiting for confirmation…" : "Verify phone by call"}</button><button disabled={busy} type="button" className="text-link" onClick={() => selectAuthMode("signIn")}>Already have an account? Sign in</button></form>
         )}
 
         {step === "otp" && (
           <form onSubmit={verifyOtp}>
             <label>One-time code<input required value={otp} onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" autoComplete="one-time-code" placeholder="000000" /></label>
-            <button disabled={busy || otp.length !== 6} className="button button-dark">{busy ? "Verifying…" : "Verify and continue ↗"}</button>
+            <button disabled={busy || otp.length !== 6} className="button button-dark">{busy ? "Verifying…" : "Verify and continue"}</button>
             <button type="button" className="text-link" onClick={() => { setStep("password"); setOtp(""); resetCaptcha(); setStatus(""); }}>Back to password</button>
           </form>
         )}
@@ -380,7 +380,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         {step === "profile" && (
           <form onSubmit={saveProfile}>
             <label>Your name<input required value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" placeholder="Your name" /></label>
-            <button disabled={busy} className="button button-dark">Create profile ↗</button>
+            <button disabled={busy} className="button button-dark">Create profile</button>
           </form>
         )}
         {status && <p className="form-status" role="status" aria-live="polite">{status}</p>}

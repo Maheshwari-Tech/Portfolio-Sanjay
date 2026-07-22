@@ -95,7 +95,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <aside>
             <p className="eyebrow">Technology</p>
             <div className="project-detail-tags">{project.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div>
-            {project.github && <a className="button button-dark" href={project.github} target="_blank" rel="noreferrer">View source ↗</a>}
+            {project.github && <a className="button button-dark" href={project.github} target="_blank" rel="noreferrer">View source</a>}
           </aside>
         </div>
 
@@ -152,7 +152,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <ContentInteractions contentId={`project-${project.id}`} />
       </article>
 
-      {related.length > 0 && <aside className="detail-related"><p className="eyebrow">Related projects</p>{related.map((item) => <Link href={`/projects/${item.id}`} key={item.id}><strong>{item.name}</strong><span>↗</span></Link>)}</aside>}
+      {related.length > 0 && <aside className="detail-related"><p className="eyebrow">Related projects</p>{related.map((item) => <Link href={`/projects/${item.id}`} key={item.id}><strong>{item.name}</strong></Link>)}</aside>}
       <SiteFooter />
     </main>
   );

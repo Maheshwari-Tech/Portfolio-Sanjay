@@ -110,7 +110,7 @@ export default function ContentCreator({ onCreated }: { onCreated?: () => void }
         : <label>Project features (one per line)<textarea name="body" rows={6} /></label>}
       <label>Category<input name="category" defaultValue={kind === "blog" ? "Leadership" : "General"} /></label>
       <label>{kind === "blog" ? "Tags (comma separated)" : "Technologies (comma separated)"}<input name={kind === "blog" ? "tags" : "technologies"} /></label>
-      <button disabled={busy} className="button button-dark">{busy ? "Working…" : `Create ${kind === "blog" ? "blog" : "project"} ↗`}</button>
+      <button disabled={busy} className="button button-dark">{busy ? "Working…" : `Create ${kind === "blog" ? "blog" : "project"}`}</button>
       {status && <p className="form-status" role="status">{status}</p>}
     </form>
   </section>;

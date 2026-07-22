@@ -5,5 +5,6 @@
   "distributedSystems": ["Kafka", "gRPC", "Elasticsearch", "Microservices", "WebSockets", "Async Systems"],
   "aiAndMachineLearning": ["LLMs", "LangChain", "LangGraph", "RAG", "AI Agents", "Generative AI", "MCP Server", "Scikit-Learn", "Isolation Forest", "Anomaly Detection"],
   "architectureAndQuality": ["System Design", "API Design", "Performance Tuning", "Code Reviews", "Testing", "Observability"],
-  "techLeadAndLeadership": ["Technical Direction", "Team Leadership", "Architecture Reviews", "Mentoring", "Hiring & Onboarding", "Stakeholder Management", "Cross-team Alignment", "Delivery Planning", "Roadmapping", "Documentation"]
+  "techLeadAndLeadership": ["Technical Direction", "Team Leadership", "Architecture Reviews", "Mentoring", "Hiring & Onboarding", "Stakeholder Management", "Cross-team Alignment", "Delivery Planning", "Roadmapping", "Documentation"],
+  "devOpsAndSre": ["CI/CD", "Jenkins", "Prometheus", "Grafana", "OpenTelemetry", "SLOs", "Monitoring & Alerting", "Incident Response"]
 }

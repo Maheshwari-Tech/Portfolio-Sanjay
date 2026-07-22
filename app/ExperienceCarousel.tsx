@@ -6,6 +6,10 @@ import { technologyClassName } from "./technologyStyles";
 
 type Experience = { company: string; role: string; period: string; duration: string; logo: string; technologies: string[]; keySkills: string[]; details: string[] };
 
+function companyTone(company: string) {
+  return company.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 export default function ExperienceCarousel({ experiences }: { experiences: Experience[] }) {
   const [page, setPage] = useState(0);
   const [viewportHeight, setViewportHeight] = useState<number>();
@@ -18,19 +22,30 @@ export default function ExperienceCarousel({ experiences }: { experiences: Exper
   const showingLatest = page === 0;
 
   useLayoutEffect(() => {
-    const panels = panelRefs.current.filter((panel): panel is HTMLDivElement => panel !== null);
-    if (!panels.length) return;
+    const activePanel = panelRefs.current[page];
+    if (!activePanel) return;
 
     const updateHeight = () => {
-      const tallestPanel = Math.max(...panels.map((panel) => panel.scrollHeight));
-      setViewportHeight((current) => current === tallestPanel ? current : tallestPanel);
+      const activePanelHeight = activePanel.scrollHeight;
+      setViewportHeight((current) => current === activePanelHeight ? current : activePanelHeight);
     };
     const resizeObserver = new ResizeObserver(updateHeight);
-    panels.forEach((panel) => resizeObserver.observe(panel));
+    resizeObserver.observe(activePanel);
     updateHeight();
 
     return () => resizeObserver.disconnect();
-  }, [pages]);
+  }, [page, pages]);
+
+  const toggleExperiencePage = () => {
+    setPage(showingLatest ? 1 : 0);
+    const section = document.getElementById("work");
+    if (!section) return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.requestAnimationFrame(() => section.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    }));
+  };
 
   return <div className="experience-carousel" aria-label="Professional experience carousel">
     <div className="experience-carousel-viewport" style={viewportHeight ? { height: viewportHeight } : undefined}>
@@ -41,7 +56,7 @@ export default function ExperienceCarousel({ experiences }: { experiences: Exper
         key={pageIndex}
         ref={(panel) => { panelRefs.current[pageIndex] = panel; }}
       >
-        {visible.map((item, index) => <article className={`experience-slide ${index % 2 ? "experience-slide-reverse" : ""}`} key={item.company}>
+        {visible.map((item, index) => <article className={`experience-slide experience-company-${companyTone(item.company)} ${index % 2 ? "experience-slide-reverse" : ""}`} key={item.company}>
           <div className="experience-slide-brand">
             <Image src={item.logo} alt={`${item.company} logo`} width={180} height={180} sizes="180px" />
             <span>{item.period}</span><h3>{item.company}</h3><p>{item.role}</p><small>{item.duration}</small>
@@ -57,7 +72,7 @@ export default function ExperienceCarousel({ experiences }: { experiences: Exper
       </div>)}
     </div>
     <div className="experience-history-control">
-      <button type="button" onClick={() => setPage(showingLatest ? 1 : 0)}>
+      <button type="button" onClick={toggleExperiencePage}>
         <span>{showingLatest ? "Show past experience" : "Show latest experience"}</span>
         <i aria-hidden="true">{showingLatest ? "↓" : "↑"}</i>
       </button>

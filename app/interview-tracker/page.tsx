@@ -124,7 +124,7 @@ export default function InterviewTrackerPage() {
 
   if (state !== "ready") return <main className="tracker-page">
     <header className="admin-topbar"><Wordmark/><nav><Link href="/admin">Admin portal</Link><Link href="/">Public website</Link></nav><span>{userName}</span></header>
-    <section className="admin-empty"><p className="eyebrow">PRIVATE · ADMIN ONLY</p><h1>{state === "loading" ? "Opening your tracker…" : state === "offline" ? "Tracker service unavailable." : "Admin access only."}</h1><p>{message}</p>{state === "offline" ? <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection ↗</button> : state === "denied" ? <Link className="button button-dark" href="/admin/login?next=/interview-tracker">Admin login ↗</Link> : null}</section>
+    <section className="admin-empty"><p className="eyebrow">PRIVATE · ADMIN ONLY</p><h1>{state === "loading" ? "Opening your tracker…" : state === "offline" ? "Tracker service unavailable." : "Admin access only."}</h1><p>{message}</p>{state === "offline" ? <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection</button> : state === "denied" ? <Link className="button button-dark" href="/admin/login?next=/interview-tracker">Admin login</Link> : null}</section>
   </main>;
 
   return <main className="tracker-page">

@@ -28,7 +28,7 @@ export default function AccountStatus() {
     window.location.href = "/";
   }
 
-  if (!user.phone) return <Link className="account-status" href="/login">Log in</Link>;
+  if (!user.phone) return <Link className="account-status" href="/login">Member login</Link>;
 
   const displayName = user.name || `User ${user.phone.slice(-4)}`;
   return (

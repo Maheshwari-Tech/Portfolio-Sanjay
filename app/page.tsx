@@ -40,6 +40,7 @@ const skillLabels: Record<string, string> = {
   distributedSystemsCloud: "Distributed systems & cloud",
   architectureAndQuality: "Architecture & quality",
   techLeadAndLeadership: "Tech Lead & Leadership",
+  devOpsAndSre: "DevOps & SRE",
   tools: "Tools",
   softwareDevelopment: "Software development",
 };
@@ -107,24 +108,16 @@ export default async function Home() {
   const featuredProjectIds = [29, 15, 25];
   const projects = featuredProjectIds.map((id) => projectData.find((project) => project.id === id)).filter((project) => project !== undefined);
   const allProjectTechnologies = Array.from(new Set(projectData.flatMap((project) => project.technologies))).sort();
+  const displayedSkills: Record<string, string[]> = {
+    ...(skills as Record<string, string[]>),
+    devOpsAndSre: (skills as Record<string, string[]>).devOpsAndSre ?? ["CI/CD", "Jenkins", "Prometheus", "Grafana", "OpenTelemetry", "SLOs", "Monitoring & Alerting", "Incident Response"],
+  };
   const liveProjects = projectData.filter((project) => project.deployed).length;
-  const usedTechnologies = (names: string[]) => names.filter((name) => allProjectTechnologies.includes(name));
-  const projectAreas = [
-    { label: "AI & ML", description: "Intelligence, retrieval, automation", technologies: usedTechnologies(["AI Agents", "LLMs", "LangChain", "LangGraph", "RAG", "TensorFlow", "Scikit-Learn", "OCI Generative AI"]) },
-    { label: "Web apps", description: "Interfaces, dashboards, products", technologies: usedTechnologies(["React", "TypeScript", "Vite", "Node.js", "Express", "Chart.js", "Leaflet"]) },
-    { label: "Mobile", description: "Cross-platform product delivery", technologies: usedTechnologies(["Flutter", "Dart", "React Native", "Expo", "Android", "iOS"]) },
-    { label: "Backend & software", description: "APIs, services, real-time systems", technologies: usedTechnologies(["Python", "Go", "FastAPI", "Backend APIs", "gRPC", "WebSocket", "CLI"]) },
+  const technologyMarqueeRows = [
+    allProjectTechnologies.filter((_, index) => index % 2 === 0),
+    allProjectTechnologies.filter((_, index) => index % 2 !== 0),
   ];
-  const technologyGroups = [
-    { label: "Languages", technologies: usedTechnologies(["Python", "TypeScript", "Go", "Dart", "SQL", "JSON"]) },
-    { label: "Frameworks & libraries", technologies: usedTechnologies(["React", "React Native", "Flutter", "Expo", "Node.js", "Express", "FastAPI", "Vite", "MERN", "LangChain", "LangGraph", "Scikit-Learn", "TensorFlow", "NumPy", "Pandas", "OpenCV", "Chart.js", "Leaflet", "Jupyter Notebook"]) },
-    { label: "External tools & platforms", technologies: usedTechnologies(["Docker", "OCI", "OCI Generative AI", "Grafana", "Prometheus", "OpenTelemetry", "NATS", "Traefik", "k3s", "containerd", "WireGuard", "OPA", "SPIFFE/SPIRE", "Tree-sitter", "Llama 4", "Android", "iOS", "excel", "PDF", "pdf-parsing"]) },
-    { label: "Data & storage", technologies: usedTechnologies(["PostgreSQL", "MongoDB", "Redis", "SQLite", "pgvector", "Vector Database", "FTS", "Knowledge Graph", "Product Association Graph", "Memory"]) },
-  ];
-  const groupedTechnologies = new Set(technologyGroups.flatMap((group) => group.technologies));
-  technologyGroups.push({ label: "Concepts & patterns", technologies: allProjectTechnologies.filter((technology) => !groupedTechnologies.has(technology)) });
   const recognitionGroups = Object.entries(achievementGroups).map(([category, items]) => ({ category, label: achievementLabels[category] ?? category, items: items as Achievement[] }));
-  const travelWishlist = personalItems.filter((item) => item.category === "travel_wishlist");
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -227,8 +220,12 @@ export default async function Home() {
             </div>
           </div>
         </div>
-        <div className="skills-grid" id="technologies">
-          {Object.entries(skills).map(([category, items]) => (
+        <div className="skills-heading">
+          <div><span className="eyebrow">Technologies</span><h3 id="technologies-heading">Tools chosen for real systems.</h3></div>
+          <p>From architecture and cloud infrastructure to AI delivery and technical leadership.</p>
+        </div>
+        <div className="skills-grid" id="technologies" aria-labelledby="technologies-heading">
+          {Object.entries(displayedSkills).map(([category, items]) => (
             <article className="skill-card" key={category}>
               <h3>{skillLabels[category] ?? category}</h3>
               <div className="skill-tags">
@@ -240,8 +237,16 @@ export default async function Home() {
         <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
           <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
           <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy]) => <article key={title}><h4>{title}</h4><p>{copy}</p></article>)}</div>
-          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day <span aria-hidden="true">↗</span></Link>
+          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day</Link>
         </section>
+      </section>
+
+      <section className="recognition-section" id="achievements">
+        <div className="section-heading compact-heading">
+          <p className="eyebrow">Recognition</p>
+          <h2>Milestones Earned in Journey</h2>
+        </div>
+        <RecognitionCarousel groups={recognitionGroups} />
       </section>
 
       <section className="projects-section" id="projects">
@@ -251,7 +256,7 @@ export default async function Home() {
             <h2>Ideas, made useful.</h2>
           </div>
           <div className="projects-actions">
-            <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+            <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub</a>
           </div>
         </div>
         <div className="projects-grid">
@@ -276,34 +281,38 @@ export default async function Home() {
                 <div className="project-technology-block">
                   <span>Core technologies</span>
                   <div className="project-tags">{project.technologies.slice(0, 6).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View details <span aria-hidden="true">↗</span></Link>
+                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View details</Link>
                 </div>
               </article>
             );
           })}
         </div>
 
-        <details className="project-overview" aria-label="Project technology map">
-          <summary>Explore project domains and complete technology inventory <span aria-hidden="true">+</span></summary>
-          <div className="project-overview-halves">
-            <div className="project-context-half">
-              <div className="project-overview-stats"><div><strong>{projectData.length}</strong><span>Total projects</span></div><div><strong>{liveProjects}</strong><span>Live projects</span></div></div>
-              <div className="project-area-grid">
-                {projectAreas.map((area) => <article className={area.label === "AI & ML" ? "project-area-ai" : undefined} key={area.label}><div><h3>{area.label}</h3><p>{area.description}</p></div><ul>{area.technologies.map((technology) => <li className={technologyClassName(technology)} key={technology}>{technology}</li>)}</ul></article>)}
-              </div>
-            </div>
-            <div className="project-technology-half">
-              <span className="project-half-label">Technology inventory</span>
-              <div className="project-stack-groups">
-              {technologyGroups.map((group) => <article key={group.label}><h3>{group.label}</h3><div>{group.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div></article>)}
-              </div>
-            </div>
+        <section className="technology-marquee" aria-label="Technologies used across projects">
+          <div className="technology-marquee-heading">
+            <div><span>Used across projects</span><h3>Project-proven tools.</h3></div>
+            <p>{projectData.length} projects · {liveProjects} live builds · {allProjectTechnologies.length} technologies</p>
           </div>
-        </details>
+          <div className="technology-marquee-rows">
+            {technologyMarqueeRows.map((row, rowIndex) => (
+              <div className={`technology-marquee-row ${rowIndex === 1 ? "technology-marquee-row-reverse" : ""}`} key={rowIndex}>
+                <div className="technology-marquee-track">
+                  {[0, 1].map((copy) => (
+                    <div className="technology-marquee-set" aria-hidden={copy === 1} key={copy}>
+                      {row.map((technology) => <span className={technologyClassName(technology)} key={`${copy}-${technology}`}>{technology}</span>)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        <div className="projects-more-footer">
-          <span>More products, experiments, and engineering tools.</span>
-          <Link href="/projects">View all projects <span aria-hidden="true">↗</span></Link>
+        <div className="projects-more-footer projects-cta-panel">
+          <Link className="writing-cta writing-cta-primary projects-all-button" href="/projects">
+            <span className="writing-cta-icon projects-cta-icon" aria-hidden="true" />
+            <span>More Projects</span>
+          </Link>
         </div>
 
       </section>
@@ -318,7 +327,7 @@ export default async function Home() {
             <p>Practical thoughts on interviews, system design, engineering choices, and career growth.</p>
           </div>
         </div>
-        <div className="writing-overview" aria-label="Writing archive highlights"><strong>{blogs.length}<span>published notes</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div><p>System design, interviews, engineering decisions, and career growth—collected as practical working notes.</p></div>
+        <div className="writing-overview" aria-label="Writing archive highlights"><strong>{blogs.length}<span>published notes</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div></div>
 
         <div className="blog-grid">
           {blogs.slice(0, 3).map((blog, index) => {
@@ -332,18 +341,24 @@ export default async function Home() {
                 <h3><Link href={articleHref}>{cleanBlogTitle(blog.title)}</Link></h3>
                 <p className="blog-author">By {blog.author}</p>
                 <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
-                <div className="blog-tags">{blog.tags.map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
+                <div className="blog-tags">{blog.tags.slice(0, 2).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
                 <Link className="blog-read-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`}>
-                  Read article <span aria-hidden="true">↗</span>
+                  Read article
                 </Link>
               </article>
             );
           })}
         </div>
 
-        <div className="articles-more-footer">
-          <span>More ideas on engineering, interviews, systems, and growth.</span>
-          <Link href="/articles">View all blogs & articles <span aria-hidden="true">↗</span></Link>
+        <div className="writing-cta-panel" aria-label="Explore and subscribe to articles">
+          <Link className="writing-cta writing-cta-primary" href="/articles">
+            <span className="writing-cta-icon writing-cta-icon-posts" aria-hidden="true" />
+            <span>Read All Posts</span>
+          </Link>
+          <Link className="writing-cta writing-cta-secondary" href="/articles#subscribe">
+            <span className="writing-cta-icon writing-cta-icon-updates" aria-hidden="true" />
+            <span>Subscribe for Updates</span>
+          </Link>
         </div>
 
         <section className="video-conversations-section" aria-labelledby="video-conversations-title">
@@ -353,14 +368,6 @@ export default async function Home() {
           </div>
           <VideoCarousel videos={videos} />
         </section>
-      </section>
-
-      <section className="recognition-section" id="achievements">
-        <div className="section-heading compact-heading">
-          <p className="eyebrow">Recognition</p>
-          <h2>Milestones earned through practice.</h2>
-        </div>
-        <RecognitionCarousel groups={recognitionGroups} />
       </section>
 
       <section className="recommendations-section" id="recommendations">
@@ -373,7 +380,7 @@ export default async function Home() {
             <span>{recommendations.length} recommendations</span>
             <a className="recommendation-linkedin-control" href="https://www.linkedin.com/in/snjumaheshwari/details/recommendations/" target="_blank" rel="noreferrer">
               <span>Recommend me</span>
-              <span aria-hidden="true">in ↗</span>
+              <span aria-hidden="true">in</span>
             </a>
           </div>
         </div>
@@ -391,7 +398,7 @@ export default async function Home() {
         <div className="section-heading personal-heading">
           <div>
             <p className="eyebrow">Beyond engineering</p>
-            <h2>A little more personal.</h2>
+            <h2>What shapes me beyond the work.</h2>
           </div>
           <p>The films, series, books, places, and people that shape how I see the world beyond systems and software.</p>
         </div>
@@ -402,12 +409,15 @@ export default async function Home() {
             <h3>Life is better when it&apos;s built together. <span aria-hidden="true">♥</span></h3>
             <p>Meet Shalini Thebaria—my wife, closest friend, and the person who makes every chapter more meaningful.</p>
           </div>
-          <a href="https://shalinithebaria.com" target="_blank" rel="noreferrer">
-            Visit Shalini’s website <span>↗</span>
+          <a className="family-profile-link" href="https://shalinithebaria.com" target="_blank" rel="noreferrer">
+            <span>
+              <small>Shalini Thebaria</small>
+              <strong>Explore her portfolio</strong>
+            </span>
           </a>
         </article>
 
-        <BeyondTechnicalTabs items={personalItems} travelWishlist={travelWishlist} />
+        <BeyondTechnicalTabs items={personalItems} />
       </section>
 
       <section className="contact-section" id="contact">
@@ -422,6 +432,7 @@ export default async function Home() {
           <ContactFeedback />
         </div>
       </section>
+
       </main>
       <SiteFooter />
     </>

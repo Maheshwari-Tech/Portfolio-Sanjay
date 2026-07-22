@@ -107,7 +107,7 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
         ))}
       </div>
 
-      {featured && <article className="featured-article"><div><span className="article-kicker">Featured note</span><span>{featured.date}</span></div><p>{featured.tags[0] || "Engineering"}</p><h2>{cleanTitle(featured.title)}</h2><p>{excerpt(featured)}</p><Link href={featured.href ?? `/articles/${featured.id}`}>Read the article <span>↗</span></Link></article>}
+      {featured && <article className="featured-article"><div><span className="article-kicker">Featured note</span><span>{featured.date}</span></div><p>{featured.tags[0] || "Engineering"}</p><h2>{cleanTitle(featured.title)}</h2><p>{excerpt(featured)}</p><Link href={featured.href ?? `/articles/${featured.id}`}>Read the article</Link></article>}
 
       <div className="article-results">
         {articlesToShow.map((article) => (
@@ -117,7 +117,7 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
             <p>{excerpt(article)}</p>
             <div className="article-result-footer">
               <span>{article.tags.join(" · ")}</span>
-              <Link href={article.href ?? `/articles/${article.id}`}>Read article <span aria-hidden="true">↗</span></Link>
+              <Link href={article.href ?? `/articles/${article.id}`}>Read article</Link>
             </div>
           </article>
         ))}
@@ -129,7 +129,7 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
           Show more articles ↓
         </button>
       )}
-      <section className="article-subscribe" aria-labelledby="subscribe-title"><div><p className="eyebrow">Stay updated</p><h2 id="subscribe-title">Notes worth saving for later.</h2></div><div><p>Get occasional updates when a new piece on engineering, systems, interviews, or career growth is published.</p><form onSubmit={subscribe}><label><span>Email address</span><input required type="email" value={subscriberEmail} onChange={(event) => setSubscriberEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" /></label><button disabled={subscribing}>{subscribing ? "Subscribing…" : "Subscribe ↗"}</button></form>{subscriptionStatus && <p className="subscription-status" role="status">{subscriptionStatus}</p>}</div></section>
+      <section className="article-subscribe" id="subscribe" aria-labelledby="subscribe-title"><div><p className="eyebrow">Stay updated</p><h2 id="subscribe-title">Notes worth saving for later.</h2></div><div><p>Get occasional updates when a new piece on engineering, systems, interviews, or career growth is published.</p><form onSubmit={subscribe}><label><span>Email address</span><input required type="email" value={subscriberEmail} onChange={(event) => setSubscriberEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" /></label><button disabled={subscribing}>{subscribing ? "Subscribing…" : "Subscribe"}</button></form>{subscriptionStatus && <p className="subscription-status" role="status">{subscriptionStatus}</p>}</div></section>
     </section>
   );
 }

@@ -77,7 +77,7 @@ export default function PersonalRecommendation({ mode }: { mode: RecommendationM
           <label className="floating-field"><span>Your name <em>Optional</em></span><input value={from} onChange={(event) => setFrom(event.target.value)} placeholder="Your name (optional)" maxLength={70} tabIndex={expanded ? 0 : -1} /></label>
         </div>
         <label className="floating-field"><span>Why you recommend it <em>Optional</em></span><textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Why do you recommend it? (optional)" rows={2} maxLength={500} tabIndex={expanded ? 0 : -1} /></label>
-        <button className="inline-recommendation-submit" type="submit" disabled={sending} tabIndex={expanded ? 0 : -1}>{sending ? "Sending…" : "Send recommendation"} <span aria-hidden="true">↗</span></button>
+        <button className="inline-recommendation-submit" type="submit" disabled={sending} tabIndex={expanded ? 0 : -1}>{sending ? "Sending…" : "Send recommendation"}</button>
         <p className="inline-recommendation-status" role="status">{status || " "}</p>
       </form>
     </div>

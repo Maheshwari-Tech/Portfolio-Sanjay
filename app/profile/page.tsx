@@ -106,7 +106,7 @@ export default function ProfilePage() {
             <label>Mobile number<input value={phone} readOnly aria-readonly="true" /></label>
             <label>Profile name<input value={name} onChange={(event) => setName(event.target.value)} required maxLength={80} autoComplete="name" /></label>
             <label>Bio<textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={500} rows={6} placeholder="Share a little about your work, interests, or goals." /></label>
-            <div className="profile-form-footer"><span>{bio.length}/500</span><button className="button button-dark" disabled={savingProfile}>{savingProfile ? "Saving…" : "Save profile ↗"}</button></div>
+            <div className="profile-form-footer"><span>{bio.length}/500</span><button className="button button-dark" disabled={savingProfile}>{savingProfile ? "Saving…" : "Save profile"}</button></div>
             {profileStatus && <p className="form-status" role="status">{profileStatus}</p>}
           </form>
 
@@ -115,7 +115,7 @@ export default function ProfilePage() {
             <p className="profile-card-copy">Use a unique password with at least eight characters.</p>
             <label>New password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={8} autoComplete="new-password" /></label>
             <label>Confirm new password<input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required minLength={8} autoComplete="new-password" /></label>
-            <button className="button button-dark" disabled={savingPassword}>{savingPassword ? "Changing…" : "Change password ↗"}</button>
+            <button className="button button-dark" disabled={savingPassword}>{savingPassword ? "Changing…" : "Change password"}</button>
             {passwordStatus && <p className="form-status" role="status">{passwordStatus}</p>}
           </form>
         </section>

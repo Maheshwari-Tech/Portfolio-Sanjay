@@ -34,7 +34,7 @@ export default function ProjectDemoRequest({ projectId, projectName }: { project
 
   return <section className="demo-request" id="request-demo">
     <div><p className="eyebrow">REQUEST A DEMO</p><h2>Want to see {projectName} in context?</h2><p>Share what you would like to explore.</p></div>
-    <button className="button button-dark" onClick={() => setOpen(!open)}>{open ? "Close form" : "Request demo ↗"}</button>
-    {open && <form onSubmit={submit}><label>Name<input name="name" required /></label><label>Work email<input name="email" type="email" required /></label><label>Context<textarea name="message" required rows={4} /></label><button disabled={busy} className="button button-dark">{busy ? "Submitting…" : "Submit request ↗"}</button>{!isLoggedIn() && <p>Demo requests require <Link href={`/login?next=${encodeURIComponent(`/projects/${projectId}#request-demo`)}`}>sign in</Link>.</p>}{status && <p className="form-status">{status}</p>}</form>}
+    <button className="button button-dark" onClick={() => setOpen(!open)}>{open ? "Close form" : "Request demo"}</button>
+    {open && <form onSubmit={submit}><label>Name<input name="name" required /></label><label>Work email<input name="email" type="email" required /></label><label>Context<textarea name="message" required rows={4} /></label><button disabled={busy} className="button button-dark">{busy ? "Submitting…" : "Submit request"}</button>{!isLoggedIn() && <p>Demo requests require <Link href={`/login?next=${encodeURIComponent(`/projects/${projectId}#request-demo`)}`}>sign in</Link>.</p>}{status && <p className="form-status">{status}</p>}</form>}
   </section>;
 }
