@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const links = [
-  ["Work", "/#work"], ["Technologies", "/#technologies"], ["Projects", "/#projects"],
-  ["Blogs", "/#writing"], ["Certificates", "/certificates"], ["Recommendations", "/#recommendations"], ["Personal", "/#personal"], ["Contact", "/#contact"],
+  ["Work", "/#work"], ["Technologies", "/#technologies"], ["Projects", "/projects"],
+  ["Blogs", "/articles"], ["Certificates", "/certificates"], ["Recommendations", "/#recommendations"], ["Personal", "/#personal"], ["Contact", "/#contact"],
 ];
 
 export default function MobileNavigation({ resume }: { resume?: string }) {
