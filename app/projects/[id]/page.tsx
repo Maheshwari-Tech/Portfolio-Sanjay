@@ -115,28 +115,28 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         {"architecture" in project && project.architecture && (
           <section className="project-detail-blueprint">
-            <div className="project-detail-section-heading"><p className="eyebrow">System architecture</p><h2>{isAssistant ? "Context-aware. Tool-enabled. Safe by design." : "College-governed. Student-powered."}</h2><p>{isAssistant ? "A deterministic orchestration layer surrounds the language model, controls context and tools, and records enough evidence to evaluate every specialist." : "The administration server remains the trusted control plane; application workloads execute only on opted-in student computers."}</p></div>
+            <div className="project-detail-section-heading"><p className="eyebrow">System architecture</p><h2>{"architectureHeading" in project ? project.architectureHeading : isAssistant ? "Context-aware. Tool-enabled. Safe by design." : "College-governed. Student-powered."}</h2><p>{"architectureSummary" in project ? project.architectureSummary : isAssistant ? "A deterministic orchestration layer surrounds the language model, controls context and tools, and records enough evidence to evaluate every specialist." : "The administration server remains the trusted control plane; application workloads execute only on opted-in student computers."}</p></div>
             <div className="project-blueprint-grid">{project.architecture.map((component) => <article key={component.name}><span aria-hidden="true">↳</span><div><h3>{component.name}</h3><p>{component.detail}</p></div></article>)}</div>
           </section>
         )}
 
         {"skillsRequired" in project && project.skillsRequired && (
           <section className="project-detail-skills">
-            <div className="project-detail-section-heading"><p className="eyebrow">Skills required</p><h2>{isAssistant ? "AI engineering grounded in product trust." : "Engineering depth needed to make it trustworthy."}</h2></div>
+            <div className="project-detail-section-heading"><p className="eyebrow">Skills required</p><h2>{"skillsHeading" in project ? project.skillsHeading : isAssistant ? "AI engineering grounded in product trust." : "Engineering depth needed to make it trustworthy."}</h2></div>
             <div>{project.skillsRequired.map((skill) => <article key={skill.name}><h3>{skill.name}</h3><p>{skill.detail}</p></article>)}</div>
           </section>
         )}
 
         {"deliveryPhases" in project && project.deliveryPhases && (
           <section className="project-detail-plan">
-            <div><p className="eyebrow">Delivery approach</p><h2>{isAssistant ? "Start narrow. Earn trust. Expand carefully." : "Start stateless. Earn reliability."}</h2></div>
+            <div><p className="eyebrow">Delivery approach</p><h2>{"deliveryHeading" in project ? project.deliveryHeading : isAssistant ? "Start narrow. Earn trust. Expand carefully." : "Start stateless. Earn reliability."}</h2></div>
             <ol>{project.deliveryPhases.map((phase, index) => <li key={phase}><span>{String(index + 1).padStart(2, "0")}</span><p>{phase}</p></li>)}</ol>
           </section>
         )}
 
         {"constraints" in project && project.constraints && (
           <section className="project-detail-constraints">
-            <p className="eyebrow">{isAssistant ? "Product guardrails" : "Architecture realities"}</p><h2>{isAssistant ? "Useful assistance without invisible overreach." : "What makes the idea difficult—and worth designing carefully."}</h2>
+            <p className="eyebrow">{"constraintsLabel" in project ? project.constraintsLabel : isAssistant ? "Product guardrails" : "Architecture realities"}</p><h2>{"constraintsHeading" in project ? project.constraintsHeading : isAssistant ? "Useful assistance without invisible overreach." : "What makes the idea difficult—and worth designing carefully."}</h2>
             <ul>{project.constraints.map((constraint) => <li key={constraint}>{constraint}</li>)}</ul>
           </section>
         )}

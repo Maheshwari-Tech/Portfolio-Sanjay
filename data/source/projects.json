@@ -93,6 +93,127 @@
     ]
   },
   {
+    "id": 38,
+    "name": "VanshVriksh — Family Graph",
+    "description": "An India-first, privacy-first living family graph that helps large families see their hierarchy, understand relationships, add relatives in seconds, and stay connected across generations. The tree is the main interface: people can create and claim profiles, link families through marriage, select groups such as father’s-side cousins, keep private notes, remember family moments, and safely review possible duplicate profiles.",
+    "image": "/images/vanshvriksh-family-tree.png",
+    "gallery": [
+      {
+        "src": "/images/vanshvriksh-family-tree.png",
+        "label": "VanshVriksh family graph product concept"
+      }
+    ],
+    "github": null,
+    "technologies": [
+      "React",
+      "TypeScript",
+      "Next.js",
+      "Neo4j",
+      "Cypher",
+      "Graph Data Modeling",
+      "PostgreSQL",
+      "Drizzle ORM",
+      "Cloudflare",
+      "PWA",
+      "OTP Workflows",
+      "Event-driven Architecture",
+      "Privacy by Design",
+      "i18n"
+    ],
+    "category": "Social · Family Graph",
+    "type": "app",
+    "deployed": false,
+    "localUrl": "http://localhost:3000",
+    "priority": 5,
+    "projectId": 38,
+    "badges": [
+      "India-first",
+      "Privacy-first",
+      "Graph product"
+    ],
+    "features": [
+      "Tree-first hierarchy with contextual parent, spouse, sibling, child, and relative creation",
+      "Viewer-relative relationship groups with explainable graph traversal",
+      "Phone OTP profile verification, ownership, and visible trust states",
+      "Human-reviewed duplicate detection and reversible profile merges",
+      "Marriage-linked family graphs with independent privacy boundaries",
+      "Profiles with biographies, metadata, portfolio links, social profiles, and field-level visibility",
+      "Author-only private notes that never transfer through profile claims or merges",
+      "Birthday, anniversary, festival, call, message, and invitation actions",
+      "Color-coded family labels, newsletters, and selective group gift planning",
+      "India-first phone flows, multilingual architecture, low-bandwidth design, and accessible graph views"
+    ],
+    "architectureHeading": "One canonical family graph. Many private points of view.",
+    "architectureSummary": "Neo4j is authoritative for the family graph: every human is one Person node and every family connection is a typed edge. A separate relational security store owns accounts, claims, permissions, encrypted contacts, private notes, audit, and workflows.",
+    "architecture": [
+      {
+        "name": "Canonical graph",
+        "detail": "Neo4j stores canonical Person nodes and parent, partner, guardian, adoption, and historical marriage edges. Individual tree layouts remain user-specific views rather than copied family data."
+      },
+      {
+        "name": "Identity and profile claims",
+        "detail": "An account is not automatically a person. OTP verification proves control of a contact point; an invitation and explicit profile claim establish ownership or stewardship."
+      },
+      {
+        "name": "Relationship query engine",
+        "detail": "Bounded, permission-aware Cypher traversal answers how two people are related, resolves dynamic groups such as all cousins on the viewer’s father’s side, and returns an explanation path."
+      },
+      {
+        "name": "Separate spouse nodes",
+        "detail": "A couple is never one database record. Each spouse is an independent Person node joined by one SPOUSE_OF edge; the interface positions the two nodes together."
+      },
+      {
+        "name": "Safe merge workflow",
+        "detail": "Names, contact hashes, dates, locations, and relationship overlap create duplicate candidates. Authorized people review evidence before a transactional, audited, and reversible merge."
+      },
+      {
+        "name": "Event-driven family moments",
+        "detail": "Queues isolate invitations, OTP delivery, reminders, newsletters, duplicate evaluation, and future gift fulfillment from interactive graph writes."
+      },
+      {
+        "name": "Privacy boundaries",
+        "detail": "Graph access, profile-field visibility, contact details, private notes, blocks, and relationship disputes are evaluated on the server. Marriage can connect traversal without silently sharing two families’ private data."
+      }
+    ],
+    "skillsHeading": "Product architecture for a deeply human graph.",
+    "skillsRequired": [
+      {
+        "name": "Graph and domain modeling",
+        "detail": "Designing Neo4j Person nodes, typed relationship edges, Cypher traversal, viewer-relative kinship, automatic layout, saved perspectives, and explainable paths at family scale."
+      },
+      {
+        "name": "Identity, privacy, and abuse prevention",
+        "detail": "Separating accounts from people, securing phone OTP, protecting minors and memorial profiles, enforcing field visibility, and preventing contact discovery or invitation abuse."
+      },
+      {
+        "name": "India-first product design",
+        "detail": "Phone-first and WhatsApp-friendly flows, regional family terms, Unicode and locale readiness, low-bandwidth Android performance, festivals, and large multi-generational family structures."
+      },
+      {
+        "name": "Distributed workflow design",
+        "detail": "Idempotent writes, event queues, provider reconciliation, notification preferences, audit trails, and safe failure handling for reminders, invitations, newsletters, and gifts."
+      }
+    ],
+    "deliveryHeading": "Earn the right to expand beyond the tree.",
+    "deliveryPhases": [
+      "Validate the tree-first add experience with Indian family coordinators and finalize relationship, stewardship, language, and privacy rules.",
+      "Ship a private tree MVP with fast relative creation, profiles, invitations, saved roots, private notes, and birthday or anniversary reminders.",
+      "Add marriage-linked graphs, relationship groups, branch labels, duplicate review, and reversible merges after graph trust is proven.",
+      "Layer in WhatsApp-friendly communication, family moments, and consent-safe newsletter drafting.",
+      "Introduce reviewed group gift planning and one fulfillment partner only after recipient selection and privacy workflows are reliable."
+    ],
+    "constraintsLabel": "Product guardrails",
+    "constraintsHeading": "Family trust is more important than graph completeness.",
+    "constraints": [
+      "A phone OTP proves contact control, not automatic identity, profile ownership, or access to a private family tree.",
+      "The product never silently merges people or grants access to another family because of marriage.",
+      "Private notes belong only to their author and are excluded from claims, merges, newsletters, and exports.",
+      "Dynamic relationship groups must explain why each person was included and allow manual exclusion before messaging, gifting, or exporting.",
+      "Sensitive classifications such as caste, religion, health, and finances are not default profile fields.",
+      "The graph must have a keyboard-accessible list alternative and remain usable on mid-range Android devices and Indian 4G networks."
+    ]
+  },
+  {
     "id": 29,
     "name": "Intelligent Report Builder",
     "description": "An AI-intelligence workspace that turns natural-language intent and structured data into polished resumes, biodata, medical records, and business reports—then helps teams build templates, validate quality, investigate failures, and predict delivery time.",
@@ -241,72 +362,6 @@
       "Performance Analytics",
       "Study Plan Creation",
       "Motivational Features"
-    ]
-  },
-  {
-    "id": 22,
-    "name": "Resume Builder",
-    "description": "Advanced resume builder with customizable templates, export options, and modern design layouts.",
-    "image": "/images/resume_builder.png",
-    "github": "https://github.com/maheshwari-tech/resume-builder",
-    "technologies": ["React", "Node.js", "Express", "MongoDB"],
-    "category": "Builder",
-    "type": "app",
-    "deployed": false,
-    "localUrl": "http://localhost:3009",
-    "priority": 9,
-    "projectId": 22,
-    "features": [
-      "Customizable Templates",
-      "Resume Export Options",
-      "Modern Design Layouts",
-      "Skill Assessment",
-      "Professional Formatting",
-      "Multiple Formats Support"
-    ]
-  },
-  {
-    "id": 21,
-    "name": "Bio Data Builder",
-    "description": "Professional bio-data creation tool with customizable templates, export options, and modern design layouts.",
-    "image": "/images/bio-data.png",
-    "github": "https://github.com/maheshwari-tech/bio-builder",
-    "technologies": ["React", "Node.js", "Express", "MongoDB"],
-    "category": "Builder",
-    "type": "app",
-    "deployed": false,
-    "localUrl": "http://localhost:3001",
-    "priority": 10,
-    "projectId": 21,
-    "features": [
-      "Bio-data Templates",
-      "Customizable Designs",
-      "Export Functionality",
-      "Professional Layouts",
-      "Personal Information Management",
-      "Print-ready Formats"
-    ]
-  },
-  {
-    "id": 23,
-    "name": "Portfolio Website Builder",
-    "description": "Drag-and-drop portfolio website builder with customizable themes, content management, and hosting integration.",
-    "image": "/images/portfolio.jpg",
-    "github": "https://github.com/maheshwari-tech/portfolio-builder",
-    "technologies": ["React", "Node.js", "Express", "MongoDB"],
-    "category": "Builder",
-    "type": "app",
-    "deployed": false,
-    "localUrl": "http://localhost:3007",
-    "priority": 11,
-    "projectId": 23,
-    "features": [
-      "Drag-and-drop Interface",
-      "Customizable Themes",
-      "Content Management",
-      "Hosting Integration",
-      "SEO Optimization",
-      "Responsive Design"
     ]
   },
   {

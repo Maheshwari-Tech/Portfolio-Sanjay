@@ -288,10 +288,18 @@ export default async function Home() {
           })}
         </div>
 
-        <section className="technology-marquee" aria-label="Technologies used across projects">
+        <section className="technology-marquee" aria-label="Technologies explored through hands-on projects">
           <div className="technology-marquee-heading">
-            <div><span>Used across projects</span><h3>Project-proven tools.</h3></div>
-            <p>{projectData.length} projects · {liveProjects} live builds · {allProjectTechnologies.length} technologies</p>
+            <div>
+              <span>Learning by building</span>
+              <h3>Built to learn. Shipped to understand.</h3>
+              <p className="technology-marquee-intro">Technologies I&apos;ve explored through curiosity, then put to work by turning ideas into real, working projects.</p>
+            </div>
+            <div className="technology-marquee-proof" aria-label="Hands-on project summary">
+              <strong>{projectData.length}<span>projects</span></strong>
+              <strong>{liveProjects}<span>live builds</span></strong>
+              <strong>{allProjectTechnologies.length}<span>tools explored</span></strong>
+            </div>
           </div>
           <div className="technology-marquee-rows">
             {technologyMarqueeRows.map((row, rowIndex) => (
@@ -423,9 +431,10 @@ export default async function Home() {
       <section className="contact-section" id="contact">
         <div className="contact-shell">
           <div className="contact-heading-row">
-            <div>
-              <p className="eyebrow">Contact & feedback</p>
-              <h2>Let&apos;s start a <em>conversation.</em></h2>
+            <div className="contact-heading-copy">
+              <p className="eyebrow">Let&apos;s build together</p>
+              <h2>Get in <em>touch.</em></h2>
+              <p className="contact-intro">Have a project in mind or just want to chat? I&apos;d love to hear from you. Send me a message and I&apos;ll respond as soon as possible.</p>
             </div>
             <a className="resume-download" href={profile.resume} download>Download resume <span>PDF ↓</span></a>
           </div>

@@ -1,5 +1,14 @@
 [
   {
+    "id": 9,
+    "name": "Atishay Jain",
+    "rating": 5,
+    "comment": "I had the privilege of working under Sanjay's guidance, and I can confidently say he is not only an exceptional Tech Lead, but also one of the most impactful mentors I have ever worked with. As an SDE3, his technical depth and architectural vision are top-tier, but what truly sets him apart is his genuine commitment to elevating the engineers around him.\n\nSanjay’s mentorship was instrumental in my growth as an engineer. He leads with patience and clarity, taking the time to break down complex technical concepts and explaining the \"why\" behind critical architecture decisions. He creates a high-trust environment that empowers you to step outside your comfort zone and take full ownership of complex challenges, all while providing the exact guidance and support needed to succeed. His proactive approach to clearing blockers and sharp product sense consistently guided our team to hit critical milestones.\n\nSanjay seamlessly balances high-level technical execution with dedicated, hands-on mentorship. Any engineering team would be incredibly fortunate to have Sanjay leading their technical initiatives and developing their talent.",
+    "date": "2026-07-23",
+    "context": "Atishay reported to Sanjay directly at <b>Oracle</b>",
+    "socialLink": "https://www.linkedin.com/in/atishay-jain-387b5064"
+  },
+  {
     "id": 1,
     "name": "Sahil Jobanputra",
     "rating": 5,

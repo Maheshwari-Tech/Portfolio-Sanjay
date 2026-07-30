@@ -1827,7 +1827,7 @@ a.contact-option:hover{background:#2c3855}
 .recommendation-marquee .recommendation-card{border-color:rgba(89,105,159,.2);box-shadow:0 8px 26px rgba(31,34,53,.07);flex:0 0 min(360px,calc(100vw - 52px));height:500px;padding:25px;width:min(360px,calc(100vw - 52px))}
 .recommendation-marquee .recommendation-card:hover,.recommendation-marquee .recommendation-card:focus-within{transform:none}
 .recommendation-marquee .recommendation-topline{align-items:center}.recommendation-marquee .recommendation-topline time{color:var(--muted);font:.62rem var(--font-geist-mono),monospace}
-.recommendation-marquee .recommendation-quote{font-size:.94rem;line-height:1.58;margin:25px 0;overflow:auto;padding-right:6px}
+.recommendation-marquee .recommendation-quote{font-size:.94rem;line-height:1.58;margin:25px 0;overflow:auto;padding-right:6px;white-space:pre-line}
 .recommendation-name{font-size:.9rem;font-weight:620;margin:0}
 @keyframes recommendationMarquee{to{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){.recommendation-marquee{overflow-x:auto}.recommendation-marquee-track{animation:none;width:auto}.recommendation-marquee-set[aria-hidden="true"]{display:none}.recommendation-marquee-set{width:max-content}}
@@ -2641,21 +2641,37 @@ a.contact-option:hover{background:#2c3855}
 
 /* Applied technologies stay visually distinct from the expertise cards above. */
 .technology-marquee{border-color:#557061;border-radius:18px;box-shadow:0 20px 48px rgba(14,25,19,.18);margin-top:18px;padding:0 0 21px}
-.technology-marquee-heading{align-items:center;background:linear-gradient(90deg,rgba(217,255,87,.075),transparent 62%);border-bottom:1px solid rgba(166,194,173,.2);padding:21px clamp(22px,3.5vw,42px) 19px}
+.technology-marquee-heading{align-items:center;background:linear-gradient(90deg,rgba(217,255,87,.075),transparent 62%);border-bottom:1px solid rgba(166,194,173,.2);padding:24px clamp(22px,3.5vw,42px) 22px}
+.technology-marquee-heading>div:first-child{max-width:690px}
 .technology-marquee-heading h3{font-size:clamp(1.55rem,2.3vw,2.25rem);margin-top:7px}
-.technology-marquee-heading p{background:rgba(4,12,8,.38);border:1px solid rgba(171,194,178,.28);border-radius:999px;padding:8px 11px}
+.technology-marquee-heading .technology-marquee-intro{color:#bdc8c0;font-family:inherit;font-size:.82rem;letter-spacing:0;line-height:1.6;margin:11px 0 0;max-width:610px;text-align:left;text-transform:none}
+.technology-marquee-proof{display:grid;gap:7px;grid-template-columns:repeat(3,auto)}
+.technology-marquee-proof strong{align-items:center;background:rgba(4,12,8,.38);border:1px solid rgba(171,194,178,.28);border-radius:10px;color:#f4f7f1;display:flex;font:700 1rem var(--font-geist-mono),monospace;gap:7px;min-height:54px;padding:8px 11px}
+.technology-marquee-proof strong span{color:#9fb0a4;font-size:.56rem;letter-spacing:.08em;line-height:1.25;text-transform:uppercase}
 .technology-marquee-rows{-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);gap:7px;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);padding-top:16px}
 .technology-marquee-set{gap:8px;padding-right:8px}
-.technology-marquee-set span{background:rgba(246,248,241,.08);border-color:rgba(190,211,195,.38);color:#edf4ee;font-size:.74rem;font-weight:680;min-height:38px;padding:0 14px}
+.technology-marquee-set span{background:linear-gradient(145deg,rgba(246,248,241,.13),rgba(246,248,241,.055));border-color:rgba(190,211,195,.38);border-radius:10px;color:#edf4ee;font-size:.74rem;font-weight:680;min-height:40px;padding:0 15px;transition:background-color .2s ease,border-color .2s ease,transform .2s ease}
 .technology-marquee-set span:not(.ai-tech-tag){border-color:rgba(190,211,195,.38);box-shadow:none}
+.technology-marquee-set span:hover{background:rgba(217,255,87,.12);border-color:rgba(217,255,87,.6);transform:translateY(-2px)}
 .technology-marquee-set span.ai-tech-tag{background:linear-gradient(135deg,#344b91,#25366d)!important;border-color:#7183c9!important;box-shadow:none;color:#eef2ff!important}
 .technology-marquee:hover .technology-marquee-track,.technology-marquee:focus-within .technology-marquee-track{animation-play-state:paused}
 @media(max-width:620px){
   .technology-marquee{border-radius:13px;padding-bottom:17px}
   .technology-marquee-heading{align-items:flex-start;gap:12px;padding:18px}
-  .technology-marquee-heading p{border-radius:8px;line-height:1.45;padding:7px 9px;text-align:left}
+  .technology-marquee-heading .technology-marquee-intro{font-size:.77rem;line-height:1.55}
+  .technology-marquee-proof{grid-template-columns:repeat(3,1fr);width:100%}
+  .technology-marquee-proof strong{align-items:flex-start;flex-direction:column;gap:3px;min-height:62px;padding:9px}
   .technology-marquee-rows{-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);padding-top:13px}
   .technology-marquee-set span{font-size:.7rem;min-height:36px;padding:0 12px}
+}
+
+/* The contact invitation leads with a clear reason to start a conversation. */
+.contact-heading-copy{max-width:850px}
+.contact-section .contact-heading-copy h2{margin-top:25px}
+.contact-intro{color:#c8d1e3;font-size:clamp(.98rem,1.4vw,1.15rem);line-height:1.7;margin:24px 0 0;max-width:680px}
+@media(max-width:720px){
+  .contact-section .contact-heading-copy h2{margin-top:20px}
+  .contact-intro{margin-top:18px}
 }
 
 /* Muted multishade metrics make the impact summary easier to scan. */
