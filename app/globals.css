@@ -1876,6 +1876,7 @@ a.contact-option:hover{background:#2c3855}
 .recognition-controls .recognition-pause{background:transparent;border:1px solid #8e948d;border-radius:999px;color:#333d37;font-size:.875rem;padding:10px 15px}
 .recognition-slide .recognition-item-link,.blog-read-link,.recognition-controls button,.family-card>a{font-size:.875rem}
 .recognition-slide .recognition-item-link{align-items:center;display:inline-flex;min-height:44px}
+.recognition-slide .recognition-item-link:has(.milestone-number){display:inline-block}
 
 .personal-category-heading{min-height:0}
 .personal-category .inline-recommendation{display:grid;grid-template-rows:auto auto}
@@ -2694,3 +2695,12 @@ a.contact-option:hover{background:#2c3855}
 .stat-supporting strong{color:var(--supporting-accent)}
 .stat-supporting span{color:#5c615b}
 .stat-supporting:hover{background:linear-gradient(155deg,color-mix(in srgb,var(--supporting-accent) 12%,#f3f1eb),#ece9e2);box-shadow:inset 0 3px 0 var(--supporting-accent)}
+
+/* Homepage blog and project cards open from the full card surface. */
+.blog-card-link,.project-card-link{inset:0;position:absolute;z-index:1}
+.blog-card,.project-card{cursor:pointer}
+.blog-card-link:focus-visible,.project-card-link:focus-visible{outline:3px solid #8296e3;outline-offset:-4px}
+.project-gallery-controls{position:relative;z-index:2}
+.blog-read-link,.project-detail-link{opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .2s ease,transform .2s ease,visibility .2s;visibility:hidden}
+.blog-card:hover .blog-read-link,.blog-card:focus-within .blog-read-link,.project-card:hover .project-detail-link,.project-card:focus-within .project-detail-link{opacity:1;transform:translateY(0);visibility:visible}
+@media(hover:none){.blog-read-link,.project-detail-link{opacity:1;transform:none;visibility:visible}}

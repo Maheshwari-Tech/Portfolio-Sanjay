@@ -11,6 +11,11 @@ const retiredProjectNames = new Set([
 ]);
 
 function normalizeContent<T>(resource: string, value: T, fallback: T): T {
+  if (resource === "blogs" && Array.isArray(value) && Array.isArray(fallback)) {
+    const merged = new Map(fallback.map((item: any) => [item?.id, item]));
+    value.forEach((item: any) => merged.set(item?.id, { ...merged.get(item?.id), ...item }));
+    return Array.from(merged.values()) as T;
+  }
   if (resource !== "projects" || !Array.isArray(value)) return value;
 
   const visible = value.filter((item) => {

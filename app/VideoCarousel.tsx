@@ -22,7 +22,7 @@ export default function VideoCarousel({ videos }: { videos: Video[] }) {
   const next = () => setIndex((value) => (value + 1) % videos.length);
 
   return (
-    <div className="video-carousel" aria-label="Video conversations">
+    <div className="video-carousel" aria-label="Videos">
       <article className="video-slide">
         <a href={current.url} target="_blank" rel="noreferrer">
           <div className="video-image-wrap">

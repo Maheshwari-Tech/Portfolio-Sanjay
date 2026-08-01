@@ -64,19 +64,20 @@ export default function ProjectExplorer({ projects }: { projects: Project[] }) {
       <div className="project-results">
         {filtered.slice(0, visibleCount).map((project) => (
           <article key={project.id}>
-            <Link className="project-result-image" href={`/projects/${project.id}`} aria-label={`View ${project.name}`}>
+            <Link className="project-result-card-link" href={`/projects/${project.id}`} aria-label={`View ${project.name}`} />
+            <div className="project-result-image">
               {project.image ? <img src={project.image} alt="" /> : <span>{project.name}</span>}
               <div>{(project.badges ?? [project.category]).map((badge) => <span key={badge}>{badge}</span>)}</div>
-            </Link>
+            </div>
             <div className="project-result-copy">
-              <h2><Link href={`/projects/${project.id}`}>{project.name}</Link></h2>
+              <h2>{project.name}</h2>
               <p>{project.description}</p>
               {project.features.length > 0 && (
                 <ul>{project.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
               )}
               <div className="project-result-footer">
                 <div>{project.technologies.map((technology) => <span className={technologyClassName(technology)} key={technology}>{technology}</span>)}</div>
-                <Link href={`/projects/${project.id}#request-demo`}>Request demo</Link>
+                <span className="project-hover-read" aria-hidden="true">{project.github ? "Show more ↗" : "Request demo ↗"}</span>
               </div>
             </div>
           </article>

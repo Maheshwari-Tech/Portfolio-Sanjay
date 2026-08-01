@@ -3,6 +3,10 @@ import Link from "next/link";
 type Achievement = string | { text: string; url?: string; learning?: string };
 type RecognitionGroup = { category: string; label: string; items: Achievement[] };
 
+function highlightNumbers(text: string) {
+  return text.split(/(\b\d[\d,.+]*%?(?:\s*(?:years?|engineers?|interviews?|hires?|teams?|rank|candidates?|certifications?|problems?))?)/gi).filter(Boolean).map((part, index) => /\d/.test(part) ? <strong className="milestone-number" key={index}>{part}</strong> : part);
+}
+
 export default function RecognitionCarousel({ groups }: { groups: RecognitionGroup[] }) {
   return <div className="recognition-carousel" role="region" aria-label="Recognition highlights">
     <div className="recognition-carousel-track recognition-all-grid" role="list">
@@ -12,7 +16,7 @@ export default function RecognitionCarousel({ groups }: { groups: RecognitionGro
         <ul>{group.items.map((item) => {
           const value = typeof item === "string" ? { text: item } : item;
           return <li key={value.text} tabIndex={value.learning ? 0 : undefined}>
-            {value.url ? <a className="recognition-item-link" href={value.url} target="_blank" rel="noreferrer">{value.text}</a> : <p>{value.text}</p>}
+            {value.url ? <a className="recognition-item-link" href={value.url} target="_blank" rel="noreferrer">{highlightNumbers(value.text)}</a> : <p>{highlightNumbers(value.text)}</p>}
             {value.learning && <p className="recognition-slide-learning">{value.learning}</p>}
           </li>;
         })}</ul>

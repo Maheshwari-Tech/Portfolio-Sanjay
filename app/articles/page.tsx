@@ -4,12 +4,13 @@ import ArticleExplorer from "./ArticleExplorer";
 import SiteHeader from "../SiteHeader";
 import SiteFooter from "../SiteFooter";
 import { backendFirst } from "../serverContent";
+import type { ArticleRecord } from "./articleData";
 
 export const metadata: Metadata = {
-  title: "Blogs & Articles",
-  description: "Writing on software engineering, system design, interviews, and career growth by Sanjay Gandhi.",
+  title: "Notes from my Second Brain",
+  description: "Notes on engineering, interviews, systems, and the work behind the work by Sanjay Gandhi.",
   alternates: { canonical: "/articles" },
-  openGraph: { url: "/articles", title: "Blogs & Articles — Sanjay Gandhi", description: "Writing on software engineering, system design, interviews, and career growth by Sanjay Gandhi." },
+  openGraph: { url: "/articles", title: "Notes from my Second Brain — Sanjay Gandhi", description: "Notes on engineering, interviews, systems, and the work behind the work by Sanjay Gandhi." },
 };
 
 export const revalidate = 120;
@@ -20,11 +21,11 @@ export default async function ArticlesPage() {
     <>
       <SiteHeader />
       <main className="articles-index-page" id="main-content"><section className="articles-index-hero">
-        <p className="eyebrow">Ideas in practice</p>
-        <h1>Blogs & Articles.</h1>
-        <p>A growing library of practical notes on engineering, interviews, systems, and the work behind the work.</p>
+        <p className="eyebrow">Second Brain</p>
+        <h1>Notes from my Second Brain.</h1>
+        <p>Notes on engineering, interviews, systems, and the work behind the work.</p>
       </section>
-      <ArticleExplorer articles={blogs} />
+      <ArticleExplorer articles={blogs as ArticleRecord[]} />
       </main>
       <SiteFooter />
     </>

@@ -4,20 +4,9 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../apiClient";
 import { submitPortfolioEntry } from "../submissionService";
+import { sortArticlesByCreation, type ArticleRecord } from "./articleData";
 
-type Article = {
-  id: number;
-  title: string;
-  content_description: string;
-  date: string;
-  tags: string[];
-  author: string;
-  fileType: string;
-  isTextFile: boolean;
-  href?: string;
-  summary?: string;
-  asset_url?: string;
-};
+type Article = ArticleRecord;
 
 const cleanTitle = (title: string) => title.replace(/\.(md|svg|pdf)$/i, "");
 const summaries: Record<number, string> = {
@@ -31,11 +20,13 @@ const excerpt = (article: Article) => summaries[article.id] ?? article.summary ?
   .trim()
   .slice(0, 190) + "…";
 
+const isPrivate = (article: Article) => article.visibility === "private" || article.access_scope === "private";
+
 export default function ArticleExplorer({ articles }: { articles: Article[] }) {
   const [availableArticles, setAvailableArticles] = useState(articles);
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [page, setPage] = useState(1);
   const [subscriberEmail, setSubscriberEmail] = useState("");
   const [subscriptionStatus, setSubscriptionStatus] = useState("");
   const [subscribing, setSubscribing] = useState(false);
@@ -48,7 +39,7 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
         if (!active) return;
         const merged = new Map(articles.map(article => [article.id, article]));
         remote.forEach(article => merged.set(article.id, article));
-        setAvailableArticles(Array.from(merged.values()));
+        setAvailableArticles(sortArticlesByCreation(Array.from(merged.values())));
       })
       .catch(() => undefined);
     return () => { active = false; };
@@ -57,7 +48,7 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
   const tags = useMemo(() => Array.from(new Set(availableArticles.flatMap((article) => article.tags))).sort(), [availableArticles]);
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
-    return availableArticles.filter((article) => {
+    return sortArticlesByCreation(availableArticles).filter((article) => {
       const matchesTag = activeTag === "All" || article.tags.includes(activeTag);
       const matchesQuery = !term || cleanTitle(article.title).toLowerCase().includes(term) ||
         article.content_description.toLowerCase().includes(term) ||
@@ -68,12 +59,12 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
 
   const updateQuery = (value: string) => {
     setQuery(value);
-    setVisibleCount(12);
+    setPage(1);
   };
 
   const updateTag = (tag: string) => {
     setActiveTag(tag);
-    setVisibleCount(12);
+    setPage(1);
   };
 
   const subscribe = async (event: FormEvent<HTMLFormElement>) => {
@@ -86,8 +77,10 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
     setSubscribing(false);
   };
 
-  const featured = filtered[0];
-  const articlesToShow = filtered.slice(featured ? 1 : 0, visibleCount + 1);
+  const pageSize = 10;
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const articlesToShow = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <section className="article-explorer" aria-label="Browse blogs and articles">
@@ -107,28 +100,27 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
         ))}
       </div>
 
-      {featured && <article className="featured-article"><div><span className="article-kicker">Featured note</span><span>{featured.date}</span></div><p>{featured.tags[0] || "Engineering"}</p><h2>{cleanTitle(featured.title)}</h2><p>{excerpt(featured)}</p><Link href={featured.href ?? `/articles/${featured.id}`}>Read the article</Link></article>}
-
       <div className="article-results">
         {articlesToShow.map((article) => (
           <article key={article.id}>
-            <div className="article-result-meta"><span>{article.date}</span><span>{article.tags[0]}</span></div>
+            <Link className="article-card-link" href={article.href ?? `/articles/${article.id}`} aria-label={`Read ${cleanTitle(article.title)}`} />
+            <div className="article-result-meta"><span>{isPrivate(article) ? "🔒 Private note" : article.date}</span><span>{article.tags[0]}</span></div>
             <h2>{cleanTitle(article.title)}</h2>
             <p>{excerpt(article)}</p>
             <div className="article-result-footer">
               <span>{article.tags.join(" · ")}</span>
-              <Link href={article.href ?? `/articles/${article.id}`}>Read article</Link>
+              <span className="article-hover-read" aria-hidden="true">Read more ↗</span>
             </div>
           </article>
         ))}
       </div>
 
       {filtered.length === 0 && <p className="article-empty">No articles match this search yet.</p>}
-      {visibleCount + 1 < filtered.length && (
-        <button className="show-more-articles" type="button" onClick={() => setVisibleCount((count) => count + 12)}>
-          Show more articles ↓
-        </button>
-      )}
+      {pageCount > 1 && <nav className="article-pagination" aria-label="Notes pagination">
+        <button disabled={currentPage === 1} type="button" onClick={() => setPage(currentPage - 1)}>Previous</button>
+        {Array.from({ length: pageCount }, (_, index) => index + 1).map((item) => <button aria-current={item === currentPage ? "page" : undefined} className={item === currentPage ? "active" : ""} key={item} type="button" onClick={() => setPage(item)}>{item}</button>)}
+        <button disabled={currentPage === pageCount} type="button" onClick={() => setPage(currentPage + 1)}>Next</button>
+      </nav>}
       <section className="article-subscribe" id="subscribe" aria-labelledby="subscribe-title"><div><p className="eyebrow">Stay updated</p><h2 id="subscribe-title">Notes worth saving for later.</h2></div><div><p>Get occasional updates when a new piece on engineering, systems, interviews, or career growth is published.</p><form onSubmit={subscribe}><label><span>Email address</span><input required type="email" value={subscriberEmail} onChange={(event) => setSubscriberEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" /></label><button disabled={subscribing}>{subscribing ? "Subscribing…" : "Subscribe"}</button></form>{subscriptionStatus && <p className="subscription-status" role="status">{subscriptionStatus}</p>}</div></section>
     </section>
   );

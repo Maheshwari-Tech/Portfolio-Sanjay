@@ -99,5 +99,88 @@
     "source_path": "System Design Interviews Introduction.pdf",
     "asset_url": "/blogs/obsidian/system-design-interviews-introduction-14a16ae6.pdf",
     "page_count": 1
+  },
+  {
+    "id": 13,
+    "title": "5 Kinds of Good Software Engineers",
+    "summary": "A rough map of the different strengths that make engineers valuable: getting things done, running meetings, strong technical depth, product knowledge, and people and process work.",
+    "content_description": "A rough map of the different strengths that make engineers valuable: getting things done, running meetings, strong technical depth, product knowledge, and people and process work.",
+    "date": "2026-08-01",
+    "created_at": "2026-08-01T10:50:36+05:30",
+    "tags": [
+      "Software Engineering",
+      "Career Growth"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "pdf",
+    "isTextFile": false,
+    "visibility": "public",
+    "hidden": false,
+    "source": "obsidian",
+    "source_path": "Different Types of Good Software Engineers.pdf",
+    "asset_url": "/blogs/obsidian/different-types-of-good-software-engineers-8bc873a7.pdf",
+    "page_count": 2
+  },
+  {
+    "id": 14,
+    "title": "Interviews for Software Professionals",
+    "summary": "A practical view of common interview rounds, interviewer biases, and how candidates and interviewers can approach the process fairly.",
+    "content_description": "# Interviews for Software Professionals\n\n## Five kinds of interview rounds\n\n1. **DSA / Coding**\n   - Typically, the candidate writes code for one or two problems.\n   - Most of the time, the expectation is a working and optimal solution.\n\n2. **Machine Coding / LLD**\n   - Expectations can be ambiguous, but a full implementation is usually not required.\n\n3. **HLD**\n   - This round covers system architecture and design.\n   - Sometimes the expectation is to draw many moving components, even when a simpler system would meet the requirements.\n\n4. **Behavioural / Leadership**\n   - This usually covers company-specific leadership principles and the candidate's work profile.\n\n5. **Resume**\n   - The interviewer may discuss any technical skill that interests them.\n   - A shortlisted resume already indicates that the relevant skills are present.\n   - Projects and past experience are also discussed.\n\n## Types of interviewers\n\n### DSA haters\n\n- They may not value DSA skills and assume that someone who has solved many problems has memorised them.\n- Feedback should be based on problem-solving and implementation skills, not assumptions about how those skills were built.\n- More practice over the years is not the same as memorisation. If it is memorisation, a meaningful variation should expose it.\n- Some candidates also consider DSA irrelevant because of AI. However, at the core of our work, we still write functions. DSA evaluates challenging functions, complexity, and clean, optimal code.\n\n### Competitive programming lovers\n\n- The opposite bias also exists: some interviewers may ask questions that are too difficult.\n- Good interviewers recognise the difficulty and adjust expectations. They may expect a collaborative discussion rather than a complete solution.\n- Candidates should be evaluated on their performance during the interview, not only on a competitive-programming profile. Profiles can also be misrepresented.\n- Candidates should add competitive programming only when they have genuinely done it. A weak or artificial profile does not help.\n\n### Language / technology specialists\n\n- Some interviewers stay within one technology and expect candidates to match it.\n- This can create a matching-playlist bias.\n\n### Other biases\n\n- Bias based on language.\n- An assumption that the candidate is cheating.\n- Bias based on work experience or projects.\n- Bias around one particular question. For example, a debrief may focus only on a candidate not knowing about an artefact or the execution order of a SQL query.\n- Bias based on ethnicity, race, background, or gender. Interviewers need better training and should stop allowing these factors into the evaluation.\n- There is also a luck factor. As a candidate, recognise it and remain grateful when it has worked in your favour.\n\n## Message for candidates\n\n- Interviewers are generally among the top engineers in their teams. They are experienced. Irrespective of the category they fall into, approach them with a positive and respectful attitude.\n- Sometimes you reject yourself by deciding that a question is irrelevant or too hard. The interviewer may be evaluating how you handle a difficult situation, or expecting you to collaborate, discuss, and solve it together.\n- Understand that the interviewer's role is to collect data points for the hiring decision.\n- Respect every round instead of thinking negatively about why it is important.\n- You cannot control the interviewer's day or their familiar set of questions.\n- Research the company and interviewer: the projects they work on and the technologies or programming languages they know well. Use that context to communicate your answers better.\n\n## Message for interviewers\n\n- Look for the positives and collect data points for either side of the decision.\n- A candidate may have strengths different from yours. Strong engineers can be strong in different ways.\n- Adhere to the competency assigned to the round.\n- Collect enough data points for that competency first.\n- Do not rely on only one or a few data points for a hire or no-hire decision.",
+    "date": "2026-07-31",
+    "created_at": "2026-07-31T10:43:41+05:30",
+    "tags": [
+      "Interview",
+      "Software Engineering",
+      "Career Growth"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "md",
+    "isTextFile": true,
+    "visibility": "public",
+    "hidden": false,
+    "source": "obsidian",
+    "source_path": "Interviews for Software Professionals.md"
+  },
+  {
+    "id": 15,
+    "title": "Learnings for Growth - Software Professionals",
+    "summary": "Notes on building a genuine resume, learning through projects, filling knowledge gaps, and preparing for interviews.",
+    "content_description": "# Learnings for Growth - Software Professionals\n\n## Building a resume\n\n- Keep it 100% genuine.\n- Use it as a retrospective of your experience.\n\n## Hands-on experience with modern technologies\n\n- Use projects to cover the breadth and depth of technologies.\n- Use them to develop LLD skills, code-review experience, production experience, or anything your work has not given you the opportunity to practise.\n- Some groundwork - reading, courses, training, or certifications - may be needed, but think project first.\n- Build with AI, review the work, and make it production-ready.\n- Make sure the code is written in a way you understand and would have written yourself: clean, easy to understand, and easy to change later without AI.\n\n## Revision and filling gaps\n\n- Revisit DSA, algorithms, and computer fundamentals.\n- What you need to work on depends on your level and current gaps.\n\n## High-level system design and architecture\n\n- Read useful notes and blogs.\n- You can demonstrate an idea in a project only when you understand where it can be applied.\n\n## What matters more\n\n- Practical demonstration matters more than ever.\n- Leadership skills matter: authenticity, a learning attitude, clear communication, being easy to collaborate with, and being receptive to feedback.\n\n## Interview preparation\n\nMy interview preparation starts when an interview is actually scheduled. Companies that require more revision of past skills usually provide time accordingly:\n\n- Google: around one month on average.\n- Meta: around three weeks.\n\nI then focus on:\n\n- A quick review of the work I have done.\n- Interview experiences and company-specific leadership principles.\n- Staying calm and maintaining a positive attitude.",
+    "date": "2026-07-31",
+    "created_at": "2026-07-31T09:44:38+05:30",
+    "tags": [
+      "Career Growth",
+      "Software Engineering",
+      "Interview Preparation"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "md",
+    "isTextFile": true,
+    "visibility": "public",
+    "hidden": false,
+    "source": "obsidian",
+    "source_path": "Learnings for Growth - Software Professionals.md"
+  },
+  {
+    "id": 16,
+    "title": "Evaluations in Each Round",
+    "summary": "Notes on evaluation across coding, LLD, HLD, leadership, and resume rounds, with sample feedback, debrief decisions, and common red flags.",
+    "content_description": "Notes on evaluation across coding, LLD, HLD, leadership, and resume rounds, with sample feedback, debrief decisions, and common red flags.",
+    "date": "2026-08-01",
+    "created_at": "2026-08-01T12:44:26+05:30",
+    "tags": [
+      "Interview",
+      "Hiring",
+      "Software Engineering"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "pdf",
+    "isTextFile": false,
+    "visibility": "public",
+    "hidden": false,
+    "source": "obsidian",
+    "source_path": "Evaluations in Each Round.pdf",
+    "asset_url": "/blogs/obsidian/evaluations-in-each-round-ef0fb8aa.pdf",
+    "page_count": 2
   }
 ]

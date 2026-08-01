@@ -26,6 +26,7 @@ import Wordmark from "./Wordmark";
 import SiteFooter from "./SiteFooter";
 import RecommendationCarousel from "./RecommendationCarousel";
 import { backendFirst } from "./serverContent";
+import { sortArticlesByCreation, type ArticleRecord } from "./articles/articleData";
 
 export const revalidate = 120;
 
@@ -118,6 +119,7 @@ export default async function Home() {
     allProjectTechnologies.filter((_, index) => index % 2 !== 0),
   ];
   const recognitionGroups = Object.entries(achievementGroups).map(([category, items]) => ({ category, label: achievementLabels[category] ?? category, items: items as Achievement[] }));
+  const orderedBlogs = sortArticlesByCreation(blogs as ArticleRecord[]);
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -271,9 +273,10 @@ export default async function Home() {
 
             return (
               <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""} ${galleryImages.length === 0 ? "project-no-gallery" : ""}`} key={project.name}>
+                <Link className="project-card-link" href={`/projects/${project.id}`} aria-label={`View ${project.name}`} />
                 <ProjectGallery images={galleryImages} projectName={project.name} />
                 <div className="project-header">
-                  <div><span className={highlighted ? "project-ai-kicker" : undefined}>{project.category}</span><h3><Link href={`/projects/${project.id}`}>{project.name}</Link></h3></div>
+                  <div><span className={highlighted ? "project-ai-kicker" : undefined}>{project.category}</span><h3>{project.name}</h3></div>
                   <span className="project-number">{project.deployed ? "Live project" : highlighted ? "AI Intelligence" : "Product build"}</span>
                 </div>
                 <p className="project-description">{project.description}</p>
@@ -281,7 +284,7 @@ export default async function Home() {
                 <div className="project-technology-block">
                   <span>Core technologies</span>
                   <div className="project-tags">{project.technologies.slice(0, 6).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                  <Link className="project-detail-link" href={`/projects/${project.id}`}>View details</Link>
+                  <span className="project-detail-link" aria-hidden="true">{project.deployed ? "Show more ↗" : "Request demo ↗"}</span>
                 </div>
               </article>
             );
@@ -328,31 +331,30 @@ export default async function Home() {
       <section className="content-section" id="writing">
         <div className="section-heading content-heading">
           <div>
-            <p className="eyebrow">Writing</p>
-            <h2>Blogs & Articles.</h2>
+            <p className="eyebrow">Media · Notes & videos</p>
+            <h2>Notes from my Second Brain.</h2>
           </div>
           <div className="content-intro">
-            <p>Practical thoughts on interviews, system design, engineering choices, and career growth.</p>
+            <p>Thoughts on interviews, systems, engineering choices, and work along the way.</p>
           </div>
         </div>
-        <div className="writing-overview" aria-label="Writing archive highlights"><strong>{blogs.length}<span>published notes</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div></div>
+        <div className="writing-overview" aria-label="Notes archive highlights"><strong>{orderedBlogs.length}<span>notes & blogs</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div></div>
 
         <div className="blog-grid">
-          {blogs.slice(0, 3).map((blog, index) => {
+          {orderedBlogs.slice(0, 3).map((blog) => {
             const articleHref = "href" in blog && typeof blog.href === "string" ? blog.href : `/articles/${blog.id}`;
             return (
-              <article className={`blog-card ${index === 0 ? "blog-card-featured" : ""}`} key={blog.id}>
+              <article className="blog-card" key={blog.id}>
+                <Link className="blog-card-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`} />
                 <div className="blog-meta">
-                  <span>{blog.date}</span>
+                  <span>{blog.visibility === "private" || blog.access_scope === "private" ? "🔒 Private note" : blog.date}</span>
                   <span>{blog.tags[0]}</span>
                 </div>
-                <h3><Link href={articleHref}>{cleanBlogTitle(blog.title)}</Link></h3>
+                <h3>{cleanBlogTitle(blog.title)}</h3>
                 <p className="blog-author">By {blog.author}</p>
                 <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
                 <div className="blog-tags">{blog.tags.slice(0, 2).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                <Link className="blog-read-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`}>
-                  Read article
-                </Link>
+                <span className="blog-read-link" aria-hidden="true">Read more <span>↗</span></span>
               </article>
             );
           })}
@@ -361,7 +363,7 @@ export default async function Home() {
         <div className="writing-cta-panel" aria-label="Explore and subscribe to articles">
           <Link className="writing-cta writing-cta-primary" href="/articles">
             <span className="writing-cta-icon writing-cta-icon-posts" aria-hidden="true" />
-            <span>Read All Posts</span>
+            <span>Read all notes</span>
           </Link>
           <Link className="writing-cta writing-cta-secondary" href="/articles#subscribe">
             <span className="writing-cta-icon writing-cta-icon-updates" aria-hidden="true" />
@@ -371,8 +373,8 @@ export default async function Home() {
 
         <section className="video-conversations-section" aria-labelledby="video-conversations-title">
           <div className="video-heading">
-            <p className="eyebrow">Video conversations</p>
-            <h3 id="video-conversations-title">Stories beyond the resume.</h3>
+            <p className="eyebrow">Videos</p>
+            <h3 id="video-conversations-title">Conversations.</h3>
           </div>
           <VideoCarousel videos={videos} />
         </section>

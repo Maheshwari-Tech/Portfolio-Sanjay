@@ -81,6 +81,7 @@ function MarkdownArticle({ content }: { content: string }) {
   const blocks: ReactNode[] = [];
   let unordered: string[] = [];
   let ordered: string[] = [];
+  let orderedStart = 1;
   let code: string[] = [];
 
   const flushLists = () => {
@@ -91,8 +92,9 @@ function MarkdownArticle({ content }: { content: string }) {
     }
     if (ordered.length) {
       const items = ordered;
-      blocks.push(<ol key={`ol-${blocks.length}`}>{items.map((item) => <li key={item}>{renderInline(item)}</li>)}</ol>);
+      blocks.push(<ol key={`ol-${blocks.length}`} start={orderedStart}>{items.map((item) => <li key={item}>{renderInline(item)}</li>)}</ol>);
       ordered = [];
+      orderedStart = 1;
     }
   };
 
@@ -131,6 +133,7 @@ function MarkdownArticle({ content }: { content: string }) {
     }
     if (/^\d+\.\s+/.test(line)) {
       if (unordered.length) flushLists();
+      if (!ordered.length) orderedStart = Number(line.match(/^\d+/)?.[0] ?? 1);
       ordered.push(line.replace(/^\d+\.\s+/, ""));
       return;
     }
