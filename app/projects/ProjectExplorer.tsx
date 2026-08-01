@@ -46,7 +46,7 @@ export default function ProjectExplorer({ projects }: { projects: Project[] }) {
   };
 
   return (
-    <section className="project-explorer" aria-label="Browse all projects">
+    <section className="project-explorer" aria-label="Browse projects">
       <div className="project-search-row">
         <label>
           <span>Search projects</span>

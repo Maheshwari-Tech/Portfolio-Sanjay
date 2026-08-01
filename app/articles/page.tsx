@@ -7,10 +7,10 @@ import { backendFirst } from "../serverContent";
 import type { ArticleRecord } from "./articleData";
 
 export const metadata: Metadata = {
-  title: "Notes from my Second Brain",
+  title: "Notes & Thoughts",
   description: "Notes on engineering, interviews, systems, and the work behind the work by Sanjay Gandhi.",
   alternates: { canonical: "/articles" },
-  openGraph: { url: "/articles", title: "Notes from my Second Brain — Sanjay Gandhi", description: "Notes on engineering, interviews, systems, and the work behind the work by Sanjay Gandhi." },
+  openGraph: { url: "/articles", title: "Notes & Thoughts — Sanjay Gandhi", description: "Notes on engineering, interviews, systems, and the work behind the work by Sanjay Gandhi." },
 };
 
 export const revalidate = 120;
@@ -21,8 +21,8 @@ export default async function ArticlesPage() {
     <>
       <SiteHeader />
       <main className="articles-index-page" id="main-content"><section className="articles-index-hero">
-        <p className="eyebrow">Second Brain</p>
-        <h1>Notes from my Second Brain.</h1>
+        <p className="eyebrow">Notes</p>
+        <h1>Notes &amp; Thoughts.</h1>
         <p>Notes on engineering, interviews, systems, and the work behind the work.</p>
       </section>
       <ArticleExplorer articles={blogs as ArticleRecord[]} />

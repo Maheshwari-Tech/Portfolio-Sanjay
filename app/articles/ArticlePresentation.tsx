@@ -6,7 +6,7 @@ export default function ArticlePresentation({ article, markdownContent, visualAs
   const isPdf = article.fileType === "pdf";
   return <article className="article-shell">
     <header className="article-header">
-      <p className="eyebrow">Note from my Second Brain</p>
+      <p className="eyebrow">Notes &amp; Thoughts</p>
       <h1>{cleanArticleTitle(article.title)}</h1>
       <div className="article-byline"><span>By {article.author}</span><time>{article.date}</time><span>{article.tags.join(" · ")}</span></div>
     </header>

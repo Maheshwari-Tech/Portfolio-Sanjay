@@ -331,14 +331,14 @@ export default async function Home() {
       <section className="content-section" id="writing">
         <div className="section-heading content-heading">
           <div>
-            <p className="eyebrow">Media · Notes & videos</p>
-            <h2>Notes from my Second Brain.</h2>
+            <p className="eyebrow">Notes</p>
+            <h2>Notes &amp; Thoughts.</h2>
           </div>
           <div className="content-intro">
             <p>Thoughts on interviews, systems, engineering choices, and work along the way.</p>
           </div>
         </div>
-        <div className="writing-overview" aria-label="Notes archive highlights"><strong>{orderedBlogs.length}<span>notes & blogs</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div></div>
+        <div className="writing-overview" aria-label="Notes archive highlights"><strong>{orderedBlogs.length}<span>notes & thoughts</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div></div>
 
         <div className="blog-grid">
           {orderedBlogs.slice(0, 3).map((blog) => {
@@ -360,7 +360,7 @@ export default async function Home() {
           })}
         </div>
 
-        <div className="writing-cta-panel" aria-label="Explore and subscribe to articles">
+        <div className="writing-cta-panel" aria-label="Explore and subscribe to notes">
           <Link className="writing-cta writing-cta-primary" href="/articles">
             <span className="writing-cta-icon writing-cta-icon-posts" aria-hidden="true" />
             <span>Read all notes</span>
@@ -371,13 +371,14 @@ export default async function Home() {
           </Link>
         </div>
 
-        <section className="video-conversations-section" aria-labelledby="video-conversations-title">
-          <div className="video-heading">
-            <p className="eyebrow">Videos</p>
-            <h3 id="video-conversations-title">Conversations.</h3>
-          </div>
-          <VideoCarousel videos={videos} />
-        </section>
+      </section>
+
+      <section className="media-section" id="media" aria-labelledby="media-title">
+        <div className="video-heading">
+          <p className="eyebrow">Media</p>
+          <h2 id="media-title">Video conversations.</h2>
+        </div>
+        <VideoCarousel videos={videos} />
       </section>
 
       <section className="recommendations-section" id="recommendations">

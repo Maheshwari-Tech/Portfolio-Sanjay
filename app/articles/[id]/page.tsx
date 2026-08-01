@@ -7,6 +7,8 @@ import { siteConfig } from "../../siteConfig";
 import ContentInteractions from "../../ContentInteractions";
 import SiteHeader from "../../SiteHeader";
 import SiteFooter from "../../SiteFooter";
+import RelatedArticles from "../RelatedArticles";
+import { publicArchiveArticles, similarArticles } from "../articleData";
 
 export const dynamicParams = true;
 
@@ -162,7 +164,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const blobAsset = article.blob_key && apiBase ? `${apiBase}/content/blogs/${article.id}/asset` : undefined;
   const visualAsset = blobAsset ?? importedAsset ?? asset?.svg;
   const isPdf = article.fileType === "pdf";
-  const related = allBlogs.filter((blog) => blog.id !== article.id);
+  const related = similarArticles(article, publicArchiveArticles(allBlogs));
   const articleTitle = cleanTitle(article.title);
   let markdownContent = article.content_description;
   if (article.blob_key && article.fileType === "md" && blobAsset) {
@@ -190,7 +192,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
       <article className="article-shell">
         <header className="article-header">
-          <p className="eyebrow">Blog & Article</p>
+          <p className="eyebrow">Notes & Thoughts</p>
           <h1>{cleanTitle(article.title)}</h1>
           <div className="article-byline">
             <span>By {article.author}</span>
@@ -216,17 +218,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         <ContentInteractions contentId={`article-${article.id}`} />
       </article>
 
-      <aside className="related-articles">
-        <p className="eyebrow">Keep reading</p>
-        <div>
-          {related.map((item) => (
-            <Link href={item.href ?? `/articles/${item.id}`} key={item.id}>
-              <span>{item.date}</span>
-              <strong>{cleanTitle(item.title)}</strong>
-            </Link>
-          ))}
-        </div>
-      </aside>
+      <RelatedArticles articles={related} />
       <SiteFooter />
     </main>
   );

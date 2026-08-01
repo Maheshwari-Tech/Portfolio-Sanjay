@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const links = [
   ["Work", "/#work"], ["Technologies", "/#technologies"], ["Projects", "/projects"],
-  ["Blogs", "/articles"], ["Certificates", "/certificates"], ["Recommendations", "/#recommendations"], ["Personal", "/#personal"], ["Contact", "/#contact"],
+  ["Notes", "/articles"], ["Certificates", "/certificates"], ["Recommendations", "/#recommendations"], ["Personal", "/#personal"], ["Contact", "/#contact"],
 ];
 
 export default function MobileNavigation({ resume }: { resume?: string }) {
@@ -56,7 +56,7 @@ export default function MobileNavigation({ resume }: { resume?: string }) {
         {links.map(([label, href]) => {
           const active = activeHref === href ||
             (label === "Projects" && activeHref.startsWith("/projects")) ||
-            (label === "Blogs" && activeHref.startsWith("/articles")) ||
+            (label === "Notes" && activeHref.startsWith("/articles")) ||
             (label === "Certificates" && activeHref.startsWith("/certificates"));
           return <a className={active ? "active" : undefined} aria-current={active ? "location" : undefined} href={href} key={href} onClick={() => setOpen(false)}>{label}</a>;
         })}

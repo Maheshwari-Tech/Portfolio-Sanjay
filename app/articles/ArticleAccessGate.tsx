@@ -73,11 +73,11 @@ export default function ArticleAccessGate({ article, initialCandidates }: { arti
   const loginHref = `/login?next=${encodeURIComponent(`/articles/${article.id}`)}`;
   return <>
     <section className="article-access-gate" aria-live="polite"><div>
-      <p className="eyebrow">Protected Second Brain note</p>
+      <p className="eyebrow">Protected note</p>
       {state === "checking" && <><h1>Checking note access…</h1><p>Your permissions are being verified.</p></>}
       {state === "signed-out" && <><h1>{isSemiPrivate ? visibleTitle : "Sign in to read this."}</h1>{isSemiPrivate && <p>{articleSummary(article)}</p>}<p>This note is available to approved readers.</p><Link className="button button-dark" href={loginHref}>Sign in to continue</Link></>}
       {state === "denied" && <><h1>{visibleTitle || "This note is protected."}</h1><p>This note is available to approved readers.</p>{requestState === "sent" ? <p className="article-access-success">Access request sent. I’ll review it shortly.</p> : <button className="button button-dark" disabled={requestState === "sending"} onClick={() => void requestAccess()} type="button">{requestState === "sending" ? "Sending…" : "Request access"}</button>}{requestState === "error" && <p className="article-access-error">The request could not be sent. Please try again.</p>}</>}
-      {state === "not-found" && <><h1>Note not found.</h1><p>This note is unavailable or has been removed.</p><Link className="button button-dark" href="/articles">Explore Second Brain notes</Link></>}
+      {state === "not-found" && <><h1>Note not found.</h1><p>This note is unavailable or has been removed.</p><Link className="button button-dark" href="/articles">Explore Notes &amp; Thoughts</Link></>}
       {state === "offline" && <><h1>Access cannot be verified right now.</h1><p>The note remains locked while the private service is unavailable. Please try again shortly.</p></>}
     </div></section>
     <RelatedArticles articles={similarArticles(article, initialCandidates)} />

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../apiClient";
-import { submitPortfolioEntry } from "../submissionService";
+import ArticleSubscribe from "./ArticleSubscribe";
 import { sortArticlesByCreation, type ArticleRecord } from "./articleData";
 
 type Article = ArticleRecord;
@@ -27,9 +27,6 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [page, setPage] = useState(1);
-  const [subscriberEmail, setSubscriberEmail] = useState("");
-  const [subscriptionStatus, setSubscriptionStatus] = useState("");
-  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -67,23 +64,13 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
     setPage(1);
   };
 
-  const subscribe = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubscribing(true);
-    setSubscriptionStatus("Subscribing…");
-    const result = await submitPortfolioEntry({ type: "subscription", title: "Blog updates subscription", category: "Blog updates", name: "Blog reader", email: subscriberEmail.trim(), message: "Requested updates from the blog archive." });
-    setSubscriberEmail("");
-    setSubscriptionStatus(result.delivery === "api" ? "You’re on the list. Thanks for subscribing." : "The subscription service is offline. Your request is saved on this device.");
-    setSubscribing(false);
-  };
-
   const pageSize = 10;
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, pageCount);
   const articlesToShow = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
-    <section className="article-explorer" aria-label="Browse blogs and articles">
+    <section className="article-explorer" aria-label="Browse notes and thoughts">
       <div className="article-search-row">
         <label>
           <span>Search articles</span>
@@ -121,7 +108,7 @@ export default function ArticleExplorer({ articles }: { articles: Article[] }) {
         {Array.from({ length: pageCount }, (_, index) => index + 1).map((item) => <button aria-current={item === currentPage ? "page" : undefined} className={item === currentPage ? "active" : ""} key={item} type="button" onClick={() => setPage(item)}>{item}</button>)}
         <button disabled={currentPage === pageCount} type="button" onClick={() => setPage(currentPage + 1)}>Next</button>
       </nav>}
-      <section className="article-subscribe" id="subscribe" aria-labelledby="subscribe-title"><div><p className="eyebrow">Stay updated</p><h2 id="subscribe-title">Notes worth saving for later.</h2></div><div><p>Get occasional updates when a new piece on engineering, systems, interviews, or career growth is published.</p><form onSubmit={subscribe}><label><span>Email address</span><input required type="email" value={subscriberEmail} onChange={(event) => setSubscriberEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" /></label><button disabled={subscribing}>{subscribing ? "Subscribing…" : "Subscribe"}</button></form>{subscriptionStatus && <p className="subscription-status" role="status">{subscriptionStatus}</p>}</div></section>
+      <ArticleSubscribe />
     </section>
   );
 }

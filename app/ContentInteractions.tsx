@@ -6,7 +6,7 @@ import { apiFetch, authHeaders, isLoggedIn } from "./apiClient";
 type Comment={id:number;author:string;message:string};
 export default function ContentInteractions({contentId}:{contentId:string}) {
   const [likes,setLikes]=useState(0); const [comments,setComments]=useState<Comment[]>([]); const [text,setText]=useState(""); const [note,setNote]=useState(""); const [available,setAvailable]=useState(true);
-  useEffect(()=>{apiFetch(`/content/${contentId}/interactions`).then(r=>r.json()).then(d=>{setLikes(d.likes?.length||0);setComments(d.comments||[])}).catch(()=>{setAvailable(false);setNote("Likes and comments are temporarily unavailable; the article remains available.")})},[contentId]);
+  useEffect(()=>{apiFetch(`/content/${contentId}/interactions`).then(r=>r.json()).then(d=>{setLikes(d.likes?.length||0);setComments(d.comments||[])}).catch(()=>{setAvailable(false);setNote("Likes and comments are temporarily unavailable.")})},[contentId]);
   async function action(action:"like"|"comment",message?:string){
     if(!isLoggedIn()){window.location.href="/login";return;}
     try { const r=await apiFetch(`/content/${contentId}/interactions`,{method:"POST",headers:authHeaders(),body:JSON.stringify({action,message})}); const d=await r.json(); if(r.ok){if(action==="like")setLikes(d.count);else{setComments(c=>[...c,d.comment]);setText("")}}else setNote(d.detail||"Could not save interaction."); }
