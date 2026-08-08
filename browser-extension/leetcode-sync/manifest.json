@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Portfolio LeetCode Sync",
+  "version": "1.2.0",
+  "description": "Securely sync LeetCode question progress to Sanjay's interview tracker without sharing session cookies.",
+  "permissions": ["storage"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "leetcode-sync@portfolio.sanjay",
+      "strict_min_version": "109.0"
+    }
+  },
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "http://localhost:3001/*",
+    "http://portfolio.localtest.me:3001/*",
+    "https://portfolio-sanjay-tech.vercel.app/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.com/*",
+        "http://localhost:3001/*",
+        "http://portfolio.localtest.me:3001/*",
+        "https://portfolio-sanjay-tech.vercel.app/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

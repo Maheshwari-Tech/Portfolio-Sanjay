@@ -1,12 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { apiFetch, ApiUnavailableError, authHeaders } from "../apiClient";
 import Wordmark from "../Wordmark";
+import QuestionBank from "./QuestionBank";
 
-type Stage = "wishlist" | "researching" | "ready" | "applied" | "recruiter" | "screening" | "interviewing" | "offer" | "rejected" | "paused";
+type Stage = "wishlist" | "researching" | "ready" | "applied" | "recruiter" | "screening" | "scheduled" | "interviewing" | "offer" | "rejected" | "paused";
 type Priority = "dream" | "high" | "target" | "watch";
+type SortKey = "company" | "priority" | "status" | "target_role" | "last_applied" | "next_action" | "contacts" | "updated_at";
+type SortDirection = "asc" | "desc";
+type LeetCodeBrowserPayload = {
+  username: string;
+  question_statuses: Record<string, "solved" | "attempted" | "not_started">;
+  recent_submissions: Array<{id: string; title: string; title_slug: string; timestamp: number; status: string; language: string}>;
+  solved_counts: Array<{difficulty: string; count: number; submissions: number}>;
+};
 type Company = {
   id: number;
   company: string;
@@ -27,9 +37,12 @@ type Company = {
 const stages: Array<[Stage, string]> = [
   ["wishlist", "Wish list"], ["researching", "Researching"], ["ready", "Ready to apply"],
   ["applied", "Applied"], ["recruiter", "Recruiter connect"], ["screening", "Screening"],
-  ["interviewing", "Interviewing"], ["offer", "Offer"], ["rejected", "Closed"], ["paused", "Paused"],
+  ["scheduled", "Interview scheduled"], ["interviewing", "Interviewing"], ["offer", "Offer"], ["rejected", "Closed"], ["paused", "Paused"],
 ];
 const priorities: Array<[Priority, string]> = [["dream", "Dream"], ["high", "High"], ["target", "Target"], ["watch", "Watch"]];
+const activeStages = stages.filter(([value]) => value !== "rejected");
+const stageOrder = new Map(stages.map(([value], index) => [value, index]));
+const priorityOrder = new Map(priorities.map(([value], index) => [value, index]));
 
 const emptyCompany = (): Omit<Company, "id" | "updated_at"> => ({
   company: "", target_role: "Senior Software Engineer / Tech Lead", priority: "target", status: "wishlist",
@@ -41,49 +54,174 @@ function safeUserName() {
   try { return JSON.parse(localStorage.getItem("sanjay_portfolio_user") || "{}").name || "Sanjay"; } catch { return "Sanjay"; }
 }
 
-export default function InterviewTrackerPage() {
+function encodeConnection(value: object) {
+  const bytes = new TextEncoder().encode(JSON.stringify(value));
+  let binary = "";
+  bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+  return window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function companySlug(value: string) {
+  return value.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: string}) {
+  const router = useRouter();
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [state, setState] = useState<"loading" | "ready" | "denied" | "offline">("loading");
+  const [state, setState] = useState<"loading" | "ready" | "offline">("loading");
+  const [canManage, setCanManage] = useState(false);
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
-  const [stageFilter, setStageFilter] = useState("all");
+  const [stageFilter, setStageFilter] = useState("active");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [sortKey, setSortKey] = useState<SortKey>("status");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [editing, setEditing] = useState<Company | null>(null);
   const [adding, setAdding] = useState(false);
   const [newCompany, setNewCompany] = useState(emptyCompany());
   const [saving, setSaving] = useState(false);
+  const [leetcodePairingToken, setLeetcodePairingToken] = useState<string | null>(null);
+  const [leetcodeSyncState, setLeetcodeSyncState] = useState<"idle" | "opening" | "waiting" | "saving" | "done" | "error">("idle");
+  const [leetcodeSyncMessage, setLeetcodeSyncMessage] = useState("");
+  const [showLeetcodeSetup, setShowLeetcodeSetup] = useState(false);
   const userName = safeUserName();
 
   const loadCompanies = useCallback(async (initial = false) => {
     if (initial) setState("loading");
     setMessage("");
     try {
-      const response = await apiFetch("/admin/interview-tracker", { headers: authHeaders() });
+      const hasAdminToken = Boolean(localStorage.getItem("sanjay_portfolio_token"));
+      let response = hasAdminToken
+        ? await apiFetch("/admin/interview-tracker", { headers: authHeaders() })
+        : await apiFetch("/content/interview-tracker");
+      if (hasAdminToken && !response.ok) {
+        response = await apiFetch("/content/interview-tracker");
+      }
       const body = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setState("denied");
-        setMessage(body.detail || "Admin authentication is required.");
+        setState("offline");
+        setMessage(body.detail || "The tracker could not be loaded.");
         return;
       }
-      setCompanies(body.items || []);
+      const loadedCompanies = (body.items || []) as Company[];
+      setCompanies(loadedCompanies);
+      if (initialCompanySlug) {
+        const selected = loadedCompanies.find(item => companySlug(item.company) === initialCompanySlug.toLowerCase());
+        if (selected) setEditing({...selected});
+        else setMessage("That company is not available in the interview tracker.");
+      }
+      setCanManage(hasAdminToken && response.url.includes("/admin/"));
       setState("ready");
     } catch (error) {
-      setState(error instanceof ApiUnavailableError ? "offline" : "denied");
-      setMessage(error instanceof ApiUnavailableError ? "The private API is unavailable. Tracker data cannot be displayed or changed." : "Admin access could not be verified.");
+      setState("offline");
+      setMessage(error instanceof ApiUnavailableError ? "The tracker service is unavailable." : "The tracker could not be loaded.");
     }
+  }, [initialCompanySlug]);
+
+  useEffect(() => {
+    const task = window.setTimeout(() => { void loadCompanies(true); }, 0);
+    return () => window.clearTimeout(task);
+  }, [loadCompanies]);
+
+  useEffect(() => {
+    const task = window.setTimeout(() => {
+      const pendingToken = localStorage.getItem("portfolio_leetcode_pairing_token");
+      if (pendingToken) setLeetcodePairingToken(pendingToken);
+    }, 0);
+    return () => window.clearTimeout(task);
   }, []);
 
-  useEffect(() => { void loadCompanies(true); }, [loadCompanies]);
+  useEffect(() => {
+    if (!leetcodePairingToken) return;
+    async function receiveLeetCodeProgress(event: MessageEvent) {
+      if (event.origin !== "https://leetcode.com" && event.origin !== window.location.origin) return;
+      const message = event.data as { type?: string; token?: string; payload?: LeetCodeBrowserPayload };
+      if (message.type !== "portfolio-leetcode-sync" || message.token !== leetcodePairingToken || !message.payload) return;
+      setLeetcodeSyncState("saving");
+      setLeetcodeSyncMessage("Saving your LeetCode progress in this browser…");
+      try {
+        const syncedAt = new Date().toISOString();
+        const activity = {
+          ...message.payload,
+          profile_url: `https://leetcode.com/u/${message.payload.username}/`,
+          question_progress: {},
+          recent_accepted_question_slugs: Object.entries(message.payload.question_statuses).filter(([, status]) => status === "solved").map(([slug]) => slug),
+          session_state: "browser_synced",
+          coverage: "browser_authenticated_sync",
+          coverage_note: "Question status was synchronized from your signed-in LeetCode browser session.",
+          synced_at: syncedAt,
+        };
+        localStorage.setItem("portfolio_leetcode_activity", JSON.stringify(activity));
+        setLeetcodeSyncState("done");
+        setLeetcodeSyncMessage(`${Object.keys(message.payload.question_statuses).length} question statuses synced for ${message.payload.username}.`);
+        setLeetcodePairingToken(null);
+        localStorage.removeItem("portfolio_leetcode_pairing_token");
+        window.dispatchEvent(new Event("leetcode-progress-synced"));
+        (event.source as Window | null)?.postMessage({type: "portfolio-leetcode-sync-ack", token: message.token}, event.origin);
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : "LeetCode progress could not be saved.";
+        setLeetcodeSyncState("error");
+        setLeetcodeSyncMessage(detail);
+        (event.source as Window | null)?.postMessage({type: "portfolio-leetcode-sync-error", token: message.token, detail}, event.origin);
+      }
+    }
+    window.addEventListener("message", receiveLeetCodeProgress);
+    return () => window.removeEventListener("message", receiveLeetCodeProgress);
+  }, [leetcodePairingToken]);
+
+  async function connectLeetCode() {
+    setLeetcodeSyncState("opening");
+    setLeetcodeSyncMessage("Opening your signed-in LeetCode browser session…");
+    try {
+      if (document.documentElement.getAttribute("data-portfolio-leetcode-helper") !== "ready") {
+        setShowLeetcodeSetup(true);
+        throw new Error("The browser helper is not active. Follow the install steps, reload this tracker tab, and try again.");
+      }
+      const token = `${crypto.randomUUID()}${crypto.randomUUID()}`;
+      setLeetcodePairingToken(token);
+      localStorage.setItem("portfolio_leetcode_pairing_token", token);
+      const connection = encodeConnection({token, callbackOrigin: window.location.origin});
+      const popup = window.open(`https://leetcode.com/problemset/#portfolio-sync=${connection}`, "portfolio-leetcode-sync", "popup,width=1180,height=820");
+      if (!popup) throw new Error("Allow pop-ups for this site, then try again.");
+      setLeetcodeSyncState("waiting");
+      setLeetcodeSyncMessage("Sign in to LeetCode in the opened window. Sync continues automatically.");
+      popup.focus();
+    } catch (error) {
+      setLeetcodePairingToken(null);
+      localStorage.removeItem("portfolio_leetcode_pairing_token");
+      setLeetcodeSyncState("error");
+      setLeetcodeSyncMessage(error instanceof Error ? error.message : "The LeetCode connection could not be created.");
+    }
+  }
 
   const visibleCompanies = useMemo(() => companies.filter((item) => {
     const haystack = `${item.company} ${item.target_role} ${item.contacts || ""} ${item.notes || ""} ${item.rounds_information || ""}`.toLowerCase();
     return (!search || haystack.includes(search.toLowerCase())) &&
-      (stageFilter === "all" || item.status === stageFilter) &&
+      (stageFilter === "all" || (stageFilter === "active" ? item.status !== "rejected" : item.status === stageFilter)) &&
       (priorityFilter === "all" || item.priority === priorityFilter);
-  }), [companies, priorityFilter, search, stageFilter]);
+  }).sort((left, right) => {
+    let comparison = 0;
+    if (sortKey === "status") comparison = (stageOrder.get(left.status) ?? 99) - (stageOrder.get(right.status) ?? 99);
+    else if (sortKey === "priority") comparison = (priorityOrder.get(left.priority) ?? 99) - (priorityOrder.get(right.priority) ?? 99);
+    else if (sortKey === "updated_at" || sortKey === "last_applied") comparison = new Date(left[sortKey] || 0).getTime() - new Date(right[sortKey] || 0).getTime();
+    else comparison = String(left[sortKey] || "").localeCompare(String(right[sortKey] || ""), undefined, {sensitivity: "base"});
+    if (comparison === 0) comparison = left.company.localeCompare(right.company);
+    return sortDirection === "asc" ? comparison : -comparison;
+  }), [companies, priorityFilter, search, sortDirection, sortKey, stageFilter]);
 
-  const activeCount = companies.filter(item => ["applied", "recruiter", "screening", "interviewing"].includes(item.status)).length;
-  const interviewCount = companies.filter(item => item.status === "interviewing").length;
+  function toggleSort(nextKey: SortKey) {
+    if (sortKey === nextKey) {
+      setSortDirection(current => current === "asc" ? "desc" : "asc");
+      return;
+    }
+    setSortKey(nextKey);
+    setSortDirection(nextKey === "updated_at" || nextKey === "last_applied" ? "desc" : "asc");
+  }
+
+  const sortHeader = (key: SortKey, label: string) => <th aria-sort={sortKey === key ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}><button className="tracker-sort-header" onClick={() => toggleSort(key)}>{label}<span aria-hidden="true">{sortKey === key ? (sortDirection === "asc" ? "↑" : "↓") : "↕"}</span></button></th>;
+
+  const activeCount = companies.filter(item => ["applied", "recruiter", "screening", "scheduled", "interviewing"].includes(item.status)).length;
+  const interviewCount = companies.filter(item => ["scheduled", "interviewing"].includes(item.status)).length;
   const nextActions = companies.filter(item => item.next_action_date && item.status !== "rejected").length;
 
   async function updateCompany(id: number, changes: Partial<Company>) {
@@ -98,7 +236,7 @@ export default function InterviewTrackerPage() {
     event.preventDefault();
     if (!editing) return;
     setSaving(true); setMessage("");
-    try { await updateCompany(editing.id, editing); setEditing(null); }
+    try { await updateCompany(editing.id, editing); closeEditor(); }
     catch (error) { setMessage(error instanceof Error ? error.message : "The company could not be updated."); }
     finally { setSaving(false); }
   }
@@ -118,28 +256,60 @@ export default function InterviewTrackerPage() {
   async function deleteCompany(item: Company) {
     if (!window.confirm(`Remove ${item.company} from the tracker?`)) return;
     const response = await apiFetch(`/admin/interview-tracker/${item.id}`, { method: "DELETE", headers: authHeaders() });
-    if (response.ok) { setCompanies(current => current.filter(company => company.id !== item.id)); setEditing(null); }
+    if (response.ok) { setCompanies(current => current.filter(company => company.id !== item.id)); closeEditor(); }
     else setMessage("The company could not be removed.");
   }
 
+  function openCompany(item: Company) {
+    router.push(`/interview-tracker/company/${companySlug(item.company)}`, {scroll: false});
+  }
+
+  function closeEditor() {
+    setEditing(null);
+    setAdding(false);
+    if (initialCompanySlug) router.push("/interview-tracker", {scroll: false});
+  }
+
   if (state !== "ready") return <main className="tracker-page">
-    <header className="admin-topbar"><Wordmark/><nav><Link href="/admin">Admin portal</Link><Link href="/">Public website</Link></nav><span>{userName}</span></header>
-    <section className="admin-empty"><p className="eyebrow">PRIVATE · ADMIN ONLY</p><h1>{state === "loading" ? "Opening your tracker…" : state === "offline" ? "Tracker service unavailable." : "Admin access only."}</h1><p>{message}</p>{state === "offline" ? <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection</button> : state === "denied" ? <Link className="button button-dark" href="/admin/login?next=/interview-tracker">Admin login</Link> : null}</section>
+    <header className="admin-topbar"><Wordmark/><nav><Link href="/admin/login?next=/interview-tracker">Admin sign in</Link></nav></header>
+    <section className="admin-empty"><p className="eyebrow">INTERVIEW PREPARATION</p><h1>{state === "loading" ? "Opening the tracker…" : "Tracker service unavailable."}</h1><p>{message}</p>{state === "offline" && <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection</button>}</section>
   </main>;
 
   return <main className="tracker-page">
-    <header className="admin-topbar"><Wordmark/><nav><Link href="/admin">Admin portal</Link><a href="#companies">Companies</a><a href="#actions">Next actions</a></nav><span>{userName}</span></header>
+    <header className="admin-topbar"><Wordmark/><nav>{canManage ? <Link href="/admin">Admin portal</Link> : <Link href="/admin/login?next=/interview-tracker">Admin sign in</Link>}<a href="#companies">Companies</a>{canManage && <a href="#actions">Next actions</a>}</nav>{canManage && <span>{userName}</span>}</header>
     <section className="tracker-shell">
       <header className="tracker-hero">
-        <div><p className="eyebrow">PRIVATE CAREER WORKSPACE</p><h1>Top companies.<br/><em>One clear pipeline.</em></h1><p>Track applications, interview loops, people, values, preparation notes, and the next move for every target company.</p></div>
-        <button className="tracker-add" onClick={() => setAdding(true)}><span>＋</span>Add company</button>
+        <div><p className="eyebrow">INTERVIEW PREPARATION TRACKER</p><h1>Top companies.<br/><em>One clear pipeline.</em></h1><p>Explore target companies, current interview status, and company-specific LeetCode questions in one focused preparation workspace.</p></div>
+        <div className="tracker-hero-actions"><button className="tracker-connect" onClick={() => void connectLeetCode()} disabled={["opening", "waiting", "saving"].includes(leetcodeSyncState)}><span>↻</span>{leetcodeSyncState === "waiting" ? "Waiting for LeetCode" : leetcodeSyncState === "saving" ? "Syncing progress" : "Refresh LeetCode status"}</button><button className="tracker-extension-download" onClick={() => setShowLeetcodeSetup(true)}>Set up browser helper</button>{canManage && <button className="tracker-add" onClick={() => setAdding(true)}><span>＋</span>Add company</button>}</div>
       </header>
 
-      <section className="tracker-summary" aria-label="Application summary">
+      {leetcodeSyncMessage && <div className={`tracker-sync-status ${leetcodeSyncState}`} role="status"><strong>{leetcodeSyncState === "done" ? "LeetCode connected" : leetcodeSyncState === "error" ? "Connection needs attention" : "LeetCode connection"}</strong><span>{leetcodeSyncMessage}</span>{leetcodeSyncState === "error" && <button onClick={() => { setLeetcodeSyncState("idle"); setLeetcodeSyncMessage(""); }}>Dismiss</button>}</div>}
+
+      {showLeetcodeSetup && <div className="leetcode-setup-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) setShowLeetcodeSetup(false); }}>
+        <section className="leetcode-setup" role="dialog" aria-modal="true" aria-labelledby="leetcode-setup-title">
+          <header><div><p className="eyebrow">ONE-TIME SETUP</p><h2 id="leetcode-setup-title">Connect your browser to LeetCode</h2></div><button aria-label="Close setup" onClick={() => setShowLeetcodeSetup(false)}>×</button></header>
+          <p>The ZIP does not install when downloaded. Unzip it first, then load that folder as an extension.</p>
+          <ol>
+            <li><a className="button button-dark" href="/leetcode-sync-extension.zip" download>1. Download helper ZIP</a><span>Open your Downloads folder and unzip it.</span></li>
+            <li><strong>2. Open extensions</strong><span>Chrome: <code>chrome://extensions</code> · Edge: <code>edge://extensions</code> · Firefox: <code>about:debugging#/runtime/this-firefox</code></span></li>
+            <li><strong>3. Load the unzipped folder</strong><span>Chrome/Edge: enable Developer mode, choose “Load unpacked,” then select the folder. Firefox: choose “Load Temporary Add-on” and select <code>manifest.json</code>.</span></li>
+            <li><strong>4. Reload this tracker tab</strong><span>The helper cannot activate in a tab that was already open when it was installed.</span></li>
+          </ol>
+          <div className="leetcode-setup-actions"><button className="button button-dark" onClick={() => window.location.reload()}>Reload tracker</button><button className="button" onClick={() => { setShowLeetcodeSetup(false); void connectLeetCode(); }}>I installed and reloaded it</button></div>
+          <small>The helper reads only progress from the LeetCode account signed in within this browser. It never sends your LeetCode cookies to this site.</small>
+        </section>
+      </div>}
+
+      <section className={`tracker-summary ${canManage ? "" : "public"}`} aria-label="Application summary">
         <article><span>Target list</span><strong>{companies.length}</strong><small>companies</small></article>
         <article><span>Active pipeline</span><strong>{activeCount}</strong><small>in progress</small></article>
         <article><span>Interviewing</span><strong>{interviewCount}</strong><small>live loops</small></article>
-        <article><span>Dated actions</span><strong>{nextActions}</strong><small>scheduled</small></article>
+        {canManage && <article><span>Dated actions</span><strong>{nextActions}</strong><small>scheduled</small></article>}
+      </section>
+
+      <section className="tracker-lifecycle" aria-label="Interview stage lifecycle">
+        <div><p className="eyebrow">ACTIVE LIFECYCLE</p><strong>Progress from target to offer</strong><small>Closed companies are excluded from this view.</small></div>
+        <ol>{activeStages.map(([value, label]) => <li key={value}><button className={stageFilter === value ? "active" : ""} onClick={() => setStageFilter(value)}><span>{companies.filter(item => item.status === value).length}</span>{label}</button></li>)}</ol>
       </section>
 
       {message && <div className="tracker-alert">{message}<button onClick={() => setMessage("")}>×</button></div>}
@@ -148,43 +318,51 @@ export default function InterviewTrackerPage() {
         <div className="tracker-heading"><div><p className="eyebrow">APPLICATION SHEET</p><h2>Company tracker</h2></div><span>{visibleCompanies.length} of {companies.length}</span></div>
         <div className="tracker-filters">
           <label className="tracker-search">Search<input value={search} onChange={event => setSearch(event.target.value)} placeholder="Company, contact, role or note…"/></label>
-          <label>Stage<select value={stageFilter} onChange={event => setStageFilter(event.target.value)}><option value="all">All stages</option>{stages.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+          <label>Stage<select value={stageFilter} onChange={event => setStageFilter(event.target.value)}><option value="active">Active · excludes closed</option><option value="all">All stages</option>{stages.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
           <label>Priority<select value={priorityFilter} onChange={event => setPriorityFilter(event.target.value)}><option value="all">All priorities</option>{priorities.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
-          {(search || stageFilter !== "all" || priorityFilter !== "all") && <button className="tracker-clear" onClick={() => { setSearch(""); setStageFilter("all"); setPriorityFilter("all"); }}>Clear filters</button>}
+          {(search || stageFilter !== "active" || priorityFilter !== "all" || sortKey !== "status" || sortDirection !== "asc") && <button className="tracker-clear" onClick={() => { setSearch(""); setStageFilter("active"); setPriorityFilter("all"); setSortKey("status"); setSortDirection("asc"); }}>Reset view</button>}
         </div>
 
         <div className="tracker-table-wrap">
           <table className="tracker-table">
-            <thead><tr><th># / Company</th><th>Priority</th><th>Status</th><th>Target role</th><th>Last applied</th><th>Next action</th><th>Contact</th><th aria-label="Actions"/></tr></thead>
-            <tbody>{visibleCompanies.map((item) => <tr key={item.id} onDoubleClick={() => setEditing({...item})}>
+            <thead><tr>{sortHeader("company", "# / Company")}{sortHeader("priority", "Priority")}{sortHeader("status", "Status")}{sortHeader("target_role", "Target role")}{canManage && <>{sortHeader("last_applied", "Last applied")}{sortHeader("next_action", "Next action")}{sortHeader("contacts", "Contact")}</>}{sortHeader("updated_at", "Last modified")}<th>Preparation</th></tr></thead>
+            <tbody>{visibleCompanies.map((item) => <tr key={item.id} onDoubleClick={() => openCompany(item)}>
               <td><span className="tracker-rank">{String(companies.indexOf(item) + 1).padStart(2, "0")}</span><strong>{item.company}</strong></td>
               <td><span className={`tracker-priority ${item.priority}`}>{item.priority}</span></td>
-              <td><select className={`tracker-stage ${item.status}`} value={item.status} aria-label={`${item.company} status`} onChange={event => void updateCompany(item.id, {status: event.target.value as Stage}).catch(error => setMessage(error.message))}>{stages.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></td>
+              <td>{canManage ? <select className={`tracker-stage ${item.status}`} value={item.status} aria-label={`${item.company} status`} onChange={event => void updateCompany(item.id, {status: event.target.value as Stage}).catch(error => setMessage(error.message))}>{stages.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select> : <span className={`tracker-stage tracker-stage-readonly ${item.status}`}>{stages.find(([value]) => value === item.status)?.[1] || item.status}</span>}</td>
               <td>{item.target_role || <span className="tracker-muted">Add role</span>}</td>
-              <td>{item.last_applied || <span className="tracker-muted">Not applied</span>}</td>
-              <td><strong className="tracker-action-copy">{item.next_action || "Define next move"}</strong>{item.next_action_date && <small>{item.next_action_date}</small>}</td>
-              <td>{item.contacts || <span className="tracker-muted">Add contact</span>}</td>
-              <td><button className="tracker-open" onClick={() => setEditing({...item})}>Open →</button></td>
+              {canManage && <><td>{item.last_applied || <span className="tracker-muted">Not applied</span>}</td><td><strong className="tracker-action-copy">{item.next_action || "Define next move"}</strong>{item.next_action_date && <small>{item.next_action_date}</small>}</td><td>{item.contacts || <span className="tracker-muted">Add contact</span>}</td></>}
+              <td><time dateTime={item.updated_at}>{item.updated_at ? new Date(item.updated_at).toLocaleDateString(undefined, {day: "2-digit", month: "short", year: "numeric"}) : "—"}</time></td>
+              <td><button className="tracker-open" onClick={() => openCompany(item)}>Questions →</button></td>
             </tr>)}</tbody>
           </table>
           {visibleCompanies.length === 0 && <div className="tracker-zero"><strong>No companies found.</strong><p>Try clearing a filter or add another target company.</p></div>}
         </div>
       </section>
 
-      <section className="tracker-next-actions" id="actions"><div className="tracker-heading"><div><p className="eyebrow">FOCUS QUEUE</p><h2>What needs attention</h2></div></div><div>{companies.filter(item => item.next_action).slice(0, 6).map(item => <button key={item.id} onClick={() => setEditing({...item})}><span>{item.company}</span><strong>{item.next_action}</strong><small>{item.next_action_date || "No due date"} →</small></button>)}</div></section>
+      {canManage && <section className="tracker-next-actions" id="actions"><div className="tracker-heading"><div><p className="eyebrow">FOCUS QUEUE</p><h2>What needs attention</h2></div></div><div>{companies.filter(item => item.next_action).slice(0, 6).map(item => <button key={item.id} onClick={() => openCompany(item)}><span>{item.company}</span><strong>{item.next_action}</strong><small>{item.next_action_date || "No due date"} →</small></button>)}</div></section>}
     </section>
 
-    {(editing || adding) && <div className="tracker-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) { setEditing(null); setAdding(false); } }}>
+    {(editing || adding) && <div className="tracker-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) closeEditor(); }}>
       <section className="tracker-editor" role="dialog" aria-modal="true" aria-label={adding ? "Add company" : `Edit ${editing?.company}`}>
-        <header><div><p className="eyebrow">{adding ? "NEW TARGET" : "COMPANY DOSSIER"}</p><h2>{adding ? "Add a company" : editing?.company}</h2></div><button aria-label="Close" onClick={() => { setEditing(null); setAdding(false); }}>×</button></header>
-        {adding ? <CompanyForm value={newCompany} onChange={setNewCompany} onSubmit={createCompany} saving={saving}/>: editing && <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving} onDelete={() => void deleteCompany(editing)}/>} 
+        <header><div><p className="eyebrow">{adding ? "NEW TARGET" : canManage ? "COMPANY DOSSIER" : "INTERVIEW PREPARATION"}</p><h2>{adding ? "Add a company" : editing?.company}</h2></div><button aria-label="Close" onClick={closeEditor}>×</button></header>
+        {editing && (
+          <QuestionBank company={editing.company} onRefresh={() => void connectLeetCode()}/>
+        )}
+        {canManage && (adding ? <CompanyForm value={newCompany} onChange={setNewCompany} onSubmit={createCompany} saving={saving}/>: editing && <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving} onDelete={() => void deleteCompany(editing)}/>)}
       </section>
     </div>}
   </main>;
 }
 
-function CompanyForm({value, onChange, onSubmit, saving, onDelete}: {value: Omit<Company, "id" | "updated_at"> | Company; onChange: (value: any) => void; onSubmit: (event: FormEvent) => void; saving: boolean; onDelete?: () => void}) {
-  const field = (name: keyof Company, next: string) => onChange({...value, [name]: next});
+export default function InterviewTrackerPage() {
+  return <InterviewTracker/>;
+}
+
+type CompanyFormValue = Omit<Company, "id" | "updated_at"> | Company;
+
+function CompanyForm<T extends CompanyFormValue>({value, onChange, onSubmit, saving, onDelete}: {value: T; onChange: (value: T) => void; onSubmit: (event: FormEvent) => void; saving: boolean; onDelete?: () => void}) {
+  const field = (name: keyof Company, next: string) => onChange({...value, [name]: next} as T);
   return <form className="tracker-form" onSubmit={onSubmit}>
     <div className="tracker-form-grid">
       <label>Company<input required minLength={2} value={value.company} onChange={event => field("company", event.target.value)}/></label>

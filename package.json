@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "import:blogs": "python3 scripts/import_obsidian_blogs.py",
+    "import:interview-questions": "node scripts/import_interview_questions.mjs",
     "build:resume": "bash scripts/build_resume.sh"
   },
   "dependencies": {
