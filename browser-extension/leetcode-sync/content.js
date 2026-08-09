@@ -4,6 +4,7 @@
   const pendingKey = "portfolioLeetCodeSync";
   const completedKey = "portfolioLeetCodeCompletedSync";
   const acknowledgedKey = "portfolioLeetCodeSyncAcknowledged";
+  const helperCapabilities = ["company-question-sync", "cross-tab-ack"];
   const allowedOrigins = new Set([
     "http://localhost:3001",
     "http://portfolio.localtest.me:3001",
@@ -14,6 +15,7 @@
 
   async function setupTrackerRelay() {
     document.documentElement.setAttribute("data-portfolio-leetcode-helper", "ready");
+    document.documentElement.setAttribute("data-portfolio-leetcode-helper-capabilities", helperCapabilities.join(" "));
     const relay = async () => {
       const completed = (await extensionApi.storage.local.get(completedKey))[completedKey];
       if (!completed || completed.callbackOrigin !== window.location.origin) return;

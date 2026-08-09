@@ -187,6 +187,11 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
         setShowLeetcodeSetup(true);
         throw new Error("The browser helper is not active. Follow the install steps, reload this tracker tab, and try again.");
       }
+      const helperCapabilities = new Set((document.documentElement.getAttribute("data-portfolio-leetcode-helper-capabilities") || "").split(/\s+/).filter(Boolean));
+      if (!helperCapabilities.has("company-question-sync") || !helperCapabilities.has("cross-tab-ack")) {
+        setShowLeetcodeSetup(true);
+        throw new Error("The installed browser helper is outdated. Replace it with the latest helper, reload this tracker tab, and try again.");
+      }
       const token = `${crypto.randomUUID()}${crypto.randomUUID()}`;
       setLeetcodePairingToken(token);
       localStorage.setItem("portfolio_leetcode_pairing_token", token);
