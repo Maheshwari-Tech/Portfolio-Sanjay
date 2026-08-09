@@ -204,6 +204,15 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     }
   }
 
+  function downloadLatestLeetCodeHelper() {
+    const link = document.createElement("a");
+    link.href = `/leetcode-sync-extension.zip?download=${Date.now()}`;
+    link.download = "portfolio-leetcode-sync.zip";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
   const visibleCompanies = useMemo(() => companies.filter((item) => {
     const haystack = `${item.company} ${item.target_role} ${item.contacts || ""} ${item.notes || ""} ${item.rounds_information || ""}`.toLowerCase();
     return (!search || haystack.includes(search.toLowerCase())) &&
@@ -298,11 +307,11 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       {showLeetcodeSetup && <div className="leetcode-setup-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) setShowLeetcodeSetup(false); }}>
         <section className="leetcode-setup" role="dialog" aria-modal="true" aria-labelledby="leetcode-setup-title">
           <header><div><p className="eyebrow">ONE-TIME SETUP</p><h2 id="leetcode-setup-title">Connect your browser to LeetCode</h2></div><button aria-label="Close setup" onClick={() => setShowLeetcodeSetup(false)}>×</button></header>
-          <p>Required helper version: <strong>1.4.0</strong>. The ZIP does not install when downloaded. Unzip it first, then load that folder as an extension.</p>
+          <p>Always replace an older helper with the latest download. The ZIP does not install when downloaded—unzip it first, then load that folder as an extension.</p>
           <ol>
-            <li><a className="button button-dark" href="/leetcode-sync-extension-v1.4.0.zip" download="portfolio-leetcode-sync-v1.4.0.zip">1. Download helper v1.4.0</a><span>Open your Downloads folder and unzip it. The folder manifest must show version 1.4.0.</span></li>
+            <li><button className="button button-dark" onClick={downloadLatestLeetCodeHelper}>1. Download latest helper</button><span>Open your Downloads folder and unzip the newly downloaded package.</span></li>
             <li><strong>2. Open extensions</strong><span>Chrome: <code>chrome://extensions</code> · Edge: <code>edge://extensions</code> · Firefox: <code>about:debugging#/runtime/this-firefox</code></span></li>
-            <li><strong>3. Replace the old helper</strong><span>Remove the existing Portfolio LeetCode Sync extension first. Then choose “Load unpacked” and select the new v1.4.0 folder. Firefox: choose “Load Temporary Add-on” and select its <code>manifest.json</code>.</span></li>
+            <li><strong>3. Replace the old helper</strong><span>Remove the existing Portfolio LeetCode Sync extension first. Then choose “Load unpacked” and select the newly downloaded folder. Firefox: choose “Load Temporary Add-on” and select its <code>manifest.json</code>.</span></li>
             <li><strong>4. Reload this tracker tab</strong><span>The helper cannot activate in a tab that was already open when it was installed.</span></li>
           </ol>
           <div className="leetcode-setup-actions"><button className="button button-dark" onClick={() => window.location.reload()}>Reload tracker</button><button className="button" onClick={() => setShowLeetcodeSetup(false)}>Close setup</button></div>
