@@ -22,3 +22,5 @@ Firefox's temporary installation lasts until Firefox restarts. A permanently sig
 The helper uses the LeetCode account signed in within the browser. Progress is stored only in that visitor's browser. The extension never reads or transmits the `LEETCODE_SESSION` cookie.
 
 After updating the helper, reload it from your browser's extension page and reload the tracker tab.
+
+Version 1.3 retrieves every LeetCode question-status page before reporting that synchronization is complete.

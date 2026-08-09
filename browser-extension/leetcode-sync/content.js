@@ -112,10 +112,8 @@
     return headers;
   }
 
-  async function synchronize(config) {
-    activeConfig = config;
-    showPanel("Portfolio LeetCode Sync", "Checking your signed-in LeetCode account…");
-    const progressResponse = await fetch("https://leetcode.com/graphql", {
+  async function fetchProgressPage(skip, limit) {
+    const response = await fetch("https://leetcode.com/graphql", {
       method: "POST",
       credentials: "include",
       headers: graphqlHeaders(),
@@ -123,14 +121,37 @@
         operationName: "PortfolioBrowserProgress",
         query: progressQuery,
         variables: {
-          skip: 0,
-          limit: 5000,
+          skip,
+          limit,
           filters: {filterCombineType: "ALL"}
         }
       })
     });
-    if (!progressResponse.ok) throw new Error("LeetCode did not accept the progress request.");
-    const progressResult = await progressResponse.json();
+    if (!response.ok) throw new Error("LeetCode did not accept the progress request.");
+    const result = await response.json();
+    if (result.errors?.length) throw new Error("LeetCode progress is temporarily unavailable.");
+    return result;
+  }
+
+  async function synchronize(config) {
+    activeConfig = config;
+    showPanel("Portfolio LeetCode Sync", "Checking your signed-in LeetCode account…");
+    const pageSize = 100;
+    let skip = 0;
+    let progressResult = null;
+    const questions = [];
+    while (true) {
+      const pageResult = await fetchProgressPage(skip, pageSize);
+      if (!progressResult) progressResult = pageResult;
+      const page = pageResult.data?.problemsetQuestionListV2 || {};
+      const pageQuestions = page.questions || [];
+      questions.push(...pageQuestions);
+      if (page.hasMore && pageQuestions.length === 0) throw new Error("LeetCode returned an incomplete progress page. Please try the sync again.");
+      if (!page.hasMore) break;
+      skip += pageQuestions.length;
+      showPanel("Portfolio LeetCode Sync", `Loading your question progress… ${questions.length} checked`);
+      if (skip > 10000) throw new Error("LeetCode returned too many progress pages to synchronize safely.");
+    }
     if (!progressResult?.data?.isCurrentUserAuthenticated || !progressResult.data.userStatus?.isSignedIn) {
       showPanel(
         "Sign in to continue",
@@ -149,8 +170,7 @@
     });
     if (!profileResponse.ok) throw new Error("LeetCode did not return profile activity.");
     const profileResult = await profileResponse.json();
-    if (progressResult.errors?.length || profileResult.errors?.length || !profileResult.data?.matchedUser) throw new Error("LeetCode progress is temporarily unavailable.");
-    const questions = progressResult.data.problemsetQuestionListV2?.questions || [];
+    if (profileResult.errors?.length || !profileResult.data?.matchedUser) throw new Error("LeetCode progress is temporarily unavailable.");
     const questionStatuses = Object.fromEntries(
       questions.filter(item => item.titleSlug).map(item => [item.titleSlug, normalizedStatus(item.status)])
     );
@@ -170,6 +190,7 @@
       payload: {
         username,
         question_statuses: questionStatuses,
+        question_statuses_complete: true,
         recent_submissions: recentSubmissions,
         solved_counts: solvedCounts
       }

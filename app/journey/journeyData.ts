@@ -35,10 +35,7 @@ export type JourneyChapter = {
     title: string;
     copy: string;
   }>;
-  learnings: Array<{
-    title: string;
-    copy: string;
-  }>;
+  learnings: string[];
   milestones: Array<{
     value: string;
     label: string;
@@ -77,47 +74,34 @@ export const journeyChapters: JourneyChapter[] = [
     place: "Lovely Professional University · Jalandhar",
     headline: "I began college with a four-year goal: earn a 10 LPA offer.",
     summary:
-      "The goal gave me direction, but I did not spend four years staring at it. I followed the work that felt difficult and exciting, tried widely, and let growing skill move the boundary of what I believed was possible.",
+      "The goal set direction. Curiosity did the rest: I tried widely, stayed with the hardest work I enjoyed, and let growing skill keep moving the goalpost.",
     tone: "paper",
     pivot: {
       label: "The process",
-      text: "Set the direction, then give your attention to the work. Curiosity made the hours feel lighter; challenge kept the work meaningful; and every sincere attempt revealed what deserved deeper commitment.",
+      text: "Set the direction, then focus on the work. Curiosity made sustained effort feel natural; each attempt showed where to go deeper.",
     },
     contextTitle: "What confidence could not teach me on its own",
     work: [
       {
         title: "I chose challenging work and let interest decide where to go deeper.",
-        copy: "I tried coding contests, hackathons, projects, aptitude tests, teaching, and mentoring before deciding what deserved deeper commitment. Competitive programming was the challenge I enjoyed most, while Machine Learning became my academic specialisation. The effort was real, but curiosity made difficult work feel natural rather than forced.",
+        copy: "I tried contests, hackathons, projects, aptitude tests, teaching, and mentoring. Competitive programming was the most fun; Machine Learning became my specialisation. Curiosity made the hard work feel almost effortless.",
       },
       {
         title: "Skill moved the goalpost before any offer did.",
-        copy: "By second year, seniors who had seen my contest profiles and leaderboard results told me that 10 LPA was already within reach. I was regularly among the top students in company coding tests. Their guidance helped me see what my own experience had not yet shown me. At the early-stage InterviewBit, now Scaler, I then helped hire teachers, develop the course, and build the learning platform with my Team Amigos friends.",
+        copy: "By second year, seniors reviewing my contest results told me 10 LPA was already within reach. I was among the top students in company coding tests. Their guidance raised my ambition. At early-stage InterviewBit—now Scaler—I helped hire teachers, develop the course, and build the learning platform with Team Amigos.",
       },
     ],
     started: {
       title: "The goal was a compass, not a scoreboard.",
-      copy: "The 10 LPA ambition mattered because it pointed me forward. After setting it, I gave my attention to the process: exploring computer science, choosing work that challenged me, and staying with the problems I genuinely enjoyed. Progress followed as a consequence rather than an obsession.",
+      copy: "The 10 LPA ambition pointed me forward. Then I focused on exploring computer science, choosing hard work, and staying with problems I enjoyed. Progress followed the process.",
     },
     other: [
       {
         title: "In hindsight, it was extraordinary—and never mine alone.",
-        copy: "At the time, the Amazon offer felt like a natural result of preparation. Looking back, I can see its true scale. Years of work had created readiness; timing, good fortune, senior guidance, committed teammates, supportive teachers, and people who believed in me helped that readiness meet the right opportunity. That reflection does not reduce the achievement. It lets confidence and gratitude exist together.",
+        copy: "The Amazon offer felt natural then; in hindsight, it was extraordinary. Preparation created readiness, while timing, luck, seniors, teammates, teachers, and family helped it meet opportunity. Confidence and gratitude belong together.",
       },
     ],
-    learnings: [
-      {
-        title: "Direction matters; daily attention belongs to the work.",
-        copy: "The four-year goal was useful because it set a direction. Progress came from focusing on skills, not repeatedly measuring the distance to the target.",
-      },
-      {
-        title: "Curiosity makes sustained effort possible.",
-        copy: "Trying several paths revealed where challenge and enjoyment met. That made difficult practice consistent rather than forced.",
-      },
-      {
-        title: "Confidence works best with gratitude and patience.",
-        copy: "Preparation builds confidence; guidance, timing, and good fortune shape opportunity. Listening carefully keeps confidence from becoming haste.",
-      },
-    ],
+    learnings: ["Competitive Programming", "Machine Learning", "Teaching", "Mentoring"],
     milestones: [
       { value: "10 LPA", label: "The ambition I began college with" },
       { value: "First", label: "Student offered a direct full-time Amazon role when Amazon came to hire interns" },
@@ -184,30 +168,30 @@ export const journeyChapters: JourneyChapter[] = [
         {
           outcome: "Declined",
           title: "Campus startup",
-          copy: "The role began at 8 LPA and rose as high as 28 LPA. I declined because accepting it could close later campus opportunities under university rules.",
+          copy: "The offer rose from 8 to 28 LPA. I declined because university rules could close later campus opportunities.",
         },
         {
           outcome: "Selected",
           title: "InterviewBit · Scaler internship",
-          copy: "I earned the internship off campus and joined the early-stage company with two Team Amigos friends.",
+          copy: "I earned the off-campus internship and joined with two Team Amigos friends.",
         },
         {
           outcome: "Selected",
           title: "Amazon · Direct full-time SDE",
-          copy: "Amazon came to hire interns, but I became the first student selected directly for a full-time role, advertised by the university as 32 LPA. My reaction was, ‘Amazon toh normal hai!’",
+          copy: "Amazon came for interns; I became the first student selected directly for full-time, advertised as 32 LPA. My reaction: ‘Amazon toh normal hai!’",
         },
         {
           outcome: "Rejected",
           title: "Google · First round",
-          copy: "I rushed into code before fully understanding an easy-to-medium problem. The rejection taught me to listen, clarify, and only then solve.",
+          copy: "I coded before understanding the problem. The rejection taught me to listen, clarify, then solve.",
         },
         {
           outcome: "Joined",
           title: "HackerEarth · Problem Curator",
-          copy: "With Amazon’s full-time role scheduled for July, I chose HackerEarth for my final semester—and they chose me knowing the commitment would be six months.",
+          copy: "With Amazon starting in July, HackerEarth and I chose each other for a six-month final-semester internship.",
         },
       ],
-      text: "I left Scaler when my teammates moved to their internships, returned to college, and continued helping juniors and Programming Pathshala students prepare for placements. HackerEarth became the bridge between competitive programming and full-time product engineering.",
+      text: "When my Scaler teammates left for internships, I returned to college and helped juniors prepare for placements. HackerEarth became the bridge to full-time engineering.",
     },
     tags: ["Competitive programming", "ACM-ICPC", "Mentoring", "Machine learning"],
   },
@@ -222,24 +206,24 @@ export const journeyChapters: JourneyChapter[] = [
     place: "Bengaluru",
     headline: "I learned that a technical problem is also a product decision.",
     summary:
-      "College had taught me to solve difficult problems. HackerEarth taught me to decide which problems were worth asking—and to make that decision fair for candidates and useful for companies.",
+      "HackerEarth moved me from solving hard problems to designing fair, useful assessments for candidates and companies.",
     logo: "/images/HackerEarth_logo.png",
     logoAlt: "HackerEarth",
     logoClass: "wide",
     tone: "mint",
     pivot: {
       label: "From skill to judgement",
-      text: "A hard question can still be a poor hiring signal. The real work is balancing depth, clarity, time, test coverage, and fairness so the assessment measures the capability the company actually needs.",
+      text: "Difficulty alone is a poor hiring signal. A useful assessment balances depth, clarity, time, test coverage, and fairness.",
     },
     contextTitle: "The first leadership lesson was designing for people I would never meet",
     work: [
       {
         title: "Turned algorithms into reliable hiring signals.",
-        copy: "I created and tested coding problems for companies including Infosys, Google, Facebook, Nokia, PayPal, and Salesforce. The responsibility was larger than producing a clever question. I had to define what it measured, remove ambiguity, choose reasonable limits, prove the solution, and build tests that treated every candidate consistently.",
+        copy: "I created and tested coding problems for Infosys, Google, Facebook, Nokia, PayPal, and Salesforce—defining what each measured, removing ambiguity, proving the solution, and testing every candidate consistently.",
       },
       {
         title: "Learned that expertise scales only when it can be explained.",
-        copy: "On HackerEarth’s behalf, I delivered a two-day, ten-hour-plus workshop on advanced data structures and algorithms at MNIT Jaipur for more than 120 attendees. Teaching exposed every gap that solving alone could hide. It taught me to structure ideas, adapt to an audience, and treat understanding—not presentation—as the outcome.",
+        copy: "I represented HackerEarth in a two-day, 10+ hour advanced algorithms workshop at MNIT Jaipur for 120+ attendees. Teaching exposed gaps that solving alone could hide.",
       },
     ],
     portfolioRecord: {
@@ -252,28 +236,15 @@ export const journeyChapters: JourneyChapter[] = [
     },
     started: {
       title: "We chose each other, even with a clear six-month horizon.",
-      copy: "By January 2020, I already held Amazon’s full-time offer, scheduled to begin in July. For the six months in between, I chose HackerEarth because problem setting was close to what I loved and would stretch me from solving questions to evaluating people fairly. HackerEarth chose me knowing from the beginning that I could stay for only six months. I remain grateful for that trust: they invested in me, gave me meaningful company assessments, and let me represent them at MNIT Jaipur instead of limiting the responsibility because the time was short.",
+      copy: "I already held Amazon’s July 2020 offer, but chose HackerEarth because problem setting stretched what I loved into fair evaluation. They hired me knowing I could stay only six months, yet trusted me with company assessments and the MNIT workshop. I remain grateful for that investment.",
     },
     other: [
       {
         title: "Fairness became an engineering requirement.",
-        copy: "Clarity, realistic constraints, complete tests, and a defensible expected solution were not editorial polish; they were the product. This was my first experience of making a technical decision for people I could not speak to directly and still being accountable for its consequences.",
+        copy: "Clear wording, realistic limits, complete tests, and a sound expected solution were the product. My decisions affected candidates I would never meet.",
       },
     ],
-    learnings: [
-      {
-        title: "Fairness must be designed, not assumed.",
-        copy: "Clear wording, reasonable limits, and complete tests determine whether an assessment measures skill or creates noise.",
-      },
-      {
-        title: "Teaching reveals the depth of understanding.",
-        copy: "Explaining a difficult idea to a large audience exposes gaps that solving the problem alone can hide.",
-      },
-      {
-        title: "Technical decisions affect people before they affect systems.",
-        copy: "A hiring problem can shape someone’s opportunity. That makes care, consistency, and accountability part of the engineering work.",
-      },
-    ],
+    learnings: ["Problem Setting", "Competitive Programming", "Teaching", "Public Speaking"],
     milestones: [
       { value: "6+", label: "Company hiring programs supported" },
       { value: "120+", label: "Workshop attendees" },
@@ -318,7 +289,7 @@ export const journeyChapters: JourneyChapter[] = [
           copy: "The direct campus offer became my first full-time engineering role in July 2020.",
         },
       ],
-      text: "HackerEarth taught me to create a trustworthy signal before someone joined a company. Amazon offered the next layer of responsibility: building systems people and businesses would depend on every day.",
+      text: "HackerEarth taught me to judge skill fairly. Amazon added responsibility for systems used every day.",
     },
     tags: ["Problem setting", "Algorithms", "Teaching", "Public speaking"],
   },
@@ -333,28 +304,28 @@ export const journeyChapters: JourneyChapter[] = [
     place: "Hyderabad",
     headline: "At Amazon, correctness became only the starting point.",
     summary:
-      "The 32 LPA offer had been the visible milestone. The deeper achievement was learning to own finance systems at scale—where reliability, speed, observability, and business risk mattered together.",
+      "The placement number opened the door. Inside, success meant reliable, fast finance systems and sound decisions under real business risk.",
     logo: "/images/amazon_logo.svg",
     logoAlt: "Amazon",
     logoClass: "wide",
     tone: "night",
     pivot: {
       label: "Owning real outcomes",
-      text: "Correct code is only the beginning. A dependable system must be safe to release, easy to understand, resilient when something fails, and trustworthy under real demand.",
+      text: "Correct code is the beginning. A dependable system must be safe to release, easy to operate, and resilient under real demand.",
     },
     contextTitle: "Production scale changed both my engineering and my ambition",
     work: [
       {
         title: "Connected technical choices to financial risk.",
-        copy: "I built systems to identify unusual, duplicate, or potentially fraudulent invoices across more than one lakh daily requests. Three detection rules identified more than 100 million US dollars in anomalies within one month. The work made impact concrete: a technical decision could influence a real financial decision.",
+        copy: "I built systems for unusual, duplicate, and potentially fraudulent invoices across 100K+ daily requests. Three rules identified $100M+ in anomalies within one month.",
       },
       {
         title: "Made results faster and the system safer to run.",
-        copy: "I helped move anomaly findings from a 24-hour delay to near real time, then built the service interfaces, monitoring, infrastructure, and release setup needed to run the system safely. Accurate detection was not enough; the result had to arrive quickly and teams had to trust the service around it.",
+        copy: "I moved findings from a 24-hour delay to near real time, then built the interfaces, monitoring, infrastructure, and release setup needed to run safely.",
       },
       {
         title: "Began leading before leadership was part of the title.",
-        copy: "I learned several connected services quickly, developed strong product knowledge, drove discussions, contributed across teams, and supported colleagues when work crossed service boundaries. That pattern—understand the whole system, create clarity, and help others move—became the earliest version of the leadership style I would later formalise.",
+        copy: "I learned connected services quickly, drove discussions, worked across teams, and supported colleagues. Understanding the whole system and creating clarity became my first leadership pattern.",
       },
     ],
     portfolioRecord: {
@@ -371,28 +342,15 @@ export const journeyChapters: JourneyChapter[] = [
     },
     started: {
       title: "Full-time work reset the scoreboard.",
-      copy: "I joined Amazon Finance Automation in July 2020. Contest ranks and placement numbers had shaped the journey there, but they had little value inside the role. The new measures were reliability, judgement, product understanding, communication, and how calmly I could respond when a system behaved differently in production.",
+      copy: "I joined Finance Automation in July 2020. Contest ranks no longer mattered; reliability, judgement, product understanding, communication, and calm production decisions did.",
     },
     other: [
       {
         title: "The system—not the individual component—became the unit of thinking.",
-        copy: "A local optimisation could create a downstream failure, and a technically elegant service could still be difficult to release or operate. I began looking beyond my assigned component: at dependencies, monitoring, deployment, failure paths, team communication, and the business decision the system existed to support.",
+        copy: "A good component could still create a poor system. I began considering dependencies, monitoring, releases, failures, team communication, and the business decision together.",
       },
     ],
-    learnings: [
-      {
-        title: "Correctness is only the first requirement.",
-        copy: "A valuable system must also be timely, reliable, measurable, and safe for another team to operate.",
-      },
-      {
-        title: "The business outcome should guide the technical choice.",
-        copy: "Models, interfaces, and services matter because of the decision they improve—not because of their technical novelty.",
-      },
-      {
-        title: "Leadership can begin before the title.",
-        copy: "Learning the wider system, creating clarity, and helping colleagues move forward are leadership behaviours at any level.",
-      },
-    ],
+    learnings: ["Machine Learning", "Anomaly Detection", "Microservices", "API Design", "CI/CD", "Monitoring"],
     milestones: [
       { value: "$100M+", label: "Anomalies identified in one month" },
       { value: "100K+", label: "Daily invoice create / update requests" },
@@ -428,10 +386,10 @@ export const journeyChapters: JourneyChapter[] = [
         {
           outcome: "Selected",
           title: "Google · Software Engineer II",
-          copy: "A recruiter returned after my earlier rejection. I asked for one month, completed more than 450 practice questions, and cleared the process.",
+          copy: "A recruiter returned. I asked for one month, completed 450+ practice questions, and cleared the process.",
         },
       ],
-      text: "I was performing well and could have progressed to SDE II quickly. Brand mattered honestly, but it was not the only consideration: my manager was moving teams, a senior engineer encouraged the move, and Search offered a chance to learn how products serve people at enormous scale. I left a strong Amazon path to broaden what I could learn.",
+      text: "I was on a strong path toward SDE II. Brand mattered, but so did my manager moving, a senior engineer’s advice, and the chance to learn Search at global scale. I chose the wider learning curve.",
     },
     tags: ["Machine learning", "Anomaly detection", "AWS", "Microservices"],
   },
@@ -446,28 +404,28 @@ export const journeyChapters: JourneyChapter[] = [
     place: "Bengaluru · Hybrid",
     headline: "Google widened the question from systems to people and intent.",
     summary:
-      "Amazon taught me to make systems dependable. Search India added another layer: understand what a person means, make the experience useful across languages, and change a global product without losing local context.",
+      "Search India taught me to understand intent, serve people across languages, and change a global product without losing local context.",
     logo: "/images/google_logo.webp",
     logoAlt: "Google",
     logoClass: "wide",
     tone: "blue",
     pivot: {
       label: "Product judgement at scale",
-      text: "At Search scale, a small percentage is still a large human audience. Architecture, product intent, language, and rollout discipline have to move together because an apparently narrow change can reach more than a million daily queries.",
+      text: "At Search scale, a small percentage still means millions of people. Product intent, language, design, and release discipline must move together.",
     },
     contextTitle: "User empathy, mentorship, and life outside work shaped the next decision",
     work: [
       {
         title: "Helped Search understand what users meant, not only what they typed.",
-        copy: "I built Exam Quiz and structured education experiences for Search India, then helped change how the product interpreted education searches. The work affected 0.05% of Search traffic—an estimated scale of more than one million daily queries. It taught me to judge a technical change by the user need it served.",
+        copy: "I built Exam Quiz and education experiences, then improved how Search interpreted education queries. The change affected 0.05% of traffic—an estimated 1M+ daily queries.",
       },
       {
         title: "Built language support once so several products could use it.",
-        copy: "I launched exam-result experiences in Hindi, Tamil, and Telugu and designed a shared language service for other features. The aim was not translation for its own sake; it was a useful experience for Indian-language users, including people in smaller cities, without every team solving the same problem again.",
+        copy: "I launched exam-result experiences in Hindi, Tamil, and Telugu and designed a shared language service, helping several features serve Indian-language users without repeating the work.",
       },
       {
         title: "Learned to deliver through influence, not authority.",
-        copy: "The work crossed product and infrastructure teams. Progress depended on clear requirements, shared priorities, careful release planning, and patient resolution of disagreements and failures. In a large organisation, the ability to create alignment was as important as writing the change itself.",
+        copy: "The work crossed product and infrastructure teams. Clear requirements, shared priorities, careful releases, and patient agreement mattered as much as writing the change.",
       },
     ],
     portfolioRecord: {
@@ -486,28 +444,15 @@ export const journeyChapters: JourneyChapter[] = [
     },
     started: {
       title: "The role began with a more disciplined way of solving problems.",
-      copy: "I joined Search India in September 2021 with a method shaped by deliberate preparation: listen, clarify, understand, and then solve. That discipline carried into product work, cross-team decisions, and the way I approached ambiguous problems.",
+      copy: "I joined Search India in September 2021 with a deliberate method: listen, clarify, understand, then solve. It shaped both product work and cross-team decisions.",
     },
     other: [
       {
         title: "Mentorship kept scale personal.",
-        copy: "I held more than 50 mentoring sessions through Bosscoder Academy. Engineers I supported later joined Atlassian, Adobe, Amazon, PhonePe, and Microsoft. The sessions reinforced a lesson that large products can obscure: leadership is still experienced one person, one blocker, and one decision at a time.",
+        copy: "I held 50+ Bosscoder mentoring sessions. Engineers I supported later joined Atlassian, Adobe, Amazon, PhonePe, and Microsoft. Leadership still happens one person at a time.",
       },
     ],
-    learnings: [
-      {
-        title: "Start with the user’s need, not the proposed solution.",
-        copy: "Understanding what a person means leads to better decisions than optimising only for the words or structure already available.",
-      },
-      {
-        title: "Influence is a delivery skill.",
-        copy: "Large changes succeed through shared priorities, clear reasoning, and patient agreement across teams—not authority alone.",
-      },
-      {
-        title: "Leadership remains personal at any scale.",
-        copy: "Products may reach millions, but people experience leadership through individual support, clear feedback, and trust.",
-      },
-    ],
+    learnings: ["Product Engineering", "API Design", "Localization", "Cross-functional Collaboration", "System Design"],
     milestones: [
       { value: "1M+", label: "Estimated daily queries touched" },
       { value: "3", label: "Indian languages launched" },
@@ -538,25 +483,25 @@ export const journeyChapters: JourneyChapter[] = [
         {
           outcome: "Life",
           title: "Marriage",
-          copy: "I married on 28 November 2023. Growth, location, and daily life now had to be evaluated together rather than as separate decisions.",
+          copy: "I married on 28 November 2023. Career, location, and daily life now belonged in one decision.",
         },
         {
           outcome: "Ambition",
           title: "Bigger, more hands-on challenges",
-          copy: "After two and a half years at Google, I wanted responsibility for more of the outcome—from design and implementation through delivery and team growth.",
+          copy: "After 2.5 years, I wanted wider hands-on ownership—from design and implementation to delivery and team growth.",
         },
         {
           outcome: "Rejected",
           title: "Amazon · SDE II",
-          copy: "I interviewed without giving preparation enough time and was not selected. I treated it as one result, not a verdict.",
+          copy: "I prepared too little and was rejected. It was one result, not a verdict.",
         },
         {
           outcome: "Selected",
           title: "Oracle Health",
-          copy: "Oracle offered meaningful healthcare work, remote flexibility, and broader hands-on ownership. I joined on 4 April 2024.",
+          copy: "Healthcare impact, remote work, and broader ownership led me to join on 4 April 2024.",
         },
       ],
-      text: "The move was not away from ambition. It was a more complete form of ambition: harder problems, wider responsibility, continued hands-on learning, and a working model that fit the life we were building.",
+      text: "The move combined harder problems, wider responsibility, hands-on learning, and a working model that fit our life.",
     },
     tags: ["Search", "Localization", "API design", "Mentorship"],
   },
@@ -571,32 +516,32 @@ export const journeyChapters: JourneyChapter[] = [
     place: "Oracle Health · Remote",
     headline: "Oracle is where engineering breadth became leadership scope.",
     summary:
-      "The work joined everything the earlier chapters had taught me: problem depth, fairness, reliable systems, user impact, cross-team alignment, and mentorship—now applied to product direction, delivery, hiring, and team leadership.",
+      "Oracle brought architecture, delivery, hiring, and team leadership into one responsibility for a healthcare platform.",
     logo: "/images/oracle_logo.svg",
     logoAlt: "Oracle",
     logoClass: "wide",
     tone: "red",
     pivot: {
       label: "Leadership at system level",
-      text: "Good design makes responsibility clear—between services, teams, failure recovery, and future decisions. Good leadership gives people enough clarity to move quickly without making the product fragile.",
+      text: "Good design clarifies responsibility across services and failures. Good leadership gives people clarity without making the product depend on one person.",
     },
     contextTitle: "A healthcare platform made architecture, delivery, and people one responsibility",
     work: [
       {
         title: "Own platform direction across products.",
-        copy: "I lead the design, technical direction, delivery, and production readiness of Oracle Health’s next clinical reporting platform across more than three products. I designed and helped build more than seven services spanning requests, templates, data extraction, report generation, and final PDF assembly, with clear ownership for security, audit history, failure recovery, and operation.",
+        copy: "I lead design, delivery, and production readiness for clinical reporting across 3+ products. I designed and helped build 7+ services covering requests, templates, data, reports, PDF assembly, security, audit history, and recovery.",
       },
       {
         title: "Turn plans into safe, predictable releases.",
-        copy: "Across four quarterly releases, I translated roadmaps into decisions and work for five to eight engineers, removed ambiguity and blockers, guided design, resolved defects, and led compliance, monitoring, release, and production readiness. A design creates value only when the team can deliver and support it safely.",
+        copy: "Across four quarterly releases, I turned roadmaps into clear work for 5–8 engineers, guided design, removed blockers, resolved defects, and led safe production releases.",
       },
       {
         title: "Fix the underlying limit, not only the immediate failure.",
-        copy: "When very large reports missed a strict response-time target, I led improvements across memory use, processing, and repeated data work. The objective was not a one-off rescue; it was a stronger design, better measurement, and a system that could keep meeting the requirement as demand grew.",
+        copy: "When 1,000-page reports missed a 30-second target, I led improvements that cut memory 40%, raised speed 25%+, and reduced data-extraction time 60%.",
       },
       {
         title: "Build organisational capacity, not personal dependency.",
-        copy: "I built the India Clinical Reporting team from the ground up, lead work across several products, partner broadly, reduce onboarding time, mentor engineers, and help maintain a high hiring standard. The goal is a team that can make strong decisions without waiting for one person.",
+        copy: "I built the India Clinical Reporting team, now 10+ engineers across 3+ products, while partnering with 25+ teams, mentoring engineers, and strengthening hiring.",
       },
     ],
     portfolioRecord: {
@@ -616,32 +561,19 @@ export const journeyChapters: JourneyChapter[] = [
     },
     started: {
       title: "I chose wider ownership, meaningful stakes, and a life-compatible operating model.",
-      copy: "I joined Oracle Health on 4 April 2024 with clear criteria: end-to-end ownership, a domain where reliability mattered, room to lead, and a remote setup that fit life after marriage. I was promoted to Tech Lead in October 2025.",
+      copy: "I joined Oracle Health on 4 April 2024 for end-to-end ownership, meaningful reliability work, room to lead, and remote work after marriage. I became Tech Lead in October 2025.",
     },
     other: [
       {
         title: "Reliability is part of the user promise.",
-        copy: "Clinical reports can be long, sensitive, and required under strict time limits. Security, audit history, failure recovery, monitoring, performance, and calm release preparation are therefore not background work. They are part of what the product promises clinicians and patients.",
+        copy: "Clinical reports are sensitive and time-bound. Security, audit history, recovery, monitoring, performance, and safe releases are part of the promise to clinicians and patients.",
       },
       {
         title: "Continuous learning keeps judgement current.",
-        copy: "I earned Oracle Cloud certifications in generative AI, cloud development, and AI foundations, alongside the advanced CodeChef data structures and algorithms certification. More than 30 technical certifications support a broader habit: keep learning enough to question old assumptions without chasing every new tool.",
+        copy: "Oracle certifications in generative AI, cloud development, and AI foundations—plus 30+ technical credentials—help me question old assumptions without chasing every new tool.",
       },
     ],
-    learnings: [
-      {
-        title: "Design, delivery, and people are one responsibility.",
-        copy: "A strong technical direction matters only when the team can deliver it safely and support it confidently.",
-      },
-      {
-        title: "Solve the underlying limit, not only the visible incident.",
-        copy: "Production problems are opportunities to improve measurement, design, and future capacity—not merely restore the current state.",
-      },
-      {
-        title: "Build a team that does not depend on one person.",
-        copy: "Clear ownership, strong hiring, mentoring, and shared judgement create more durable impact than individual heroics.",
-      },
-    ],
+    learnings: ["Technical Leadership", "System Architecture", "Performance Tuning", "Hiring", "Mentoring", "Cross-team Delivery"],
     milestones: [
       { value: "10+", label: "Engineers across 3+ products" },
       { value: "7+", label: "Microservices architected and built" },
@@ -716,25 +648,25 @@ export const journeyChapters: JourneyChapter[] = [
         {
           outcome: "Rejected",
           title: "Meta",
-          copy: "I interviewed with Meta after joining Oracle but was not selected.",
+          copy: "I interviewed after joining Oracle and was not selected.",
         },
         {
           outcome: "Two offers",
           title: "Amazon · SDE II",
-          copy: "I interviewed with two separate Amazon teams during offline hiring drives and received an SDE II offer from both.",
+          copy: "Two separate offline hiring drives produced two SDE II offers.",
         },
         {
           outcome: "Offer",
           title: "Uber · SDE II",
-          copy: "I was selected for an Uber SDE II role through an offline hiring drive.",
+          copy: "Selected through an offline hiring drive.",
         },
         {
           outcome: "Offer",
           title: "Microsoft · L62",
-          copy: "I interviewed with Microsoft and was selected for an L62 role.",
+          copy: "Selected for an L62 role.",
         },
       ],
-      text: "I chose to stay at Oracle through those outcomes. The role, ownership, visible impact, room to grow, and nomination for the next level mattered more than changing companies for its own sake. More recent leadership and organisation changes have altered that balance, so I am reassessing the next chapter honestly. The decision remains the same kind of decision: meaningful responsibility, good people, sustained impact, and room to keep growing.",
+      text: "I stayed because ownership, impact, growth, and a next-level nomination mattered more than changing logos. Recent leadership and organisation changes shifted that balance. I am reassessing with the same criteria: meaningful responsibility, good people, sustained impact, and room to grow.",
     },
     tags: ["Technical leadership", "Architecture", "Hiring", "Healthcare"],
   },

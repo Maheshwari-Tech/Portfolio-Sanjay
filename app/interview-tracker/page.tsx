@@ -14,6 +14,7 @@ type SortDirection = "asc" | "desc";
 type LeetCodeBrowserPayload = {
   username: string;
   question_statuses: Record<string, "solved" | "attempted" | "not_started">;
+  question_statuses_complete?: boolean;
   recent_submissions: Array<{id: string; title: string; title_slug: string; timestamp: number; status: string; language: string}>;
   solved_counts: Array<{difficulty: string; count: number; submissions: number}>;
 };
@@ -148,7 +149,9 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
           recent_accepted_question_slugs: Object.entries(message.payload.question_statuses).filter(([, status]) => status === "solved").map(([slug]) => slug),
           session_state: "browser_synced",
           coverage: "browser_authenticated_sync",
-          coverage_note: "Question status was synchronized from your signed-in LeetCode browser session.",
+          coverage_note: message.payload.question_statuses_complete
+            ? "All question statuses were synchronized from your signed-in LeetCode browser session."
+            : "LeetCode returned a partial question-status snapshot. Missing questions remain Not verified.",
           synced_at: syncedAt,
         };
         localStorage.setItem("portfolio_leetcode_activity", JSON.stringify(activity));
