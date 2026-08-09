@@ -13,6 +13,9 @@ type SortKey = "company" | "priority" | "status" | "target_role" | "last_applied
 type SortDirection = "asc" | "desc";
 type LeetCodeBrowserPayload = {
   username: string;
+  sync_scope?: "company";
+  company_name?: string;
+  requested_question_slugs?: string[];
   question_statuses: Record<string, "solved" | "attempted" | "not_started">;
   question_statuses_complete?: boolean;
   recent_submissions: Array<{id: string; title: string; title_slug: string; timestamp: number; status: string; language: string}>;
@@ -142,21 +145,24 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       setLeetcodeSyncMessage("Saving your LeetCode progress in this browser…");
       try {
         const syncedAt = new Date().toISOString();
+        const previous = JSON.parse(localStorage.getItem("portfolio_leetcode_activity") || "null") as (LeetCodeBrowserPayload & {username?: string}) | null;
+        const previousStatuses = previous?.username === message.payload.username && previous.sync_scope === "company" ? previous.question_statuses || {} : {};
         const activity = {
           ...message.payload,
+          question_statuses: {...previousStatuses, ...message.payload.question_statuses},
           profile_url: `https://leetcode.com/u/${message.payload.username}/`,
           question_progress: {},
           recent_accepted_question_slugs: Object.entries(message.payload.question_statuses).filter(([, status]) => status === "solved").map(([slug]) => slug),
           session_state: "browser_synced",
           coverage: "browser_authenticated_sync",
           coverage_note: message.payload.question_statuses_complete
-            ? "All question statuses were synchronized from your signed-in LeetCode browser session."
-            : "LeetCode returned a partial question-status snapshot. Missing questions remain Not verified.",
+            ? `All ${message.payload.requested_question_slugs?.length || Object.keys(message.payload.question_statuses).length} ${message.payload.company_name || "company"} question statuses were synchronized.`
+            : `LeetCode returned only ${Object.keys(message.payload.question_statuses).length} of ${message.payload.requested_question_slugs?.length || "the requested"} ${message.payload.company_name || "company"} statuses.`,
           synced_at: syncedAt,
         };
         localStorage.setItem("portfolio_leetcode_activity", JSON.stringify(activity));
         setLeetcodeSyncState("done");
-        setLeetcodeSyncMessage(`${Object.keys(message.payload.question_statuses).length} question statuses synced for ${message.payload.username}.`);
+        setLeetcodeSyncMessage(`${Object.keys(message.payload.question_statuses).length} ${message.payload.company_name || "company"} question statuses synced for ${message.payload.username}.`);
         setLeetcodePairingToken(null);
         localStorage.removeItem("portfolio_leetcode_pairing_token");
         window.dispatchEvent(new Event("leetcode-progress-synced"));
@@ -172,10 +178,11 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     return () => window.removeEventListener("message", receiveLeetCodeProgress);
   }, [leetcodePairingToken]);
 
-  async function connectLeetCode() {
+  async function connectLeetCode(questionSlugs: string[], companyName: string) {
     setLeetcodeSyncState("opening");
     setLeetcodeSyncMessage("Opening your signed-in LeetCode browser session…");
     try {
+      if (questionSlugs.length === 0) throw new Error(`No ${companyName} questions are available to synchronize.`);
       if (document.documentElement.getAttribute("data-portfolio-leetcode-helper") !== "ready") {
         setShowLeetcodeSetup(true);
         throw new Error("The browser helper is not active. Follow the install steps, reload this tracker tab, and try again.");
@@ -183,11 +190,11 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       const token = `${crypto.randomUUID()}${crypto.randomUUID()}`;
       setLeetcodePairingToken(token);
       localStorage.setItem("portfolio_leetcode_pairing_token", token);
-      const connection = encodeConnection({token, callbackOrigin: window.location.origin});
+      const connection = encodeConnection({token, callbackOrigin: window.location.origin, companyName, questionSlugs});
       const popup = window.open(`https://leetcode.com/problemset/#portfolio-sync=${connection}`, "portfolio-leetcode-sync", "popup,width=1180,height=820");
       if (!popup) throw new Error("Allow pop-ups for this site, then try again.");
       setLeetcodeSyncState("waiting");
-      setLeetcodeSyncMessage("Sign in to LeetCode in the opened window. Sync continues automatically.");
+      setLeetcodeSyncMessage(`Checking ${questionSlugs.length} ${companyName} questions in your signed-in LeetCode account…`);
       popup.focus();
     } catch (error) {
       setLeetcodePairingToken(null);
@@ -283,7 +290,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     <section className="tracker-shell">
       <header className="tracker-hero">
         <div><p className="eyebrow">INTERVIEW PREPARATION TRACKER</p><h1>Top companies.<br/><em>One clear pipeline.</em></h1><p>Explore target companies, current interview status, and company-specific LeetCode questions in one focused preparation workspace.</p></div>
-        <div className="tracker-hero-actions"><button className="tracker-connect" onClick={() => void connectLeetCode()} disabled={["opening", "waiting", "saving"].includes(leetcodeSyncState)}><span>↻</span>{leetcodeSyncState === "waiting" ? "Waiting for LeetCode" : leetcodeSyncState === "saving" ? "Syncing progress" : "Refresh LeetCode status"}</button><button className="tracker-extension-download" onClick={() => setShowLeetcodeSetup(true)}>Set up browser helper</button>{canManage && <button className="tracker-add" onClick={() => setAdding(true)}><span>＋</span>Add company</button>}</div>
+        <div className="tracker-hero-actions"><span className="tracker-sync-hint">Open a company to synchronize only its question bank.</span><button className="tracker-extension-download" onClick={() => setShowLeetcodeSetup(true)}>Set up browser helper</button>{canManage && <button className="tracker-add" onClick={() => setAdding(true)}><span>＋</span>Add company</button>}</div>
       </header>
 
       {leetcodeSyncMessage && <div className={`tracker-sync-status ${leetcodeSyncState}`} role="status"><strong>{leetcodeSyncState === "done" ? "LeetCode connected" : leetcodeSyncState === "error" ? "Connection needs attention" : "LeetCode connection"}</strong><span>{leetcodeSyncMessage}</span>{leetcodeSyncState === "error" && <button onClick={() => { setLeetcodeSyncState("idle"); setLeetcodeSyncMessage(""); }}>Dismiss</button>}</div>}
@@ -291,14 +298,14 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       {showLeetcodeSetup && <div className="leetcode-setup-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) setShowLeetcodeSetup(false); }}>
         <section className="leetcode-setup" role="dialog" aria-modal="true" aria-labelledby="leetcode-setup-title">
           <header><div><p className="eyebrow">ONE-TIME SETUP</p><h2 id="leetcode-setup-title">Connect your browser to LeetCode</h2></div><button aria-label="Close setup" onClick={() => setShowLeetcodeSetup(false)}>×</button></header>
-          <p>The ZIP does not install when downloaded. Unzip it first, then load that folder as an extension.</p>
+          <p>Required helper version: <strong>1.4.0</strong>. The ZIP does not install when downloaded. Unzip it first, then load that folder as an extension.</p>
           <ol>
-            <li><a className="button button-dark" href="/leetcode-sync-extension.zip" download>1. Download helper ZIP</a><span>Open your Downloads folder and unzip it.</span></li>
+            <li><a className="button button-dark" href="/leetcode-sync-extension-v1.4.0.zip" download="portfolio-leetcode-sync-v1.4.0.zip">1. Download helper v1.4.0</a><span>Open your Downloads folder and unzip it. The folder manifest must show version 1.4.0.</span></li>
             <li><strong>2. Open extensions</strong><span>Chrome: <code>chrome://extensions</code> · Edge: <code>edge://extensions</code> · Firefox: <code>about:debugging#/runtime/this-firefox</code></span></li>
-            <li><strong>3. Load the unzipped folder</strong><span>Chrome/Edge: enable Developer mode, choose “Load unpacked,” then select the folder. Firefox: choose “Load Temporary Add-on” and select <code>manifest.json</code>.</span></li>
+            <li><strong>3. Replace the old helper</strong><span>Remove the existing Portfolio LeetCode Sync extension first. Then choose “Load unpacked” and select the new v1.4.0 folder. Firefox: choose “Load Temporary Add-on” and select its <code>manifest.json</code>.</span></li>
             <li><strong>4. Reload this tracker tab</strong><span>The helper cannot activate in a tab that was already open when it was installed.</span></li>
           </ol>
-          <div className="leetcode-setup-actions"><button className="button button-dark" onClick={() => window.location.reload()}>Reload tracker</button><button className="button" onClick={() => { setShowLeetcodeSetup(false); void connectLeetCode(); }}>I installed and reloaded it</button></div>
+          <div className="leetcode-setup-actions"><button className="button button-dark" onClick={() => window.location.reload()}>Reload tracker</button><button className="button" onClick={() => setShowLeetcodeSetup(false)}>Close setup</button></div>
           <small>The helper reads only progress from the LeetCode account signed in within this browser. It never sends your LeetCode cookies to this site.</small>
         </section>
       </div>}
@@ -350,7 +357,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       <section className="tracker-editor" role="dialog" aria-modal="true" aria-label={adding ? "Add company" : `Edit ${editing?.company}`}>
         <header><div><p className="eyebrow">{adding ? "NEW TARGET" : canManage ? "COMPANY DOSSIER" : "INTERVIEW PREPARATION"}</p><h2>{adding ? "Add a company" : editing?.company}</h2></div><button aria-label="Close" onClick={closeEditor}>×</button></header>
         {editing && (
-          <QuestionBank company={editing.company} onRefresh={() => void connectLeetCode()}/>
+          <QuestionBank company={editing.company} onRefresh={(questionSlugs, companyName) => void connectLeetCode(questionSlugs, companyName)}/>
         )}
         {canManage && (adding ? <CompanyForm value={newCompany} onChange={setNewCompany} onSubmit={createCompany} saving={saving}/>: editing && <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving} onDelete={() => void deleteCompany(editing)}/>)}
       </section>

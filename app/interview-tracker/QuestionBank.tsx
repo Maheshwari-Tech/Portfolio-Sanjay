@@ -6,6 +6,7 @@ type Question = { id: string; url: string; title: string; difficulty: string; ac
 type Submission = { id: string; title: string; title_slug: string; timestamp: number; status: string; language: string };
 type Activity = {
   username: string;
+  sync_scope?: "company";
   profile_url: string;
   solved_counts: Array<{ difficulty: string; count: number; submissions: number }>;
   recent_submissions: Submission[];
@@ -54,7 +55,7 @@ function parseCsv(source: string): Question[] {
   }));
 }
 
-export default function QuestionBank({ company, onRefresh }: { company: string; onRefresh?: () => void }) {
+export default function QuestionBank({ company, onRefresh }: { company: string; onRefresh?: (questionSlugs: string[], companyName: string) => void }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [state, setState] = useState<LoadState>("loading");
   const [activity, setActivity] = useState<Activity | null>(null);
@@ -121,9 +122,10 @@ export default function QuestionBank({ company, onRefresh }: { company: string; 
   const acceptedSlugs = useMemo(() => new Set(activity?.recent_accepted_question_slugs || []), [activity]);
   const submissionSlugs = useMemo(() => new Set(activity?.recent_submissions.map(item => item.title_slug) || []), [activity]);
   const companySlugs = useMemo(() => new Set(questions.map(item => questionSlug(item.url))), [questions]);
+  const requestedQuestionSlugs = useMemo(() => [...companySlugs].filter(Boolean), [companySlugs]);
   const hasCompleteQuestionStatuses = useMemo(() => Boolean(
-    activity && ["authenticated", "browser_synced"].includes(activity.session_state) && activity.question_statuses_complete === true && Object.keys(activity.question_statuses || {}).length > 0
-  ), [activity]);
+    activity && activity.sync_scope === "company" && ["authenticated", "browser_synced"].includes(activity.session_state) && requestedQuestionSlugs.length > 0 && requestedQuestionSlugs.every(slug => Boolean(activity.question_statuses?.[slug]))
+  ), [activity, requestedQuestionSlugs]);
   const statusFor = (question: Question): ProgressStatus => {
     const slug = questionSlug(question.url);
     const authenticatedStatus = activity?.question_statuses?.[slug];
@@ -152,7 +154,7 @@ export default function QuestionBank({ company, onRefresh }: { company: string; 
 
   return <section className="question-bank" aria-labelledby="question-bank-title">
     <div className="question-bank-heading"><div><p className="eyebrow">COMPANY QUESTION BANK</p><h3 id="question-bank-title">LeetCode preparation</h3></div>{state === "ready" && <strong>{questions.length} questions</strong>}</div>
-    {activity ? <><div className="leetcode-profile-summary"><div><span>Profile</span><a href={activity.profile_url} target="_blank" rel="noreferrer">{activity.username} ↗</a></div>{activity.solved_counts.filter(item => item.difficulty !== "All").map(item => <div key={item.difficulty}><span>{item.difficulty}</span><strong>{item.count}</strong></div>)}{onRefresh && <button className="leetcode-refresh" onClick={onRefresh}>↻ Refresh status</button>}</div>{activity.synced_at && <p className="leetcode-last-synced">Last refreshed {new Date(activity.synced_at).toLocaleString()}</p>}</> : onRefresh && <button className="leetcode-refresh leetcode-connect-first" onClick={onRefresh}>Connect your LeetCode progress</button>}
+    {activity ? <><div className="leetcode-profile-summary"><div><span>Profile</span><a href={activity.profile_url} target="_blank" rel="noreferrer">{activity.username} ↗</a></div>{activity.solved_counts.filter(item => item.difficulty !== "All").map(item => <div key={item.difficulty}><span>{item.difficulty}</span><strong>{item.count}</strong></div>)}{onRefresh && <button className="leetcode-refresh" disabled={state !== "ready"} onClick={() => onRefresh(requestedQuestionSlugs, company)}>↻ Refresh {company} status</button>}</div>{activity.synced_at && <p className="leetcode-last-synced">Last refreshed {new Date(activity.synced_at).toLocaleString()}</p>}</> : onRefresh && <button className="leetcode-refresh leetcode-connect-first" disabled={state !== "ready"} onClick={() => onRefresh(requestedQuestionSlugs, company)}>Connect {company} LeetCode progress</button>}
     <div className="question-bank-tabs" role="tablist"><button role="tab" aria-selected={activeTab === "questions"} className={activeTab === "questions" ? "active" : ""} onClick={() => setActiveTab("questions")}>Questions</button><button role="tab" aria-selected={activeTab === "submissions"} className={activeTab === "submissions" ? "active" : ""} onClick={() => setActiveTab("submissions")}>Submission history {activity ? `(${activity.recent_submissions.length})` : ""}</button></div>
     {state === "loading" && <p className="question-bank-state">Loading questions for {company}…</p>}
     {state === "missing" && <p className="question-bank-state">No company-specific question bank is available for {company} yet.</p>}
@@ -160,7 +162,7 @@ export default function QuestionBank({ company, onRefresh }: { company: string; 
     {activeTab === "questions" && state === "ready" && <>
       <div className="question-bank-stats" aria-label="Question summary"><span><b>{counts.Easy}</b> Easy</span><span><b>{counts.Medium}</b> Medium</span><span><b>{counts.Hard}</b> Hard</span>{activityState === "ready" && <><span className="solved"><b>{progressCounts.solved}</b> Solved</span><span className="attempted"><b>{progressCounts.attempted}</b> Attempted</span>{hasCompleteQuestionStatuses && <span><b>{progressCounts.not_started}</b> Not started</span>}{progressCounts.unverified > 0 && <span><b>{progressCounts.unverified}</b> Not verified</span>}</>}</div>
       <div className="question-bank-filters"><label>Search<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Question title or ID…"/></label><label>Difficulty<select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}><option value="all">All difficulties</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label><label>Progress<select value={progress} onChange={(event) => setProgress(event.target.value)}><option value="all">All progress</option><option value="solved">Solved</option><option value="attempted">Attempted</option>{hasCompleteQuestionStatuses && <option value="not_started">Not started</option>}<option value="unverified">Not verified</option></select></label></div>
-      {activityState === "error" ? <p className="leetcode-coverage-note">LeetCode activity is temporarily unavailable; question progress cannot be verified.</p> : activity && <p className="leetcode-coverage-note">{hasCompleteQuestionStatuses ? activity.coverage_note : "Only recent LeetCode activity is available. Questions outside that limited history remain Not verified until a complete browser sync succeeds."}</p>}
+      {activityState === "error" ? <p className="leetcode-coverage-note">LeetCode activity is temporarily unavailable; question progress cannot be verified.</p> : activity && <p className="leetcode-coverage-note">{hasCompleteQuestionStatuses ? `All ${questions.length} ${company} question statuses are synchronized from your signed-in LeetCode account.` : `${progressCounts.unverified} ${company} questions still need verification. Refresh this company to check exactly these ${questions.length} questions.`}</p>}
       {activityState === "disconnected" && <p className="leetcode-coverage-note">Connect LeetCode to see progress for the account signed in on this browser.</p>}
       <div className="question-bank-list">
         {visible.map((question) => { const status = statusFor(question); return <a key={`${question.id}-${question.title}`} href={question.url} target="_blank" rel="noreferrer"><span className={`question-difficulty ${question.difficulty.toLowerCase()}`}>{question.difficulty}</span><strong>{question.title}</strong><small>#{question.id} · Acceptance {question.acceptance} · Frequency {question.frequency}</small><span className={`question-progress ${status}`}>{status === "solved" ? "✓ Solved" : status === "attempted" ? "Attempted" : status === "not_started" ? "Not started" : "Not verified"}</span><i aria-hidden="true">↗</i></a>; })}

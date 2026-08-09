@@ -3,6 +3,7 @@
 
   const pendingKey = "portfolioLeetCodeSync";
   const completedKey = "portfolioLeetCodeCompletedSync";
+  const acknowledgedKey = "portfolioLeetCodeSyncAcknowledged";
   const allowedOrigins = new Set([
     "http://localhost:3001",
     "http://portfolio.localtest.me:3001",
@@ -26,6 +27,7 @@
       if (event.origin !== window.location.origin || event.data?.type !== "portfolio-leetcode-sync-ack") return;
       const completed = (await extensionApi.storage.local.get(completedKey))[completedKey];
       if (completed?.token === event.data.token) {
+        await extensionApi.storage.local.set({[acknowledgedKey]: {token: completed.token, acknowledgedAt: Date.now()}});
         await extensionApi.storage.local.remove([completedKey, pendingKey]);
       }
     });
@@ -36,14 +38,10 @@
     window.setTimeout(() => { void relay(); }, 1200);
   }
 
-  const progressQuery = `
-    query PortfolioBrowserProgress($skip: Int!, $limit: Int!, $filters: QuestionFilterInput) {
+  const accountQuery = `
+    query PortfolioBrowserAccount {
       isCurrentUserAuthenticated
       userStatus { username isSignedIn }
-      problemsetQuestionListV2(skip: $skip, limit: $limit, filters: $filters) {
-        questions { titleSlug status }
-        hasMore
-      }
     }
   `;
 
@@ -68,7 +66,10 @@
 
   function validConfig(value) {
     return value && typeof value.token === "string" && value.token.length >= 32 &&
-      allowedOrigins.has(value.callbackOrigin);
+      allowedOrigins.has(value.callbackOrigin) && typeof value.companyName === "string" &&
+      value.companyName.length > 0 && value.companyName.length <= 100 &&
+      Array.isArray(value.questionSlugs) && value.questionSlugs.length > 0 && value.questionSlugs.length <= 200 &&
+      value.questionSlugs.every(slug => typeof slug === "string" && /^[a-z0-9-]+$/.test(slug));
   }
 
   function showPanel(title, message, action) {
@@ -112,56 +113,53 @@
     return headers;
   }
 
-  async function fetchProgressPage(skip, limit) {
+  async function graphqlRequest(operationName, query, variables = {}) {
     const response = await fetch("https://leetcode.com/graphql", {
       method: "POST",
       credentials: "include",
       headers: graphqlHeaders(),
       body: JSON.stringify({
-        operationName: "PortfolioBrowserProgress",
-        query: progressQuery,
-        variables: {
-          skip,
-          limit,
-          filters: {filterCombineType: "ALL"}
-        }
+        operationName,
+        query,
+        variables
       })
     });
-    if (!response.ok) throw new Error("LeetCode did not accept the progress request.");
+    if (!response.ok) throw new Error("LeetCode did not accept the status request.");
     const result = await response.json();
     if (result.errors?.length) throw new Error("LeetCode progress is temporarily unavailable.");
     return result;
   }
 
+  function companyProgressQuery(slugs) {
+    const fields = slugs.map((slug, index) =>
+      `q${index}: question(titleSlug: ${JSON.stringify(slug)}) { titleSlug status }`
+    ).join("\n");
+    return `query PortfolioCompanyProgress {\n${fields}\n}`;
+  }
+
   async function synchronize(config) {
     activeConfig = config;
-    showPanel("Portfolio LeetCode Sync", "Checking your signed-in LeetCode account…");
-    const pageSize = 100;
-    let skip = 0;
-    let progressResult = null;
-    const questions = [];
-    while (true) {
-      const pageResult = await fetchProgressPage(skip, pageSize);
-      if (!progressResult) progressResult = pageResult;
-      const page = pageResult.data?.problemsetQuestionListV2 || {};
-      const pageQuestions = page.questions || [];
-      questions.push(...pageQuestions);
-      if (page.hasMore && pageQuestions.length === 0) throw new Error("LeetCode returned an incomplete progress page. Please try the sync again.");
-      if (!page.hasMore) break;
-      skip += pageQuestions.length;
-      showPanel("Portfolio LeetCode Sync", `Loading your question progress… ${questions.length} checked`);
-      if (skip > 10000) throw new Error("LeetCode returned too many progress pages to synchronize safely.");
-    }
-    if (!progressResult?.data?.isCurrentUserAuthenticated || !progressResult.data.userStatus?.isSignedIn) {
+    const requestedSlugs = [...new Set(config.questionSlugs)];
+    showPanel("Portfolio LeetCode Sync", `Checking ${requestedSlugs.length} ${config.companyName} questions…`);
+    const accountResult = await graphqlRequest("PortfolioBrowserAccount", accountQuery);
+    if (!accountResult?.data?.isCurrentUserAuthenticated || !accountResult.data.userStatus?.isSignedIn) {
       showPanel(
         "Sign in to continue",
-        "Sign in to LeetCode normally. Progress sync will continue when you return.",
+        `Sign in to LeetCode normally. ${config.companyName} sync will continue when you return.`,
         {label: "Sign in to LeetCode", run: () => { window.location.href = "/accounts/login/?next=/problemset/"; }}
       );
       return;
     }
-    const username = progressResult.data.userStatus.username;
+    const username = accountResult.data.userStatus.username;
     if (!username) throw new Error("LeetCode did not return the signed-in username.");
+    const questions = [];
+    const chunkSize = 40;
+    for (let offset = 0; offset < requestedSlugs.length; offset += chunkSize) {
+      const chunk = requestedSlugs.slice(offset, offset + chunkSize);
+      const result = await graphqlRequest("PortfolioCompanyProgress", companyProgressQuery(chunk));
+      questions.push(...Object.values(result.data || {}).filter(Boolean));
+      showPanel("Portfolio LeetCode Sync", `Checked ${Math.min(offset + chunk.length, requestedSlugs.length)} of ${requestedSlugs.length} ${config.companyName} questions…`);
+    }
     const profileResponse = await fetch("https://leetcode.com/graphql", {
       method: "POST",
       credentials: "include",
@@ -174,6 +172,7 @@
     const questionStatuses = Object.fromEntries(
       questions.filter(item => item.titleSlug).map(item => [item.titleSlug, normalizedStatus(item.status)])
     );
+    const complete = requestedSlugs.every(slug => Object.hasOwn(questionStatuses, slug));
     const recentSubmissions = (profileResult.data.recentSubmissionList || []).map(item => ({
       id: String(item.id || `${item.titleSlug}-${item.timestamp}`),
       title: item.title || "Untitled question",
@@ -189,18 +188,22 @@
       callbackOrigin: config.callbackOrigin,
       payload: {
         username,
+        sync_scope: "company",
+        company_name: config.companyName,
+        requested_question_slugs: requestedSlugs,
         question_statuses: questionStatuses,
-        question_statuses_complete: true,
+        question_statuses_complete: complete,
         recent_submissions: recentSubmissions,
         solved_counts: solvedCounts
       }
     };
+    await extensionApi.storage.local.remove(acknowledgedKey);
     await extensionApi.storage.local.set({[completedKey]: completed});
     if (window.opener) {
       window.opener.postMessage(completed, config.callbackOrigin);
-      showPanel("Progress collected", `Sending ${Object.keys(questionStatuses).length} question statuses to your tracker…`);
+      showPanel("Progress collected", `${Object.keys(questionStatuses).length} of ${requestedSlugs.length} ${config.companyName} statuses are ready. Return to the tracker.`);
     } else {
-      showPanel("Progress collected", `Return to the tracker. ${Object.keys(questionStatuses).length} question statuses are ready and will sync automatically.`);
+      showPanel("Progress collected", `${Object.keys(questionStatuses).length} of ${requestedSlugs.length} ${config.companyName} statuses are ready. Return to the tracker.`);
     }
   }
 
@@ -214,6 +217,14 @@
     if (event.data.type === "portfolio-leetcode-sync-error") {
       showPanel("Sync could not finish", event.data.detail || "Return to the tracker and try again.");
     }
+  });
+
+  extensionApi.storage.onChanged.addListener((changes, area) => {
+    const acknowledgement = changes[acknowledgedKey]?.newValue;
+    if (area !== "local" || !activeConfig || acknowledgement?.token !== activeConfig.token) return;
+    showPanel("Sync complete", `${activeConfig.companyName} question status is updated in your interview tracker.`);
+    extensionApi.storage.local.remove(acknowledgedKey);
+    window.setTimeout(() => window.close(), 1400);
   });
 
   async function start() {

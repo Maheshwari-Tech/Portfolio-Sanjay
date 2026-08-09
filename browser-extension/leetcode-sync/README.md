@@ -23,4 +23,4 @@ The helper uses the LeetCode account signed in within the browser. Progress is s
 
 After updating the helper, reload it from your browser's extension page and reload the tracker tab.
 
-Version 1.3 retrieves every LeetCode question-status page before reporting that synchronization is complete.
+Version 1.4 requests only the questions in the company bank currently open in the tracker.
