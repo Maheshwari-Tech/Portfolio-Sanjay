@@ -1,7 +1,16 @@
 import Link from "next/link";
 
-type Achievement = string | { text: string; url?: string; learning?: string };
-type RecognitionGroup = { category: string; label: string; items: Achievement[] };
+export type Achievement = string | { text: string; url?: string; learning?: string };
+export type RecognitionGroup = { category: string; label: string; items: Achievement[] };
+
+export const achievementLabels: Record<string, string> = {
+  professional_leadership: "Professional & leadership",
+  certifications: "Certifications",
+  competitive_programming: "Competitive programming",
+  academic_excellence: "Academic excellence",
+  hackathons: "Hackathons",
+  Hackathons: "Hackathons",
+};
 
 function highlightNumbers(text: string) {
   return text.split(/(\b\d[\d,.+]*%?(?:\s*(?:years?|engineers?|interviews?|hires?|teams?|rank|candidates?|certifications?|problems?))?)/gi).filter(Boolean).map((part, index) => /\d/.test(part) ? <strong className="milestone-number" key={index}>{part}</strong> : part);

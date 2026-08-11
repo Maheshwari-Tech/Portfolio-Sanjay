@@ -1,4 +1,4 @@
-type Recommendation = {
+export type Recommendation = {
   id: number;
   name: string;
   rating: number;

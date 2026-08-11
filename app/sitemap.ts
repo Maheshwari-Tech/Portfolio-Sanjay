@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: siteConfig.url, lastModified: now, changeFrequency: "monthly", priority: 1 },
     { url: `${siteConfig.url}/journey`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${siteConfig.url}/personal`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteConfig.url}/projects`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     ...projects.map((project) => ({ url: `${siteConfig.url}/projects/${project.id}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 })),
     { url: `${siteConfig.url}/articles`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },

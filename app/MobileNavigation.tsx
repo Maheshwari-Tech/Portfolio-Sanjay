@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const links = [
-  ["Work", "/#work"], ["Technologies", "/#technologies"], ["Projects", "/projects"],
-  ["Notes", "/articles"], ["Certificates", "/certificates"], ["Recommendations", "/#recommendations"], ["Personal", "/#personal"], ["Contact", "/#contact"],
+  ["Work", "/#work"], ["Journey", "/journey"], ["Technologies", "/#technologies"], ["Projects", "/projects"],
+  ["Notes", "/articles"], ["Certificates", "/certificates"], ["Recommendations", "/#recommendations"], ["Personal", "/personal"], ["Contact", "/#contact"],
 ];
 
 export default function MobileNavigation({ resume }: { resume?: string }) {
@@ -57,7 +57,9 @@ export default function MobileNavigation({ resume }: { resume?: string }) {
           const active = activeHref === href ||
             (label === "Projects" && activeHref.startsWith("/projects")) ||
             (label === "Notes" && activeHref.startsWith("/articles")) ||
-            (label === "Certificates" && activeHref.startsWith("/certificates"));
+            (label === "Certificates" && activeHref.startsWith("/certificates")) ||
+            (label === "Journey" && activeHref.startsWith("/journey")) ||
+            (label === "Personal" && activeHref.startsWith("/personal"));
           return <a className={active ? "active" : undefined} aria-current={active ? "location" : undefined} href={href} key={href} onClick={() => setOpen(false)}>{label}</a>;
         })}
         {resume && <a className="nav-cta" href={resume} download>Resume <span>PDF ↓</span></a>}

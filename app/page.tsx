@@ -7,26 +7,21 @@ import achievementGroupsFallback from "../data/source/achievements.json";
 import blogsFallback from "../data/source/blogs.json";
 import educationFallback from "../data/source/education.json";
 import experienceFallback from "../data/source/experience.json";
-import personalItemsFallback from "../data/source/personal.json";
 import projectDataFallback from "../data/source/projects.json";
 import reviewsFallback from "../data/source/reviews.json";
 import skillsFallback from "../data/source/skills.json";
-import videosFallback from "../data/source/videos.json";
-import VideoCarousel from "./VideoCarousel";
 import ContactFeedback from "./ContactFeedback";
-import ProjectGallery from "./ProjectGallery";
 import ExperienceCarousel from "./ExperienceCarousel";
-import RecognitionCarousel from "./RecognitionCarousel";
+import RecognitionCarousel, { achievementLabels, type Achievement } from "./RecognitionCarousel";
 import { technologyClassName } from "./technologyStyles";
 import { siteConfig } from "./siteConfig";
 import MobileNavigation from "./MobileNavigation";
-import BeyondTechnicalTabs from "./BeyondTechnicalTabs";
 import AccountStatus from "./AccountStatus";
 import Wordmark from "./Wordmark";
 import SiteFooter from "./SiteFooter";
-import RecommendationCarousel from "./RecommendationCarousel";
+import RecommendationCarousel, { type Recommendation } from "./RecommendationCarousel";
 import { backendFirst } from "./serverContent";
-import { sortArticlesByCreation, type ArticleRecord } from "./articles/articleData";
+import { publicArchiveArticles, type ArticleRecord } from "./articles/articleData";
 
 export const revalidate = 120;
 
@@ -46,59 +41,23 @@ const skillLabels: Record<string, string> = {
   softwareDevelopment: "Software development",
 };
 
-const achievementLabels: Record<string, string> = {
-  professional_leadership: "Professional & leadership",
-  certifications: "Certifications",
-  competitive_programming: "Competitive programming",
-  academic_excellence: "Academic excellence",
-  hackathons: "Hackathons",
-  Hackathons: "Hackathons",
-};
-
 const recommendationKeywords = [
   "Technical leadership", "Architecture", "Ownership", "Execution clarity",
   "Mentoring", "Collaboration", "System design", "Code quality",
   "Product knowledge", "Problem solving", "Dependability", "Humility",
 ];
 
-type Achievement = string | { text: string; url?: string; priority?: number; learning?: string };
-type Recommendation = {
-  id: number;
-  name: string;
-  rating: number;
-  comment: string;
-  date: string;
-  context: string;
-  socialLink: string;
-};
-
-const cleanBlogTitle = (title: string) => title.replace(/\.(md|svg|pdf)$/i, "");
-const articleSummaries: Record<number, string> = {
-  4: "A visual walkthrough of system design interviews, the decisions they test, and lessons from the experience.",
-  6: "A visual look at the rhythms, priorities, and everyday systems behind a software engineer’s week.",
-};
-
-const articleExcerpt = (id: number, content: string) => {
-  if (articleSummaries[id]) return articleSummaries[id];
-  return content
-    .replace(/[#*_`>-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 230) + "…";
-};
 export default async function Home() {
-  const [portfolio, about, achievementGroups, blogs, education, experience, personalItems, projectData, reviews, skills, videos] = await Promise.all([
+  const [portfolio, about, achievementGroups, blogs, education, experience, projectData, reviews, skills] = await Promise.all([
     backendFirst("portfolio", portfolioFallback),
     backendFirst("about", aboutFallback),
     backendFirst("achievements", achievementGroupsFallback),
     backendFirst("blogs", blogsFallback),
     backendFirst("education", educationFallback),
     backendFirst("experience", experienceFallback),
-    backendFirst("personal", personalItemsFallback),
     backendFirst("projects", projectDataFallback),
     backendFirst("reviews", reviewsFallback),
     backendFirst("skills", skillsFallback),
-    backendFirst("videos", videosFallback),
   ]);
   const { profile, stats } = portfolio;
   const primaryStatIndexes = new Set([0, 1, 2, 6]);
@@ -106,20 +65,25 @@ export default async function Home() {
   const supportingStats = stats.filter((_, index) => !primaryStatIndexes.has(index));
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
   const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
-  const featuredProjectIds = [29, 15, 25];
-  const projects = featuredProjectIds.map((id) => projectData.find((project) => project.id === id)).filter((project) => project !== undefined);
   const allProjectTechnologies = Array.from(new Set(projectData.flatMap((project) => project.technologies))).sort();
   const displayedSkills: Record<string, string[]> = {
     ...(skills as Record<string, string[]>),
     devOpsAndSre: (skills as Record<string, string[]>).devOpsAndSre ?? ["CI/CD", "Jenkins", "Prometheus", "Grafana", "OpenTelemetry", "SLOs", "Monitoring & Alerting", "Incident Response"],
   };
-  const liveProjects = projectData.filter((project) => project.deployed).length;
   const technologyMarqueeRows = [
     allProjectTechnologies.filter((_, index) => index % 2 === 0),
     allProjectTechnologies.filter((_, index) => index % 2 !== 0),
   ];
   const recognitionGroups = Object.entries(achievementGroups).map(([category, items]) => ({ category, label: achievementLabels[category] ?? category, items: items as Achievement[] }));
-  const orderedBlogs = sortArticlesByCreation(blogs as ArticleRecord[]);
+  const archivedBlogs = publicArchiveArticles(blogs as ArticleRecord[]);
+  const noteTopicCounts = [
+    { label: "Leadership", pattern: /leadership|tech lead/i },
+    { label: "Work experience", pattern: /work experience|experience|typical day|career growth|software professionals/i },
+    { label: "System design", pattern: /system design|architecture|delivery framework/i },
+  ].map(({ label, pattern }) => ({
+    label,
+    count: archivedBlogs.filter((article) => pattern.test(`${article.title} ${article.tags.join(" ")}`)).length,
+  }));
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -158,7 +122,7 @@ export default async function Home() {
           <p className="hero-summary">{profile.summary}</p>
           <div className="hero-actions">
             <a className="button button-dark" href="#work">Professional experience</a>
-            <a className="button button-outline" href="#projects">Key projects</a>
+            <Link className="button button-outline" href="/projects">Explore projects</Link>
             <a className="text-link resume-link" href={profile.resume} download>
               Resume <span>PDF ↓</span>
             </a>
@@ -205,6 +169,17 @@ export default async function Home() {
         <ExperienceCarousel experiences={experience} />
       </section>
 
+      <section className="journey-invitation" aria-labelledby="journey-invitation-title">
+        <div>
+          <p className="eyebrow">Journey</p>
+          <h2 id="journey-invitation-title">The work makes more sense with the path behind it.</h2>
+        </div>
+        <div className="journey-invitation-copy">
+          <p>Follow the milestones, decisions, interviews, lessons, and people that shaped my path from competitive programming to technical leadership.</p>
+          <Link href="/journey">Open the journey <span aria-hidden="true">↗</span></Link>
+        </div>
+      </section>
+
       <section className="about-section" id="about">
         <div className="section-heading">
           <p className="eyebrow">About</p>
@@ -239,7 +214,7 @@ export default async function Home() {
         <section className="leadership-rhythm leadership-rhythm-summary" aria-label="Beyond technical leadership">
           <div className="leadership-intro"><p className="eyebrow">BEYOND TECHNICAL</p><h3>Clarity, care, and <em>follow-through.</em></h3><p>I protect focus time, help engineers move through blockers, and connect day-to-day delivery to a longer-term product direction.</p><blockquote>“You are never wrong to do the right thing.”</blockquote></div>
           <div className="leadership-principles">{[["Mentoring people", "Grow judgement, ownership, and confidence."],["Getting things done", "Turn ambiguity into clear next steps."],["Quality & process", "Make reviews and systems reliably useful."],["Roadmap & vision", "Keep the day connected to the direction."]].map(([title, copy]) => <article key={title}><h4>{title}</h4><p>{copy}</p></article>)}</div>
-          <Link className="leadership-article-link" href="/articles/tech-lead-rhythm">Read: How I organise a Tech Lead day</Link>
+          <Link className="leadership-article-link" href="/articles">Explore leadership notes</Link>
         </section>
       </section>
 
@@ -254,77 +229,64 @@ export default async function Home() {
       <section className="projects-section" id="projects">
         <div className="section-heading projects-heading">
           <div>
-            <p className="eyebrow">Key projects</p>
-            <h2>Ideas, made useful.</h2>
+            <p className="eyebrow">Projects</p>
+            <h2>Curiosity, made concrete.</h2>
+            <p className="projects-heading-intro">Products, experiments, and engineering tools built to turn new ideas into practical understanding.</p>
           </div>
           <div className="projects-actions">
-            <a href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub</a>
+            <a className="projects-github-link" href="https://github.com/Maheshwari-Tech" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
           </div>
         </div>
-        <div className="projects-grid">
-          {projects.map((project, index) => {
-            const screenshots = "gallery" in project
-              ? project.gallery ?? []
-              : project.image
-                ? [{ src: project.image, label: "Product preview" }]
-                : [];
-            const highlighted = "highlight" in project && project.highlight;
-            const galleryImages = screenshots.filter((image) => image.src !== "/images/project-concept-placeholder.svg");
 
-            return (
-              <article className={`project-card project-${index + 1} ${highlighted ? "project-highlight" : ""} ${galleryImages.length === 0 ? "project-no-gallery" : ""}`} key={project.name}>
-                <Link className="project-card-link" href={`/projects/${project.id}`} aria-label={`View ${project.name}`} />
-                <ProjectGallery images={galleryImages} projectName={project.name} />
-                <div className="project-header">
-                  <div><span className={highlighted ? "project-ai-kicker" : undefined}>{project.category}</span><h3>{project.name}</h3></div>
-                  <span className="project-number">{project.deployed ? "Live project" : highlighted ? "AI Intelligence" : "Product build"}</span>
-                </div>
-                <p className="project-description">{project.description}</p>
-                <div className={`project-feature-map ${highlighted ? "ai-feature-map" : ""}`} aria-label={`${project.name} primary capabilities`}><span>Primary capabilities</span><ul>{project.features.slice(0, 3).map((feature) => <li key={feature}><p>{feature}</p></li>)}</ul></div>
-                <div className="project-technology-block">
-                  <span>Core technologies</span>
-                  <div className="project-tags">{project.technologies.slice(0, 6).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                  <span className="project-detail-link" aria-hidden="true">{project.deployed ? "Show more ↗" : "Request demo ↗"}</span>
-                </div>
+        <section className="technology-marquee project-summary-card" aria-label="Project archive and technologies explored through hands-on projects">
+          <div className="project-summary-top">
+            <div className="project-summary-copy">
+              <span className="project-summary-kicker">Learning by building</span>
+              <h3>Built to learn.<br /><em>Shipped to understand.</em></h3>
+              <p>Each project starts with a question and ends with something tangible: a working product, a sharper system-design instinct, or a technology understood through use.</p>
+            </div>
+            <div className="project-summary-metrics" aria-label="Hands-on project summary">
+              <article>
+                <span className="project-summary-index" aria-hidden="true">01</span>
+                <strong>20+</strong>
+                <p>Projects built</p>
               </article>
-            );
-          })}
-        </div>
-
-        <section className="technology-marquee" aria-label="Technologies explored through hands-on projects">
-          <div className="technology-marquee-heading">
-            <div>
-              <span>Learning by building</span>
-              <h3>Built to learn. Shipped to understand.</h3>
-              <p className="technology-marquee-intro">Technologies I&apos;ve explored through curiosity, then put to work by turning ideas into real, working projects.</p>
-            </div>
-            <div className="technology-marquee-proof" aria-label="Hands-on project summary">
-              <strong>{projectData.length}<span>projects</span></strong>
-              <strong>{liveProjects}<span>live builds</span></strong>
-              <strong>{allProjectTechnologies.length}<span>tools explored</span></strong>
+              <article>
+                <span className="project-summary-index" aria-hidden="true">02</span>
+                <strong>100+</strong>
+                <p>Technologies used</p>
+              </article>
             </div>
           </div>
-          <div className="technology-marquee-rows">
-            {technologyMarqueeRows.map((row, rowIndex) => (
-              <div className={`technology-marquee-row ${rowIndex === 1 ? "technology-marquee-row-reverse" : ""}`} key={rowIndex}>
-                <div className="technology-marquee-track">
-                  {[0, 1].map((copy) => (
-                    <div className="technology-marquee-set" aria-hidden={copy === 1} key={copy}>
-                      {row.map((technology) => <span className={technologyClassName(technology)} key={`${copy}-${technology}`}>{technology}</span>)}
-                    </div>
-                  ))}
+
+          <div className="project-technology-window">
+            <div className="project-technology-label">
+              <span>Technology footprint</span>
+              <small>Hands-on, across the archive</small>
+            </div>
+            <div className="technology-marquee-rows">
+              {technologyMarqueeRows.map((row, rowIndex) => (
+                <div className={`technology-marquee-row ${rowIndex === 1 ? "technology-marquee-row-reverse" : ""}`} key={rowIndex}>
+                  <div className="technology-marquee-track">
+                    {[0, 1].map((copy) => (
+                      <div className="technology-marquee-set" aria-hidden={copy === 1} key={copy}>
+                        {row.map((technology) => <span className={technologyClassName(technology)} key={`${copy}-${technology}`}>{technology}</span>)}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          <div className="project-summary-footer">
+            <p>Explore the complete archive for project details, decisions, architecture, and technology choices.</p>
+            <Link className="project-summary-link" href="/projects">
+              <span>View all projects</span>
+              <i aria-hidden="true">↗</i>
+            </Link>
           </div>
         </section>
-
-        <div className="projects-more-footer projects-cta-panel">
-          <Link className="writing-cta writing-cta-primary projects-all-button" href="/projects">
-            <span className="writing-cta-icon projects-cta-icon" aria-hidden="true" />
-            <span>More Projects</span>
-          </Link>
-        </div>
 
       </section>
 
@@ -332,35 +294,29 @@ export default async function Home() {
         <div className="section-heading content-heading">
           <div>
             <p className="eyebrow">Notes</p>
-            <h2>Notes &amp; Thoughts.</h2>
+            <h2>Ideas worth keeping.</h2>
           </div>
           <div className="content-intro">
-            <p>Thoughts on interviews, systems, engineering choices, and work along the way.</p>
+            <p>Notes drawn from leadership, work experience, system design, interviews, and the lessons in between.</p>
           </div>
         </div>
-        <div className="writing-overview" aria-label="Notes archive highlights"><strong>{orderedBlogs.length}<span>notes & thoughts</span></strong><div>{["Experience", "Ideas", "Thoughts", "Learnings"].map((theme) => <span key={theme}>{theme}</span>)}</div></div>
-
-        <div className="blog-grid">
-          {orderedBlogs.slice(0, 3).map((blog) => {
-            const articleHref = "href" in blog && typeof blog.href === "string" ? blog.href : `/articles/${blog.id}`;
-            return (
-              <article className="blog-card" key={blog.id}>
-                <Link className="blog-card-link" href={articleHref} aria-label={`Read ${cleanBlogTitle(blog.title)}`} />
-                <div className="blog-meta">
-                  <span>{blog.visibility === "private" || blog.access_scope === "private" ? "🔒 Private note" : blog.date}</span>
-                  <span>{blog.tags[0]}</span>
-                </div>
-                <h3>{cleanBlogTitle(blog.title)}</h3>
-                <p className="blog-author">By {blog.author}</p>
-                <p className="blog-description">{articleExcerpt(blog.id, blog.content_description)}</p>
-                <div className="blog-tags">{blog.tags.slice(0, 2).map((tag) => <span className={technologyClassName(tag)} key={tag}>{tag}</span>)}</div>
-                <span className="blog-read-link" aria-hidden="true">Read more <span>↗</span></span>
-              </article>
-            );
-          })}
+        <div className="notes-summary" aria-label="Notes archive summary">
+          <div className="notes-summary-total">
+            <strong>{archivedBlogs.length}</strong>
+            <span>notes &amp; thoughts</span>
+            <p>A living record of ideas, decisions, and lessons from the work.</p>
+          </div>
+          <div className="notes-topic-grid" aria-label="Notes by topic">
+            {noteTopicCounts.map((topic) => (
+              <div key={topic.label}>
+                <strong>{topic.count}</strong>
+                <span>{topic.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="writing-cta-panel" aria-label="Explore and subscribe to notes">
+        <div className="writing-cta-panel notes-cta-panel" aria-label="Explore and subscribe to notes">
           <Link className="writing-cta writing-cta-primary" href="/articles">
             <span className="writing-cta-icon writing-cta-icon-posts" aria-hidden="true" />
             <span>Read all notes</span>
@@ -371,14 +327,6 @@ export default async function Home() {
           </Link>
         </div>
 
-      </section>
-
-      <section className="media-section" id="media" aria-labelledby="media-title">
-        <div className="video-heading">
-          <p className="eyebrow">Media</p>
-          <h2 id="media-title">Video conversations.</h2>
-        </div>
-        <VideoCarousel videos={videos} />
       </section>
 
       <section className="recommendations-section" id="recommendations">
@@ -403,32 +351,6 @@ export default async function Home() {
           </div>
         </div>
         <RecommendationCarousel recommendations={recommendations} />
-      </section>
-
-      <section className="personal-section" id="personal">
-        <div className="section-heading personal-heading">
-          <div>
-            <p className="eyebrow">Beyond engineering</p>
-            <h2>What shapes me beyond the work.</h2>
-          </div>
-          <p>The films, series, books, places, and people that shape how I see the world beyond systems and software.</p>
-        </div>
-
-        <article className="family-card">
-          <div>
-            <span className="card-kicker">Family</span>
-            <h3>Life is better when it&apos;s built together. <span aria-hidden="true">♥</span></h3>
-            <p>Meet Shalini Thebaria—my wife, closest friend, and the person who makes every chapter more meaningful.</p>
-          </div>
-          <a className="family-profile-link" href="https://shalinithebaria.com" target="_blank" rel="noreferrer">
-            <span>
-              <small>Shalini Thebaria</small>
-              <strong>Explore her portfolio</strong>
-            </span>
-          </a>
-        </article>
-
-        <BeyondTechnicalTabs items={personalItems} />
       </section>
 
       <section className="contact-section" id="contact">
