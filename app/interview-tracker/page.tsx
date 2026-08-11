@@ -11,6 +11,7 @@ type Stage = "wishlist" | "researching" | "ready" | "applied" | "recruiter" | "s
 type Priority = "dream" | "high" | "target" | "watch";
 type SortKey = "company" | "priority" | "status" | "target_role" | "last_applied" | "next_action" | "contacts" | "updated_at";
 type SortDirection = "asc" | "desc";
+type AuthenticatedUser = { id: string | number; name?: string; role?: string };
 type LeetCodeBrowserPayload = {
   username: string;
   sync_scope?: "company";
@@ -74,6 +75,9 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const [companies, setCompanies] = useState<Company[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "offline">("loading");
   const [canManage, setCanManage] = useState(false);
+  const [isAdminWorkspace, setIsAdminWorkspace] = useState(false);
+  const [candidateStorageKey, setCandidateStorageKey] = useState<string | null>(null);
+  const [workspaceUserName, setWorkspaceUserName] = useState("Candidate");
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState("active");
@@ -88,34 +92,62 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const [leetcodeSyncState, setLeetcodeSyncState] = useState<"idle" | "opening" | "waiting" | "saving" | "done" | "error">("idle");
   const [leetcodeSyncMessage, setLeetcodeSyncMessage] = useState("");
   const [showLeetcodeSetup, setShowLeetcodeSetup] = useState(false);
-  const userName = safeUserName();
+  const userName = workspaceUserName || safeUserName();
 
   const loadCompanies = useCallback(async (initial = false) => {
     if (initial) setState("loading");
     setMessage("");
     try {
-      const hasAdminToken = Boolean(localStorage.getItem("sanjay_portfolio_token"));
-      let response = hasAdminToken
-        ? await apiFetch("/admin/interview-tracker", { headers: authHeaders() })
-        : await apiFetch("/content/interview-tracker");
-      if (hasAdminToken && !response.ok) {
-        response = await apiFetch("/content/interview-tracker");
-      }
-      const body = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        setState("offline");
-        setMessage(body.detail || "The tracker could not be loaded.");
+      const token = localStorage.getItem("sanjay_portfolio_token");
+      if (!token) {
+        const requestedPath = `${window.location.pathname}${window.location.search}`;
+        window.location.replace(`/login?next=${encodeURIComponent(requestedPath)}`);
         return;
       }
-      const loadedCompanies = (body.items || []) as Company[];
+
+      const identityResponse = await apiFetch("/auth/me", {headers: authHeaders()});
+      const identity = await identityResponse.json().catch(() => ({})) as AuthenticatedUser & {detail?: string};
+      if (!identityResponse.ok) {
+        if (identityResponse.status === 401) {
+          localStorage.removeItem("sanjay_portfolio_token");
+          const requestedPath = `${window.location.pathname}${window.location.search}`;
+          window.location.replace(`/login?next=${encodeURIComponent(requestedPath)}`);
+          return;
+        }
+        setState("offline");
+        setMessage(identity.detail || "Your account could not be verified.");
+        return;
+      }
+
+      setWorkspaceUserName(identity.name || safeUserName());
+      let loadedCompanies: Company[] = [];
+      if (identity.role === "admin") {
+        const response = await apiFetch("/admin/interview-tracker", {headers: authHeaders()});
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          setState("offline");
+          setMessage(body.detail || "The tracker could not be loaded.");
+          return;
+        }
+        loadedCompanies = (body.items || []) as Company[];
+        setIsAdminWorkspace(true);
+        setCandidateStorageKey(null);
+      } else {
+        const storageKey = `portfolio_interview_tracker:${identity.id}`;
+        const stored = localStorage.getItem(storageKey);
+        loadedCompanies = stored ? JSON.parse(stored) as Company[] : [];
+        setCandidateStorageKey(storageKey);
+        setIsAdminWorkspace(false);
+      }
       setCompanies(loadedCompanies);
       if (initialCompanySlug) {
         const selected = loadedCompanies.find(item => companySlug(item.company) === initialCompanySlug.toLowerCase());
         if (selected) setEditing({...selected});
         else setMessage("That company is not available in the interview tracker.");
       }
-      setCanManage(hasAdminToken && response.url.includes("/admin/"));
+      setCanManage(true);
       setState("ready");
+      if (new URLSearchParams(window.location.search).get("intent") === "add") setAdding(true);
     } catch (error) {
       setState("offline");
       setMessage(error instanceof ApiUnavailableError ? "The tracker service is unavailable." : "The tracker could not be loaded.");
@@ -249,6 +281,19 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const nextActions = companies.filter(item => item.next_action_date && item.status !== "rejected").length;
 
   async function updateCompany(id: number, changes: Partial<Company>) {
+    if (candidateStorageKey) {
+      let updated = {} as Company;
+      setCompanies(current => {
+        const next = current.map(item => {
+          if (item.id !== id) return item;
+          updated = {...item, ...changes, updated_at: new Date().toISOString()};
+          return updated;
+        });
+        localStorage.setItem(candidateStorageKey, JSON.stringify(next));
+        return next;
+      });
+      return updated;
+    }
     const response = await apiFetch(`/admin/interview-tracker/${id}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify(changes) });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.detail || "The company could not be updated.");
@@ -269,6 +314,17 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     event.preventDefault();
     setSaving(true); setMessage("");
     try {
+      if (candidateStorageKey) {
+        const created: Company = {...newCompany, id: Date.now(), updated_at: new Date().toISOString()};
+        setCompanies(current => {
+          const next = [...current, created];
+          localStorage.setItem(candidateStorageKey, JSON.stringify(next));
+          return next;
+        });
+        setNewCompany(emptyCompany());
+        setAdding(false);
+        return;
+      }
       const response = await apiFetch("/admin/interview-tracker", { method: "POST", headers: authHeaders(), body: JSON.stringify(newCompany) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.detail || "The company could not be added.");
@@ -279,6 +335,15 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
 
   async function deleteCompany(item: Company) {
     if (!window.confirm(`Remove ${item.company} from the tracker?`)) return;
+    if (candidateStorageKey) {
+      setCompanies(current => {
+        const next = current.filter(company => company.id !== item.id);
+        localStorage.setItem(candidateStorageKey, JSON.stringify(next));
+        return next;
+      });
+      closeEditor();
+      return;
+    }
     const response = await apiFetch(`/admin/interview-tracker/${item.id}`, { method: "DELETE", headers: authHeaders() });
     if (response.ok) { setCompanies(current => current.filter(company => company.id !== item.id)); closeEditor(); }
     else setMessage("The company could not be removed.");
@@ -291,19 +356,19 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   function closeEditor() {
     setEditing(null);
     setAdding(false);
-    if (initialCompanySlug) router.push("/interview-tracker", {scroll: false});
+    if (initialCompanySlug) router.push("/interview-tracker/workspace", {scroll: false});
   }
 
   if (state !== "ready") return <main className="tracker-page">
-    <header className="admin-topbar"><Wordmark/><nav><Link href="/admin/login?next=/interview-tracker">Admin sign in</Link></nav></header>
-    <section className="admin-empty"><p className="eyebrow">INTERVIEW PREPARATION</p><h1>{state === "loading" ? "Opening the tracker…" : "Tracker service unavailable."}</h1><p>{message}</p>{state === "offline" && <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection</button>}</section>
+    <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker">Preparation home</Link></nav></header>
+    <section className="admin-empty"><p className="eyebrow">PRIVATE PREPARATION WORKSPACE</p><h1>{state === "loading" ? "Opening your workspace…" : "Workspace unavailable."}</h1><p>{message}</p>{state === "offline" && <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection</button>}</section>
   </main>;
 
   return <main className="tracker-page">
-    <header className="admin-topbar"><Wordmark/><nav>{canManage ? <Link href="/admin">Admin portal</Link> : <Link href="/admin/login?next=/interview-tracker">Admin sign in</Link>}<a href="#companies">Companies</a>{canManage && <a href="#actions">Next actions</a>}</nav>{canManage && <span>{userName}</span>}</header>
+    <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker">Preparation home</Link>{isAdminWorkspace && <Link href="/admin">Admin portal</Link>}<a href="#companies">Companies</a><a href="#actions">Next actions</a></nav><span>{userName}</span></header>
     <section className="tracker-shell">
       <header className="tracker-hero">
-        <div><p className="eyebrow">INTERVIEW PREPARATION TRACKER</p><h1>Top companies.<br/><em>One clear pipeline.</em></h1><p>Explore target companies, current interview status, and company-specific LeetCode questions in one focused preparation workspace.</p></div>
+        <div><p className="eyebrow">YOUR INTERVIEW PREPARATION</p><h1>Your companies.<br/><em>Your preparation plan.</em></h1><p>Add the companies you are targeting, track each application, and prepare with company-wise questions in one private workspace.</p></div>
         <div className="tracker-hero-actions"><span className="tracker-sync-hint">Open a company to synchronize only its question bank.</span><button className="tracker-extension-download" onClick={() => setShowLeetcodeSetup(true)}>Set up browser helper</button>{canManage && <button className="tracker-add" onClick={() => setAdding(true)}><span>＋</span>Add company</button>}</div>
       </header>
 
@@ -324,11 +389,11 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
         </section>
       </div>}
 
-      <section className={`tracker-summary ${canManage ? "" : "public"}`} aria-label="Application summary">
+      <section className="tracker-summary" aria-label="Application summary">
         <article><span>Target list</span><strong>{companies.length}</strong><small>companies</small></article>
         <article><span>Active pipeline</span><strong>{activeCount}</strong><small>in progress</small></article>
         <article><span>Interviewing</span><strong>{interviewCount}</strong><small>live loops</small></article>
-        {canManage && <article><span>Dated actions</span><strong>{nextActions}</strong><small>scheduled</small></article>}
+        <article><span>Dated actions</span><strong>{nextActions}</strong><small>scheduled</small></article>
       </section>
 
       <section className="tracker-lifecycle" aria-label="Interview stage lifecycle">
@@ -379,8 +444,29 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   </main>;
 }
 
+const interviewPrepPaths = [
+  {number: "01", title: "Prepare company-wise questions", copy: "Open a company and focus on the questions most relevant to its interview process.", href: "/interview-tracker/workspace"},
+  {number: "02", title: "Add companies", copy: "Build a private target list and keep applications, next actions, and preparation together.", href: "/interview-tracker/workspace?intent=add"},
+  {number: "03", title: "High Level Design", copy: "Practice architecture decisions, trade-offs, scale, reliability, and complete system designs.", href: "/interview-tracker/resource/hld"},
+  {number: "04", title: "Low Level Design", copy: "Practice object modelling, design patterns, clean interfaces, and implementation-focused problems.", href: "/interview-tracker/resource/lld"},
+];
+
 export default function InterviewTrackerPage() {
-  return <InterviewTracker/>;
+  return <main className="prep-home">
+    <header className="admin-topbar prep-home-topbar"><Wordmark/><nav><Link href="/">Portfolio</Link><Link href={{pathname: "/login", query: {next: "/interview-tracker/workspace"}}}>Sign in</Link></nav></header>
+    <section className="prep-home-shell">
+      <header className="prep-home-hero">
+        <div><p className="eyebrow">INTERVIEW PREPARATION</p><h1>Prepare with<br/><em>a clear path.</em></h1></div>
+        <p>Choose a company, build your preparation list, or strengthen system design. Your companies appear only after you sign in.</p>
+      </header>
+      <section className="prep-paths" aria-label="Interview preparation paths">
+        {interviewPrepPaths.map((path, index) => <Link className={`prep-path prep-path-${index + 1}`} href={path.href} key={path.title}>
+          <span>{path.number}</span><div><h2>{path.title}</h2><p>{path.copy}</p></div><strong aria-hidden="true">↗</strong>
+        </Link>)}
+      </section>
+      <footer className="prep-home-footer"><span>PRIVATE BY DEFAULT</span><p>Company lists are separated by signed-in account and are never shown on this public page.</p></footer>
+    </section>
+  </main>;
 }
 
 type CompanyFormValue = Omit<Company, "id" | "updated_at"> | Company;
