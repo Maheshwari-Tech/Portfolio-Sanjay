@@ -72,6 +72,91 @@ function ExpandableSectionDetails({ detail }: { detail: JourneySectionDetail }) 
   );
 }
 
+function CollegeStory({ moments }: { moments: NonNullable<(typeof journeyChapters)[number]["collegeStory"]> }) {
+  const [activeMoment, setActiveMoment] = useState(0);
+  const selected = moments[activeMoment];
+
+  const moveMoment = (direction: -1 | 1) => {
+    setActiveMoment((current) => (current + direction + moments.length) % moments.length);
+  };
+
+  return (
+    <section className={styles.collegeStory} aria-labelledby="college-story-title">
+      <header className={styles.collegeStoryHeading}>
+        <div>
+          <span>College story</span>
+          <h2 id="college-story-title">Ten moments that kept moving the goalpost.</h2>
+        </div>
+        <p>Select a moment to follow the ambition, choices, breakthroughs, setbacks, and gratitude that shaped these four years.</p>
+      </header>
+
+      <div className={styles.collegeStoryLayout}>
+        <div className={styles.collegeStoryKeys} role="tablist" aria-label="College story highlights">
+          {moments.map((moment, index) => (
+            <button
+              aria-controls="college-story-panel"
+              aria-selected={activeMoment === index}
+              className={activeMoment === index ? styles.collegeStoryKeyActive : undefined}
+              id={`college-story-tab-${index}`}
+              key={moment.key}
+              onClick={() => setActiveMoment(index)}
+              role="tab"
+              type="button"
+            >
+              <i>{String(index + 1).padStart(2, "0")}</i>
+              <span><small>{moment.key}</small><strong>{moment.title}</strong></span>
+            </button>
+          ))}
+        </div>
+
+        <article
+          aria-labelledby={`college-story-tab-${activeMoment}`}
+          className={styles.collegeStoryPanel}
+          id="college-story-panel"
+          role="tabpanel"
+        >
+          <div className={styles.collegeStoryPanelTopline}>
+            <span>{selected.key}</span>
+            <strong>{String(activeMoment + 1).padStart(2, "0")} / {String(moments.length).padStart(2, "0")}</strong>
+          </div>
+          <h3>{selected.title}</h3>
+          <p>{selected.copy}</p>
+          <footer>
+            <button aria-label="Previous college story highlight" onClick={() => moveMoment(-1)} type="button">←</button>
+            <div aria-hidden="true"><span style={{ width: `${((activeMoment + 1) / moments.length) * 100}%` }} /></div>
+            <button aria-label="Next college story highlight" onClick={() => moveMoment(1)} type="button">→</button>
+          </footer>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function MentoringMotivation() {
+  return (
+    <section className={styles.mentoringMotivation} aria-labelledby="mentoring-motivation-title">
+      <div className={styles.mentoringMotivationCopy}>
+        <span>What keeps me mentoring</span>
+        <h2 id="mentoring-motivation-title">Find your Sanju Bhaiya.</h2>
+        <blockquote>
+          “Thank you very much Sanju bhaiya for showing me the right direction and assisting me in every possible way.”
+        </blockquote>
+        <p>Krishna Barnwal’s placement reflection.</p>
+      </div>
+      <a href="/images/krishna-barnwal-mentoring-post.png" target="_blank" rel="noreferrer" aria-label="Open Krishna Barnwal’s full LinkedIn post">
+        <Image
+          src="/images/krishna-barnwal-mentoring-post.png"
+          alt="Krishna Barnwal’s LinkedIn post describing Sanjay Gandhi as a down-to-earth mentor who showed him the right direction, recognised his potential, and helped him throughout his placement journey."
+          width={1160}
+          height={1264}
+          sizes="(max-width: 760px) 92vw, 48vw"
+        />
+        <span>Open the original post <i aria-hidden="true">↗</i></span>
+      </a>
+    </section>
+  );
+}
+
 export default function JourneyTimeline({
   achievementsBySection,
   recommendationsBySection,
@@ -158,8 +243,8 @@ export default function JourneyTimeline({
               ))}
             </ol>
             <div className={styles.railControls}>
-              <button type="button" onClick={() => moveChapter(-1)} disabled={activeIndex === 0} aria-label="Previous section">↑</button>
-              <button type="button" onClick={() => moveChapter(1)} disabled={activeIndex === journeyChapters.length - 1} aria-label="Next section">↓</button>
+              <button type="button" onClick={() => moveChapter(-1)} aria-label="Previous section">↑</button>
+              <button type="button" onClick={() => moveChapter(1)} aria-label="Next section">↓</button>
             </div>
           </nav>
 
@@ -200,7 +285,10 @@ export default function JourneyTimeline({
                 </header>
 
                 <div className={styles.chapterIntro}>
-                  <h2 id={`${chapter.id}-title`}>{chapter.headline}</h2>
+                  <h2 id={`${chapter.id}-title`}>
+                    {chapter.headline}
+                    {chapter.headlineAccent && <em>{chapter.headlineAccent}</em>}
+                  </h2>
                   <p>{chapter.summary}</p>
                 </div>
 
@@ -219,22 +307,29 @@ export default function JourneyTimeline({
                   </div>
                 </section>
 
-                <div className={styles.workStage}>
-                  <article className={styles.turningPoint}>
-                    <span>The turning point</span>
-                    <h3>{chapter.turningPoint.title}</h3>
-                    <p>{chapter.turningPoint.copy}</p>
-                  </article>
-                  <section className={styles.changeList} aria-label={`What changed at ${chapter.company}`}>
-                    <span>What changed</span>
-                    {chapter.changes.map((change, changeIndex) => (
-                      <article key={change.title}>
-                        <small>{String(changeIndex + 1).padStart(2, "0")}</small>
-                        <div><h3>{change.title}</h3><p>{change.copy}</p></div>
-                      </article>
-                    ))}
-                  </section>
-                </div>
+                {chapter.collegeStory ? (
+                  <>
+                    <CollegeStory moments={chapter.collegeStory} />
+                    <MentoringMotivation />
+                  </>
+                ) : (
+                  <div className={styles.workStage}>
+                    <article className={styles.turningPoint}>
+                      <span>{chapter.featureLabel ?? "Highlight"}</span>
+                      <h3>{chapter.turningPoint.title}</h3>
+                      <p>{chapter.turningPoint.copy}</p>
+                    </article>
+                    <section className={styles.changeList} aria-label={`What changed at ${chapter.company}`}>
+                      <span>{chapter.changeLabel ?? "Learnings"}</span>
+                      {chapter.changes.map((change, changeIndex) => (
+                        <article key={change.title}>
+                          <small>{String(changeIndex + 1).padStart(2, "0")}</small>
+                          <div><h3>{change.title}</h3><p>{change.copy}</p></div>
+                        </article>
+                      ))}
+                    </section>
+                  </div>
+                )}
 
                 <div className={styles.chapterDetailsGroup}>
                   {sectionDetails[chapter.id] && <ExpandableSectionDetails detail={sectionDetails[chapter.id]} />}
@@ -288,7 +383,7 @@ export default function JourneyTimeline({
                         <span>{recommendationsBySection[chapter.id].length} {recommendationsBySection[chapter.id].length === 1 ? "recommendation" : "recommendations"}</span>
                       </div>
                     </div>
-                    <RecommendationCarousel recommendations={recommendationsBySection[chapter.id]} />
+                    <RecommendationCarousel recommendations={recommendationsBySection[chapter.id]} variant="scroll" />
                   </section>
                 )}
 

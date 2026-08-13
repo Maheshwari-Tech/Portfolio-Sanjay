@@ -20,7 +20,7 @@ type Overview = {
 };
 
 const requestTypes = [
-  ["all","All requests"],["contact","Contact"],["feedback","Feedback"],["recommendation","Recommendations"],
+  ["all","All requests"],["signup","Signup invites"],["contact","Contact"],["feedback","Feedback"],["recommendation","Recommendations"],
   ["demo","Demo requests"],["candidate","Candidates"],["recruiter","Recruiters"],
 ] as const;
 
@@ -68,8 +68,8 @@ export default function AdminPage() {
     try{const response=await apiFetch(`/admin/requests?${requestQuery}`,{headers:authHeaders()});const body=await response.json();if(response.ok)setRequests(body.items||[])}finally{setRequestBusy(false)}
   },[requestQuery]);
 
-  useEffect(()=>{void loadOverview(true)},[loadOverview]);
-  useEffect(()=>{if(state==="ready")void loadRequests()},[loadRequests,state]);
+  useEffect(()=>{const task=window.setTimeout(()=>void loadOverview(true),0);return()=>window.clearTimeout(task)},[loadOverview]);
+  useEffect(()=>{if(state!=="ready")return;const task=window.setTimeout(()=>void loadRequests(),0);return()=>window.clearTimeout(task)},[loadRequests,state]);
 
   async function setRequestStatus(id:number,status:"accepted"|"rejected"|"later"){
     setActionId(id);
@@ -102,7 +102,7 @@ export default function AdminPage() {
         </div>
         {requests.length===0?<div className="admin-zero-state"><strong>Queue clear.</strong><p>No requests match these filters.</p></div>:<div className="admin-request-list">{requests.map(item=><article key={item.id}>
           <div className="admin-request-icon">{item.type.slice(0,1).toUpperCase()}</div>
-          <div className="admin-request-copy"><div><span>{item.type}</span><span className={`request-status ${item.status||"pending"}`}>{item.status==="pending"||!item.status?"later":item.status}</span></div><h3>{item.title}</h3><p className="admin-request-person">{item.name}{item.email?` · ${item.email}`:""}</p><a className="admin-request-source" href={item.source_website} target="_blank" rel="noreferrer">{item.source_website}</a><p>{item.message||item.category||item.rating||"No additional detail provided."}</p><time>{new Date(item.created_at).toLocaleString()}</time></div>
+          <div className="admin-request-copy"><div><span>{item.type}</span><span className={`request-status ${item.status||"pending"}`}>{item.status==="pending"||!item.status?"later":item.status}</span></div><h3>{item.title}</h3><p className="admin-request-person">{item.name}{item.email?` · ${item.email}`:""}</p><a className="admin-request-source" href={item.source_website} target="_blank" rel="noreferrer">{item.source_website}</a><p>{item.message||item.category||item.rating||"No additional detail provided."}</p>{item.type==="signup"&&<p><strong>Before accepting:</strong> add and verify this number in Twilio Verified Caller IDs. The applicant can request an SMS code after approval.</p>}<time>{new Date(item.created_at).toLocaleString()}</time></div>
           <div className="admin-decision-actions"><button disabled={actionId===item.id} className="accept" title="Accept request" onClick={()=>void setRequestStatus(item.id,"accepted")}><b>✓</b><span>Accept</span></button><button disabled={actionId===item.id} className="reject" title="Reject request" onClick={()=>void setRequestStatus(item.id,"rejected")}><b>×</b><span>Reject</span></button><button disabled={actionId===item.id} className="later" title="Review later" onClick={()=>void setRequestStatus(item.id,"later")}><span>Later</span></button></div>
         </article>)}</div>}
       </section>

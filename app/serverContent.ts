@@ -11,6 +11,10 @@ const retiredProjectNames = new Set([
 ]);
 
 function normalizeContent<T>(resource: string, value: T, fallback: T): T {
+  if (resource === "experience" && Array.isArray(value) && Array.isArray(fallback)) {
+    const remoteByCompany = new Map(value.map((item) => [item?.company, item]));
+    return fallback.map((item) => ({ ...remoteByCompany.get(item?.company), ...item })) as T;
+  }
   if (resource === "blogs" && Array.isArray(value) && Array.isArray(fallback)) {
     const merged = new Map(fallback.map((item: any) => [item?.id, item]));
     value.forEach((item: any) => merged.set(item?.id, { ...merged.get(item?.id), ...item }));

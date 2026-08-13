@@ -8,6 +8,7 @@ export type JourneyChapter = {
   duration: string;
   place: string;
   headline: string;
+  headlineAccent?: string;
   summary: string;
   logo?: string;
   logoAlt?: string;
@@ -21,6 +22,13 @@ export type JourneyChapter = {
     title: string;
     copy: string;
   };
+  featureLabel?: string;
+  changeLabel?: string;
+  collegeStory?: Array<{
+    key: string;
+    title: string;
+    copy: string;
+  }>;
   changes: Array<{
     title: string;
     copy: string;
@@ -44,34 +52,95 @@ export const journeyChapters: JourneyChapter[] = [
     period: "Jul 2016 — May 2020",
     duration: "4 years",
     place: "Lovely Professional University · Jalandhar",
-    headline: "I entered college with one goal: earn a 10 LPA offer.",
+    headline: "A 10 LPA ambition started the journey.",
+    headlineAccent: "Curiosity, effortless hard work, and a constant search for harder challenges kept moving the goalpost forward.",
     summary: "Competitive programming, projects, and a Machine Learning specialization turned preparation into passion. The effort was real, but choosing technical challenges I genuinely enjoyed made the hard work feel natural.",
     tone: "paper",
     milestones: [
       { value: "First", label: "LPU student selected directly for a full-time Amazon role during intern hiring" },
+      { value: "3 of 3", label: "Team Amigos members who received Amazon offers" },
       { value: "32 LPA", label: "Placement featured in LPU advertisements across the country" },
-      { value: "ML", label: "Machine Learning specialization within Computer Science" },
     ],
     turningPoint: {
-      title: "“Amazon toh normal hai!”",
-      copy: "That was my first reaction to the offer. Confidence made an exceptional result feel ordinary: Amazon had visited to hire interns, yet I became the university’s first student selected directly for full-time. LPU later featured the 32 LPA placement in advertisements across the country.",
+      title: "Confidence got me there. Perspective changed what the achievement meant.",
+      copy: "Amazon came to LPU to hire students for nine-month internships. I entered the interview confident in my preparation and became the first student selected directly for a full-time role. Both of my Team Amigos friends received offers too. LPU celebrated the 32 LPA result across the country, making me, my family, and my loved ones proud.",
     },
+    collegeStory: [
+      {
+        key: "Starting point",
+        title: "A simple ambition: 10 LPA",
+        copy: "I entered college with one clear ambition: earn a 10 LPA offer after graduation. It gave me a starting point, even though I had no idea how far the goal would eventually move.",
+      },
+      {
+        key: "Exploration",
+        title: "Curiosity made hard work feel effortless",
+        copy: "I explored different domains of computer science and kept choosing problems that felt more challenging than the last. The effort was real, but curiosity and passion made the hard work feel natural.",
+      },
+      {
+        key: "Direction",
+        title: "Competitive Programming and Machine Learning",
+        copy: "Guided by seniors, I found my strongest interests in Competitive Programming and Machine Learning. As my understanding grew, the original 10 LPA target stopped feeling like the destination; every year moved the goalpost forward.",
+      },
+      {
+        key: "Recognition",
+        title: "Becoming one of the university’s best-known coders",
+        copy: "My competitive-programming profiles, university leaderboards, and consistent performance in company assessments made me a recognised coder across campus. By the end of my second year, internship and full-time opportunities had already started arriving.",
+      },
+      {
+        key: "Conviction",
+        title: "Choosing to wait for Amazon",
+        copy: "A campus startup increased its offer from 8 LPA to 28 LPA, matching Amazon’s previous-year package. I declined it because accepting would have closed later campus opportunities. I trusted my preparation and honestly chose the uncertainty of waiting for Amazon.",
+      },
+      {
+        key: "Team Amigos",
+        title: "Building with my ACM ICPC teammates at InterviewBit",
+        copy: "Through an off-campus interview, I joined InterviewBit with my two Team Amigos partners from ACM ICPC. At the early-stage Scaler Academy, we helped hire teachers, shape the curriculum, and build the learning platform.",
+      },
+      {
+        key: "Breakthrough",
+        title: "Amazon came for interns; I received a direct full-time offer",
+        copy: "Amazon visited LPU to hire students for nine-month internships. I entered the interview confident in my preparation and became the first student selected directly for a full-time role during that process. Both of my Team Amigos friends received offers too. LPU celebrated the 32 LPA achievement across the country, making me, my family, and my loved ones proud.",
+      },
+      {
+        key: "Giving back",
+        title: "Returning to college to help juniors prepare",
+        copy: "After my teammates left for their internships, I left InterviewBit and returned to college. I began teaching juniors, helping them prepare for placements, and working with Programming Pathshala. Creating opportunities for others started to matter as much as receiving one myself.",
+      },
+      {
+        key: "Humility",
+        title: "Google rejected me in the first round",
+        copy: "I rushed into writing code before fully understanding an easy-to-medium problem and was rejected in the opening round. The experience humbled me and taught me to listen, clarify, understand, and only then solve.",
+      },
+      {
+        key: "Gratitude",
+        title: "HackerEarth trusted my honesty",
+        copy: "During my final semester, HackerEarth hired me through an off-campus internship even though I was transparent that I would leave for Amazon after six months. I remain grateful that they trusted me with the opportunity, knowing exactly how long I could stay.",
+      },
+    ],
     changes: [
       {
-        title: "A goal became a passion for technology",
-        copy: "The 10 LPA target gave me direction. Choosing harder programming challenges, building projects, and studying machine learning gave me reasons to keep going far beyond the original number.",
+        title: "A 10 LPA ambition kept growing",
+        copy: "I explored different areas of computer science, always looking for the next challenge. Guided by seniors, I ultimately chose competitive programming and Machine Learning. Curiosity made the hard work feel effortless, and every year moved the goalpost forward.",
       },
       {
-        title: "Rejection made confidence more useful",
-        copy: "The lasting change was a better habit: listen carefully, ask questions, understand what is being asked, and only then begin solving.",
+        title: "Consistency built confidence and choices",
+        copy: "By the end of my second year, I was one of the university’s best-known coders, regularly near the top of company assessments, and receiving internship and full-time opportunities. A startup raised its offer from 8 LPA to 28 LPA, but I declined and chose to wait for Amazon.",
       },
       {
-        title: "Mentoring widened the meaning of success",
-        copy: "Progress felt more meaningful when it helped someone else move forward. Teaching made sharing what I learned part of how I wanted to grow.",
+        title: "Team Amigos chose InterviewBit",
+        copy: "Through an off-campus interview, I joined InterviewBit with my two ACM ICPC teammates. At the early-stage Scaler Academy, we helped hire teachers, shape the curriculum, and build the learning platform.",
       },
       {
-        title: "Gratitude changed how I saw the success",
-        copy: "Preparation mattered, but so did timing, luck, seniors, teammates, teachers, and family. In hindsight, the Amazon offer was extraordinary—and never mine alone.",
+        title: "Achievement became a reason to give back",
+        copy: "After my teammates left for their internships, I left InterviewBit and returned to college to teach juniors, help them prepare for placements, and work with Programming Pathshala.",
+      },
+      {
+        title: "Google humbled me",
+        copy: "I was rejected in the first round after starting to code before fully understanding the problem. It turned confidence into a better habit: listen, clarify, and only then solve.",
+      },
+      {
+        title: "HackerEarth gave me trust I still value",
+        copy: "During my final semester, HackerEarth hired me through an off-campus internship despite knowing I would leave for Amazon in six months. I remain grateful for the honesty and trust behind that opportunity.",
       },
     ],
     decisions: [
@@ -130,17 +199,19 @@ export const journeyChapters: JourneyChapter[] = [
       { value: "10+ hrs", label: "Workshop delivered over two days" },
     ],
     turningPoint: {
-      title: "I moved from solving questions to deciding what a question should measure.",
-      copy: "HackerEarth trusted me to create and test coding problems for large hiring programs, even though everyone knew I would leave for Amazon after six months.",
+      title: "I moved from solving problems to designing fair hiring assessments.",
+      copy: "At HackerEarth, difficulty alone was never the goal. Every problem had to challenge candidates while remaining clear, consistent, and focused on the skill it was intended to measure.",
     },
+    featureLabel: "Problem setting",
+    changeLabel: "Learnings",
     changes: [
       {
-        title: "Difficulty gained a purpose",
-        copy: "Each problem needed a clear skill to measure, one sound answer, and tests that treated every candidate consistently. The work supported hiring programs for Infosys, Google, Facebook, Nokia, PayPal, and Salesforce.",
+        title: "Fairness in hiring",
+        copy: "Each problem needed clear wording, sound constraints, a correct solution, and thorough tests. The assessment had to measure skill consistently and give every candidate a fair opportunity to demonstrate what they knew.",
       },
       {
-        title: "Explaining exposed gaps",
-        copy: "Teaching a two-day workshop showed me that knowing an answer and helping others understand it are different skills.",
+        title: "Problem setting strengthened critical thinking",
+        copy: "Creating problems pushed me to explore edge cases, design challenging variations, anticipate different approaches, and test solutions from a candidate’s perspective. Explaining these ideas further strengthened my knowledge.",
       },
     ],
     lesson: "Expertise becomes useful when it is clear, fair, and easy to explain.",
@@ -170,6 +241,8 @@ export const journeyChapters: JourneyChapter[] = [
       title: "Production made the customer benefit visible.",
       copy: "A small mistake could delay a payment or hide a costly invoice problem. Good work meant understanding the full customer need, releasing carefully, watching results, and responding quickly when something failed.",
     },
+    featureLabel: "Production responsibility",
+    changeLabel: "Impact highlights",
     changes: [
       {
         title: "Protect real money",
@@ -223,6 +296,8 @@ export const journeyChapters: JourneyChapter[] = [
       title: "The lesson from my first interview became a daily working habit.",
       copy: "At Google, I learned to begin by listening, clarifying the need, and understanding the people affected. That approach guided both product decisions and work across several teams.",
     },
+    featureLabel: "Search at scale",
+    changeLabel: "Product learnings",
     changes: [
       {
         title: "Intent mattered more than exact words",
@@ -290,6 +365,8 @@ export const journeyChapters: JourneyChapter[] = [
       title: "I chose broader ownership and work that fit the life we were building.",
       copy: "Oracle Health offered meaningful problems, room to lead, and a flexible working model. The role grew from building software to helping a team deliver it well.",
     },
+    featureLabel: "Leadership shift",
+    changeLabel: "Leadership highlights",
     changes: [
       {
         title: "Make clinical reports dependable",

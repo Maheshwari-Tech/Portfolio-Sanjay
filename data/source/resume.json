@@ -1,5 +1,5 @@
 {
-  "about": "Experienced Software Engineer with 5+ years of expertise in backend systems, distributed architectures, and cloud-native solutions. Certified Bar Raiser at Oracle, recognized for upholding technical excellence and guiding high-quality hiring decisions. Proven ability to design scalable systems in healthcare, education, and finance domains using Java, Python, Kafka, and OCI/AWS. Specialized in machine learning, applying techniques such as anomaly detection and generative AI to solve real-world problems and enhance system intelligence. Passionate about mentoring juniors, solving complex problems, and driving product impact through innovative technologies and continuous learning.",
+  "about": "Experienced Software Engineer with 5+ years of expertise in backend systems, distributed architectures, and cloud-native solutions. Senior Bar Raiser / Key Interviewer at Oracle, recognized for upholding technical excellence and guiding high-quality hiring decisions. Proven ability to design scalable systems in healthcare, education, and finance domains using Java, Python, Kafka, and OCI/AWS. Specialized in machine learning, applying techniques such as anomaly detection and generative AI to solve real-world problems and enhance system intelligence. Passionate about mentoring juniors, solving complex problems, and driving product impact through innovative technologies and continuous learning.",
   "experience": [
     {
       "title": "Senior Member of Technical Staff (SDE-3) at Oracle",
@@ -19,7 +19,7 @@
       "details": [
         "Worked in Search India Education Team, developing features for exam OSRPs.",
         "Built the Exam Quiz feature and migrated architecture.",
-        "Launched localized Exam OSRP with support for multiple languages."
+        "Launched localized Exam OSRPs in Hindi, Tamil, and Telugu with exam dates, fees and waivers, tabbed result layouts, and the Periodic Table; localization reached 0.03% of Search queries and 0.0019% of educational queries, improving accessibility."
       ]
     },
     {
@@ -28,7 +28,7 @@
       "details": [
         "Worked in Finance Automation Team to detect anomalies and duplicates in invoices.",
         "Implemented ML-based rules discovering over 100M USD anomalies.",
-        "Built APIs, monitoring dashboards, and used AWS CDK."
+        "Built APIs and operational dashboards for monitoring and alerting, and used AWS CDK to provision infrastructure and CI/CD pipelines across multiple services."
       ]
     },
     {
@@ -71,11 +71,12 @@
     "CodeChef Certified Data Structures and Algorithms Programme (CCDSAP - advance)"
   ],
   "technicalSkills": {
-    "programmingFrameworks": "Java, Python, C++, JavaScript, React, HTML, CSS, JS, MERN, Django, PHP",
-    "databases": "MySQL, DynamoDB, Elasticsearch, Redis, S3, Redshift(OLAP), MongoDB",
-    "machineLearningAI": "Numpy, Pandas, Scikit-Learn, Random Forest, SVM",
-    "distributedSystemsCloud": "Kafka, SQS, gRPC, WebSockets, AWS, OCI, Docker",
-    "tools": "Git, GitHub, IntelliJ, VSCode, Postman, MobaXTerm, SQL Workbench, Jenkins",
-    "softwareDevelopment": "System Design, Design Patterns, Refactoring, APIs, Unit Tests, Documentation, Teaching, Mentoring, Code Reviews"
+    "languages": "Java, C++, Python, TypeScript, Go",
+    "databasesAndStorage": "MySQL, PostgreSQL, Redis, DynamoDB, Elasticsearch, Knowledge Graphs, Redshift, S3, Azure Blob Storage",
+    "cloudInfrastructureDevOps": "AWS, OCI, Docker, Kubernetes, Terraform, AWS CDK, CI/CD, Jenkins",
+    "architectureDistributedSystems": "System Design, Microservices, Event-driven Architecture, Asynchronous Systems, Kafka, gRPC, WebSockets, API Design",
+    "machineLearningAI": "LLMs, LangChain, LangGraph, RAG, AI Agents, Generative AI, MCP, Scikit-Learn, Isolation Forest",
+    "reliabilityQuality": "Performance Tuning, Observability, OpenTelemetry, Prometheus, Grafana, SLOs, Monitoring and Alerting",
+    "techLeadLeadership": "Technical Direction, Architecture Reviews, Mentoring, Hiring, Cross-team Alignment, Delivery Planning"
   }
 }

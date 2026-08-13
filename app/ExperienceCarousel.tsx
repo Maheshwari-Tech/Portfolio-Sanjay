@@ -1,6 +1,3 @@
-"use client";
-
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { technologyClassName } from "./technologyStyles";
 
@@ -11,50 +8,17 @@ function companyTone(company: string) {
 }
 
 export default function ExperienceCarousel({ experiences }: { experiences: Experience[] }) {
-  const [page, setPage] = useState(0);
-  const [viewportHeight, setViewportHeight] = useState<number>();
-  const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const pages = useMemo(() => {
-    const grouped: Experience[][] = [];
-    for (let index = 0; index < experiences.length; index += 2) grouped.push(experiences.slice(index, index + 2));
-    return grouped.slice(0, 2);
-  }, [experiences]);
-  const showingLatest = page === 0;
-
-  useLayoutEffect(() => {
-    const activePanel = panelRefs.current[page];
-    if (!activePanel) return;
-
-    const updateHeight = () => {
-      const activePanelHeight = activePanel.scrollHeight;
-      setViewportHeight((current) => current === activePanelHeight ? current : activePanelHeight);
-    };
-    const resizeObserver = new ResizeObserver(updateHeight);
-    resizeObserver.observe(activePanel);
-    updateHeight();
-
-    return () => resizeObserver.disconnect();
-  }, [page, pages]);
-
-  const toggleExperiencePage = () => {
-    setPage(showingLatest ? 1 : 0);
-    const section = document.getElementById("work");
-    if (!section) return;
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.requestAnimationFrame(() => section.scrollIntoView({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-      block: "start",
-    }));
-  };
+  const grouped: Experience[][] = [];
+  for (let index = 0; index < experiences.length; index += 2) grouped.push(experiences.slice(index, index + 2));
+  const pages = grouped.slice(0, 2);
 
   return <div className="experience-carousel" aria-label="Professional experience carousel">
-    <div className="experience-carousel-viewport" style={viewportHeight ? { height: viewportHeight } : undefined}>
+    <div className="experience-carousel-viewport">
       {pages.map((visible, pageIndex) => <div
-        aria-hidden={pageIndex !== page}
-        className={`experience-carousel-track ${pageIndex === page ? "is-active" : "is-inactive"}`}
-        inert={pageIndex !== page ? true : undefined}
+        aria-label={pageIndex === 0 ? "Latest experience" : "Past experience"}
+        className={`experience-carousel-track experience-carousel-page-${pageIndex === 0 ? "latest" : "past"}`}
+        id={pageIndex === 1 ? "past-experience" : undefined}
         key={pageIndex}
-        ref={(panel) => { panelRefs.current[pageIndex] = panel; }}
       >
         {visible.map((item, index) => <article className={`experience-slide experience-company-${companyTone(item.company)} ${index % 2 ? "experience-slide-reverse" : ""}`} key={item.company}>
           <div className="experience-slide-brand">
@@ -66,16 +30,27 @@ export default function ExperienceCarousel({ experiences }: { experiences: Exper
               {item.details.map((detail, detailIndex) => <li key={detailIndex}><p dangerouslySetInnerHTML={{ __html: detail }} /></li>)}
             </ul>
             <div className="experience-technology-block"><span>Technology stack</span><div className="experience-meta">{item.technologies.map((technology) => <i className={technologyClassName(technology)} key={technology}>{technology}</i>)}</div></div>
-            <div className="experience-skills">{item.keySkills.map((skill) => <span key={skill}>{skill}</span>)}</div>
+            <div className="experience-learnings-block">
+              <span>Learnings</span>
+              <div className="experience-skills">{item.keySkills.map((skill) => <span key={skill}>{skill}</span>)}</div>
+            </div>
           </div>
         </article>)}
       </div>)}
     </div>
-    <div className="experience-history-control">
-      <button type="button" onClick={toggleExperiencePage}>
-        <span>{showingLatest ? "Show past experience" : "Show latest experience"}</span>
-        <i aria-hidden="true">{showingLatest ? "↓" : "↑"}</i>
-      </button>
-    </div>
+    {pages.length > 1 && <>
+      <div className="experience-history-control experience-history-show-past">
+        <a href="#past-experience">
+          <span>Show past experience</span>
+          <i aria-hidden="true">↓</i>
+        </a>
+      </div>
+      <div className="experience-history-control experience-history-show-latest">
+        <a href="#work">
+          <span>Show latest experience</span>
+          <i aria-hidden="true">↑</i>
+        </a>
+      </div>
+    </>}
   </div>;
 }

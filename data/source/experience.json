@@ -1,49 +1,46 @@
 [
   {
     "company": "Oracle",
-    "role": "Senior Member of Technical Staff (SDE III) — Tech Lead",
-    "period": "Apr 2024 – Present, Bengaluru (Remote)",
+    "role": "Senior Member of Technical Staff (SDE III), Tech Lead",
+    "period": "Apr 2024 to Present, Bengaluru (Remote)",
     "duration": "Promoted to Tech Lead in Oct 2025",
     "logo": "/images/oracle_logo.svg",
     "technologies": ["Java", "Micronaut", "React", "Kafka", "Redis", "SQL", "Elasticsearch", "Large Semantic Object Storage", "Oracle Cloud Infrastructure", "Microservices"],
     "keySkills": ["Technical Leadership", "System Architecture", "Performance Tuning", "Hiring", "Mentoring", "Cross-team Delivery"],
     "rating": 10,
     "details": [
-      "Technical Lead for Oracle Health’s Clinical Reporting / Output Management team, owning the architecture, technical direction, delivery, and production readiness of <strong>MRO / Clinical Reporting Gen2</strong> across <strong>3+ products</strong>.",
-      "Architected and implemented <strong>7+ microservices</strong> for a Java Micronaut medical-record output platform, redesigning it into a modular Gen2 reporting system across APIs, templates, data extraction, report generation, and the <strong>PDF Output Assembler</strong>.",
-      "Introduced asynchronous processing, fast/slow lanes, bulk generation, retries, DLQ handling, idempotency, horizontal scaling, authN/authZ, audit logging, metrics, dashboards, and alerting.",
-      "Led product delivery across <strong>4 quarterly releases</strong>—from roadmap planning and architecture to breaking down work for <strong>5–8 engineers</strong>, unblocking execution, and driving architecture decisions, defect resolution, release execution, compliance, monitoring, operational readiness, and production readiness.",
-      "Led the resolution of a critical production issue in which generation of approximately <strong>1,000-page reports</strong> breached the <strong>30-second SLA</strong>; reduced heap usage by <strong>40%</strong>, improved performance by over <strong>25%</strong>, and drove a request-level cache that reduced data-extraction time by <strong>60%</strong>.",
-      "Partnered with <strong>25+ cross-functional teams</strong> to translate custom clinical-reporting needs into scalable platform capabilities, while reducing Gen2 onboarding time from roughly two weeks to under one week.",
+      "Technical Lead for Oracle Health’s Clinical Reporting / Output Management team, owning the architecture, technical direction, delivery, and production readiness across <strong>3 products: MRO Gen2, XR Gen1, and Dex Gen1</strong>.",
+      "Built <strong>7+ Java Micronaut microservices from 0 to 1</strong>, transforming a medical-record output platform into a modular Gen2 reporting system spanning APIs, template management, data extraction, report generation, and the <strong>mro-ai-intelligence-service</strong>.",
+      "Scaled the platform to handle <strong>1M+ requests per day</strong> while keeping <strong>p90 latency under 30 seconds</strong>. For the roughly <strong>1%</strong> of complex reports that take more than <strong>10 minutes</strong>, and sometimes hours, introduced asynchronous fast and slow lanes with bulk generation, retries, DLQs, idempotency, horizontal scaling, security, dashboards, and alerting.",
+      "Led product delivery across <strong>4 quarterly releases</strong>, from roadmap planning and architecture through production launch. Broke down work for <strong>5 to 8 engineers</strong>, removed blockers, and drove architecture decisions, defect resolution, compliance, monitoring, and operational readiness.",
+      "Served as a primary escalation owner for critical production issues, leading high-severity investigations through diagnosis, remediation, and prevention. In one example, brought approximately <strong>1,000-page reports</strong> back within the <strong>30-second SLA</strong>, reducing heap usage by <strong>40%</strong>, improving performance by over <strong>25%</strong>, and driving request-level caching that cut data-extraction time by <strong>60%</strong>.",
+      "Partnered with <strong>25+ cross-functional teams</strong> to turn custom clinical-reporting needs into reusable platform capabilities. Cut Gen2 onboarding from <strong>2 weeks to under 1 week</strong>, a reduction of <strong>more than 50%</strong>.",
       "Led a project involving <strong>3 engineers</strong> to deliver Gen1 <strong>Report Ingress</strong> and <strong>6 APIs</strong> in <strong>1 quarter + 1 month</strong> versus <strong>2 quarters planned</strong>; enabled WebSphere-to-EJS migration with better performance, stability, scalability, and lower third-party cost.",
       "Resolved technical and scope ambiguities across multiple initiatives and contributed to early-stage architecture and planning discussions for the <strong>SI DRZ region build</strong> and <strong>EHRC modernization program</strong>.",
-      "Built and led the India Clinical Reporting team from scratch—growing the leadership scope to <strong>10+ engineers</strong> across <strong>3+ products</strong>, partnering with <strong>25+ cross-functional teams</strong>, and strengthening hiring through <strong>100+ interviews</strong> and <strong>25+ hires</strong>."
+      "Built and led the India Clinical Reporting team from scratch. Grew the leadership scope to <strong>10+ engineers</strong> across <strong>3+ products</strong> and strengthened hiring through <strong>100+ interviews</strong> and <strong>25+ hires</strong>."
     ]
   },
   {
     "company": "Google",
     "role": "Software Engineer II",
-    "period": "Sep 2021 – Feb 2024, Bengaluru (Hybrid)",
+    "period": "Sep 2021 to Feb 2024, Bengaluru (Hybrid)",
     "duration": "2 years 6 months",
     "logo": "/images/google_logo.webp",
-    "technologies": ["C++", "Java", "Python", "gRPC", "Protocol Buffers", "Graph Database (Knowledge Graph)", "Monorepo"],
+    "technologies": ["C++", "Java", "Python", "Go", "gRPC", "Protocol Buffers", "Graph Database (Knowledge Graph)", "Monorepo"],
     "keySkills": ["Product Engineering", "API Design", "Localization", "Cross-functional Collaboration", "System Design"],
     "rating": 7,
     "details": [
-      "Developed education-domain features in the Search India team for exam OSRPs and structured educational content.",
-      "Built the <strong>Exam Quiz</strong> feature to improve engagement with interactive learning modules.",
-      "Migrated architecture from entity-driven to intent-driven, impacting <strong>0.05%</strong> of Search traffic.",
-      "That measured reach maps to an estimated <strong>1M+ daily-query scale</strong> when applied to Google’s public baseline of billions of searches per day.",
-      "Launched localized Exam OSRP experiences in Hindi, Tamil, and Telugu.",
-      "Designed and integrated a scalable Language API for Indic locales in lower-tier cities.",
-      "Collaborated across teams to resolve issues, align requirements, and prioritize improvements.",
-      "Worked in a large-scale monorepo using C++, Java, Python, gRPC, protobuf, and internal technologies."
+      "As part of Google’s <strong>Search India Team</strong>, built exam OSRPs and the interactive <strong>Exam Quiz</strong>, reaching <strong>100M+ educational users</strong> on a product serving <strong>1B+ queries per day</strong>.",
+      "Migrated Google <strong>Search</strong>’s serving query-understanding architecture from <strong>entity-driven to intent-driven</strong> through the <strong>diOSRP Migration</strong>, enabling better <strong>Organized Search Result Pages (OSRPs)</strong> that answered user intent directly instead of routing users to the traditional <strong>10 blue links</strong>; impacted <strong>0.05%</strong> of Search traffic.",
+      "Launched localized <strong>Exam OSRPs</strong> in <strong>Hindi, Tamil, and Telugu</strong>, adding exam dates, fees and waivers, tabbed result layouts, and the <strong>Periodic Table</strong>. Localization reached <strong>0.03% of Search queries</strong> and <strong>0.0019% of educational queries</strong>, improving accessibility; also designed a scalable <strong>Language API</strong> for Indic locales.",
+      "Contributed across Google Search’s monorepo, one of the world’s largest codebases with <strong>2B+ lines of code</strong> and <strong>10M+ files</strong>, using <strong>C++</strong>, <strong>Java</strong>, <strong>Python</strong>, <strong>Go</strong>, <strong>gRPC</strong>, <strong>Protocol Buffers</strong>, <strong>Knowledge Graphs</strong>, and other internal technologies.",
+      "Collaborated across Search teams to resolve production issues, align requirements, and prioritize high-impact improvements."
     ]
   },
   {
     "company": "Amazon",
     "role": "Software Development Engineer I",
-    "period": "Jul 2020 – Aug 2021, Hyderabad",
+    "period": "Jul 2020 to Aug 2021, Hyderabad",
     "duration": "1 year 2 months",
     "logo": "/images/amazon_logo.svg",
     "technologies": ["Java", "Kotlin", "TypeScript", "Python", "AWS CDK", "Elasticsearch", "DynamoDB", "Redshift", "Coral", "Smithy"],
@@ -51,24 +48,25 @@
     "rating": 10,
     "details": [
       "Built statistical and ML-powered systems in Amazon Finance Automation to detect invoice fraud, duplicates, and anomalies at scale.",
-      "Supported a finance ingestion surface receiving <strong>1 lakh+ invoice create/update requests every day</strong> across retail, non-retail, and corporate workflows.",
-      "Implemented <strong>3 anomaly-detection rules</strong> using Isolation Forest, identifying over <strong>100M USD</strong> in anomalies within <strong>1 month</strong>.",
-      "Reduced anomaly reporting latency from <strong>24 hours</strong> to near real time through Gandalf-Veritas integration.",
-      "Built APIs and monitoring dashboards and used AWS CDK for infrastructure and CI/CD pipelines.",
-      "Developed microservices using Java, Kotlin, TypeScript, Python, ML, Elasticsearch, DynamoDB, Coral, Smithy, and AWS."
+      "Worked on invoice creation and update workflows handling <strong>1 lakh+ requests every day</strong> across Amazon’s retail, non-retail, and corporate finance systems.",
+      "Implemented <strong>3 anomaly-detection rules</strong> using <strong>statistical analysis</strong> and <strong>machine learning</strong>, including <strong>Isolation Forest</strong>. The rules identified over <strong>100M USD</strong> in anomalies within the <strong>first month</strong>.",
+      "Reduced anomaly reporting latency from <strong>24 hours to approximately 5 minutes</strong> through Gandalf-Veritas integration, giving finance teams near-real-time visibility into suspicious activity.",
+      "Built <strong>APIs</strong> and operational dashboards for <strong>monitoring and alerting</strong>, and used <strong>AWS CDK</strong> to provision infrastructure and <strong>CI/CD pipelines</strong> across multiple services.",
+      "Developed microservices using <strong>Java</strong>, <strong>Kotlin</strong>, <strong>TypeScript</strong>, <strong>Python</strong>, <strong>Elasticsearch</strong>, <strong>DynamoDB</strong>, <strong>Coral</strong>, <strong>Smithy</strong>, and <strong>AWS</strong>."
     ]
   },
   {
     "company": "HackerEarth",
     "role": "Problem Curator Intern",
-    "period": "Jan 2020 – Jun 2020, Bengaluru",
+    "period": "Jan 2020 to Jun 2020, Bengaluru",
     "duration": "6 months",
     "logo": "/images/HackerEarth_logo.png",
     "technologies": ["C++", "Python", "Java", "JavaScript", "Data Structures", "Algorithms"],
     "keySkills": ["Problem Setting", "Competitive Programming", "Teaching", "Public Speaking"],
     "rating": 10,
     "details": [
-      "Created and tested algorithmic problems for hiring contests at companies including Infosys, Google, Facebook, Nokia, PayPal, and Salesforce.",
+      "Set and tested algorithmic problems for hiring programs at Infosys, Google, Facebook, Nokia, PayPal, and Salesforce, and helped run the nationwide <strong>HackWithInfy</strong> contest for <strong>167,000 participants</strong> by resolving contestant doubts and queries at scale.",
+      "Raised the <strong>Net Promoter Score received from Nokia from 7 to 8</strong> by setting high-quality problems for its internal developer contest and providing prompt, responsive support.",
       "Presented a <strong>2-day / 10+ hour</strong> advanced data structures and algorithms workshop at MNIT Jaipur to <strong>120+ attendees</strong>."
     ]
   }

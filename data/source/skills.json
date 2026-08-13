@@ -1,10 +1,9 @@
 {
-  "languages": ["Java", "C++", "Python", "TypeScript"],
-  "databases": ["MySQL", "DynamoDB", "MongoDB", "Redis", "Redshift", "Knowledge Graph", "Object Storage"],
-  "cloudAndInfrastructure": ["AWS", "OCI", "Azure", "Docker", "Kubernetes", "Terraform/CDK"],
-  "distributedSystems": ["Kafka", "gRPC", "Elasticsearch", "Microservices", "WebSockets", "Async Systems"],
+  "languages": ["Java", "C++", "Python", "TypeScript", "Go"],
+  "databases": ["SQL · MySQL & PostgreSQL", "Key-value · Redis & DynamoDB", "Elasticsearch", "Graph · Knowledge Graph", "Columnar · Amazon Redshift", "Object storage · Amazon S3 & Azure Blob Storage", "AI · Semantic DB & Large Semantic Object Storage"],
+  "cloudAndInfrastructure": ["AWS · S3, CloudWatch & Lambda", "Oracle Cloud Infrastructure (OCI)", "Docker", "Kubernetes", "Terraform", "AWS CDK", "CI/CD", "Jenkins"],
+  "distributedSystems": ["System Design", "Microservices", "Event-driven Architecture", "Asynchronous Systems", "Kafka", "gRPC", "WebSockets", "API Design"],
   "aiAndMachineLearning": ["LLMs", "LangChain", "LangGraph", "RAG", "AI Agents", "Generative AI", "MCP Server", "Scikit-Learn", "Isolation Forest", "Anomaly Detection"],
-  "architectureAndQuality": ["System Design", "API Design", "Performance Tuning", "Code Reviews", "Testing", "Observability"],
-  "techLeadAndLeadership": ["Technical Direction", "Team Leadership", "Architecture Reviews", "Mentoring", "Hiring & Onboarding", "Stakeholder Management", "Cross-team Alignment", "Delivery Planning", "Roadmapping", "Documentation"],
-  "devOpsAndSre": ["CI/CD", "Jenkins", "Prometheus", "Grafana", "OpenTelemetry", "SLOs", "Monitoring & Alerting", "Incident Response"]
+  "architectureAndQuality": ["Performance Tuning", "Observability", "OpenTelemetry", "Prometheus", "Grafana", "SLOs", "Monitoring & Alerting", "Incident Response", "Code Reviews", "Testing"],
+  "techLeadAndLeadership": ["Technical Direction", "Team Leadership", "Architecture Reviews", "Mentoring", "Hiring & Onboarding", "Stakeholder Management", "Cross-team Alignment", "Delivery Planning", "Roadmapping", "Documentation"]
 }

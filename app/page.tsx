@@ -29,14 +29,14 @@ const skillLabels: Record<string, string> = {
   languages: "Languages",
   programmingFrameworks: "Programming & frameworks",
   databases: "Databases & storage",
-  cloudAndInfrastructure: "Cloud & infrastructure",
-  distributedSystems: "Distributed systems",
+  cloudAndInfrastructure: "Cloud, infrastructure & DevOps",
+  distributedSystems: "Architecture & distributed systems",
   machineLearningAndAI: "Machine learning & AI",
   aiAndMachineLearning: "AI & machine learning",
   distributedSystemsCloud: "Distributed systems & cloud",
-  architectureAndQuality: "Architecture & quality",
+  architectureAndQuality: "Reliability & engineering quality",
   techLeadAndLeadership: "Tech Lead & Leadership",
-  devOpsAndSre: "DevOps & SRE",
+  devOpsAndSre: "DevOps & infrastructure",
   tools: "Tools",
   softwareDevelopment: "Software development",
 };
@@ -66,14 +66,43 @@ export default async function Home() {
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
   const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
   const allProjectTechnologies = Array.from(new Set(projectData.flatMap((project) => project.technologies))).sort();
-  const displayedSkills: Record<string, string[]> = {
-    ...(skills as Record<string, string[]>),
-    devOpsAndSre: (skills as Record<string, string[]>).devOpsAndSre ?? ["CI/CD", "Jenkins", "Prometheus", "Grafana", "OpenTelemetry", "SLOs", "Monitoring & Alerting", "Incident Response"],
-  };
+  const sourceSkills = skills as Record<string, string[]>;
+  const combinedCloudAndDevOps = Array.from(new Set([
+    ...(sourceSkills.cloudAndInfrastructure ?? []),
+    ...(sourceSkills.devOpsAndSre ?? []),
+  ]));
+  const displayedSkills = Object.entries(sourceSkills).reduce<Record<string, string[]>>((groups, [category, items]) => {
+    if (category === "devOpsAndSre") return groups;
+    groups[category] = category === "cloudAndInfrastructure" ? combinedCloudAndDevOps : items;
+    return groups;
+  }, {});
+  if (!displayedSkills.cloudAndInfrastructure && combinedCloudAndDevOps.length > 0) {
+    displayedSkills.cloudAndInfrastructure = combinedCloudAndDevOps;
+  }
+  const frameworkAndToolPattern = /react|next|node|express|micronaut|spring|fastapi|flask|django|jupyter|pandas|numpy|scikit|tensorflow|opencv|playwright|postman|git|github|vercel|supabase|pnpm|npm|gradle|maven/i;
   const technologyMarqueeRows = [
-    allProjectTechnologies.filter((_, index) => index % 2 === 0),
-    allProjectTechnologies.filter((_, index) => index % 2 !== 0),
-  ];
+    {
+      key: "tech",
+      label: "Tech",
+      items: Array.from(new Set([
+        ...(sourceSkills.languages ?? []),
+        ...allProjectTechnologies.filter((technology) => frameworkAndToolPattern.test(technology)),
+        ...combinedCloudAndDevOps,
+        ...(sourceSkills.databases ?? []),
+        ...(sourceSkills.architectureAndQuality ?? []),
+      ])),
+    },
+    {
+      key: "ai",
+      label: "AI",
+      items: sourceSkills.aiAndMachineLearning ?? [],
+    },
+    {
+      key: "concepts",
+      label: "System design & concepts",
+      items: sourceSkills.distributedSystems ?? [],
+    },
+  ].filter((row) => row.items.length > 0);
   const recognitionGroups = Object.entries(achievementGroups).map(([category, items]) => ({ category, label: achievementLabels[category] ?? category, items: items as Achievement[] }));
   const archivedBlogs = publicArchiveArticles(blogs as ArticleRecord[]);
   const noteTopicCounts = [
@@ -169,10 +198,11 @@ export default async function Home() {
         <ExperienceCarousel experiences={experience} />
       </section>
 
-      <section className="journey-invitation" aria-labelledby="journey-invitation-title">
+      <section className="journey-invitation section-clickable" aria-labelledby="journey-invitation-title">
+        <Link className="section-click-target" href="/journey" aria-label="Open the journey" />
         <div>
           <p className="eyebrow">Journey</p>
-          <h2 id="journey-invitation-title">The work makes more sense with the path behind it.</h2>
+          <h2 id="journey-invitation-title">Every milestone has a story. Grateful for every step and every person who helped connect the dots.</h2>
         </div>
         <div className="journey-invitation-copy">
           <p>Follow the milestones, decisions, interviews, lessons, and people that shaped my path from competitive programming to technical leadership.</p>
@@ -206,7 +236,7 @@ export default async function Home() {
             <article className="skill-card" key={category}>
               <h3>{skillLabels[category] ?? category}</h3>
               <div className="skill-tags">
-                {items.map((item) => <span className={technologyClassName(item)} key={item}>{item}</span>)}
+                {items.map((item) => <span className={category === "aiAndMachineLearning" || item.startsWith("AI ·") ? "ai-tech-tag" : undefined} key={item}>{item}</span>)}
               </div>
             </article>
           ))}
@@ -226,11 +256,12 @@ export default async function Home() {
         <RecognitionCarousel groups={recognitionGroups} />
       </section>
 
-      <section className="projects-section" id="projects">
+      <section className="projects-section section-clickable" id="projects" aria-labelledby="projects-section-title">
+        <Link className="section-click-target" href="/projects" aria-label="View all projects" />
         <div className="section-heading projects-heading">
           <div>
             <p className="eyebrow">Projects</p>
-            <h2>Curiosity, made concrete.</h2>
+            <h2 id="projects-section-title">Curiosity, made concrete.</h2>
             <p className="projects-heading-intro">Products, experiments, and engineering tools built to turn new ideas into practical understanding.</p>
           </div>
           <div className="projects-actions">
@@ -242,19 +273,17 @@ export default async function Home() {
           <div className="project-summary-top">
             <div className="project-summary-copy">
               <span className="project-summary-kicker">Learning by building</span>
-              <h3>Built to learn.<br /><em>Shipped to understand.</em></h3>
-              <p>Each project starts with a question and ends with something tangible: a working product, a sharper system-design instinct, or a technology understood through use.</p>
+              <h3>Problems worth solving.<br /><em>Ideas worth testing.</em></h3>
+              <p>I identify real problems, explore how technology can solve them, and use every developed product, working prototype, and evolving idea as an opportunity to learn.</p>
             </div>
             <div className="project-summary-metrics" aria-label="Hands-on project summary">
               <article>
-                <span className="project-summary-index" aria-hidden="true">01</span>
                 <strong>20+</strong>
-                <p>Projects built</p>
+                <p>Projects across products, prototypes &amp; ideas in progress</p>
               </article>
               <article>
-                <span className="project-summary-index" aria-hidden="true">02</span>
                 <strong>100+</strong>
-                <p>Technologies used</p>
+                <p>Technologies explored through hands-on problem solving</p>
               </article>
             </div>
           </div>
@@ -266,13 +295,19 @@ export default async function Home() {
             </div>
             <div className="technology-marquee-rows">
               {technologyMarqueeRows.map((row, rowIndex) => (
-                <div className={`technology-marquee-row ${rowIndex === 1 ? "technology-marquee-row-reverse" : ""}`} key={rowIndex}>
-                  <div className="technology-marquee-track">
-                    {[0, 1].map((copy) => (
-                      <div className="technology-marquee-set" aria-hidden={copy === 1} key={copy}>
-                        {row.map((technology) => <span className={technologyClassName(technology)} key={`${copy}-${technology}`}>{technology}</span>)}
-                      </div>
-                    ))}
+                <div className={`technology-marquee-row project-technology-row ${rowIndex % 2 === 1 ? "technology-marquee-row-reverse" : ""}`} key={row.key}>
+                  <div className="project-technology-row-label">
+                    <span>{row.label}</span>
+                    <small>{String(row.items.length).padStart(2, "0")}</small>
+                  </div>
+                  <div className="project-technology-row-window">
+                    <div className="technology-marquee-track">
+                      {[0, 1].map((copy) => (
+                        <div className="technology-marquee-set" aria-hidden={copy === 1} key={copy}>
+                          {row.items.map((technology) => <span className={technologyClassName(technology)} key={`${copy}-${technology}`}>{technology}</span>)}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -290,14 +325,16 @@ export default async function Home() {
 
       </section>
 
-      <section className="content-section" id="writing">
+      <section className="content-section section-clickable" id="writing" aria-labelledby="articles-section-title">
+        <Link className="section-click-target" href="/articles" aria-label="Read all articles" />
         <div className="section-heading content-heading">
           <div>
             <p className="eyebrow">Notes</p>
-            <h2>Ideas worth keeping.</h2>
+            <h2 id="articles-section-title">Ideas worth keeping.</h2>
           </div>
           <div className="content-intro">
             <p>Notes drawn from leadership, work experience, system design, interviews, and the lessons in between.</p>
+            <span className="notes-cadence"><i aria-hidden="true" />New notes every week.</span>
           </div>
         </div>
         <div className="notes-summary" aria-label="Notes archive summary">

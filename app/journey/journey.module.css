@@ -409,6 +409,17 @@
   text-wrap: balance;
 }
 
+.chapterIntro h2 em {
+  color: var(--chapter-accent);
+  display: block;
+  font-family: Georgia, serif;
+  font-size: .56em;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  line-height: 1.08;
+  margin-top: 18px;
+}
+
 .chapterIntro > p {
   align-self: end;
   font-size: clamp(.94rem, 1.15vw, 1.08rem);
@@ -498,6 +509,156 @@
 .changeList small { color: var(--chapter-accent); font: 680 .56rem var(--font-geist-mono), monospace; }
 .changeList h3 { font-size: clamp(1.08rem, 1.6vw, 1.45rem); font-weight: 590; letter-spacing: -.035em; line-height: 1.15; margin: 0 0 8px; }
 .changeList p { font-size: .82rem; line-height: 1.62; margin: 0; opacity: .7; }
+
+.collegeStory {
+  border-bottom: 1px solid var(--chapter-border);
+  border-top: 1px solid var(--chapter-border);
+  margin-top: clamp(36px, 4vw, 52px);
+  padding: clamp(34px, 4vw, 52px) 0;
+}
+
+.collegeStoryHeading {
+  align-items: end;
+  display: grid;
+  gap: clamp(28px, 6vw, 78px);
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+
+.collegeStoryHeading span,
+.collegeStoryPanelTopline span {
+  color: var(--chapter-accent);
+  font: 700 .62rem var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.collegeStoryHeading h2 {
+  font-size: clamp(2.25rem, 4.6vw, 5rem);
+  font-weight: 540;
+  letter-spacing: -.06em;
+  line-height: .96;
+  margin: 17px 0 0;
+  max-width: 850px;
+}
+
+.collegeStoryHeading > p { font-size: .84rem; line-height: 1.68; margin: 0; opacity: .72; }
+
+.collegeStoryLayout {
+  display: grid;
+  gap: clamp(20px, 3vw, 38px);
+  grid-template-columns: minmax(340px, .88fr) minmax(0, 1.12fr);
+}
+
+.collegeStoryKeys {
+  align-content: start;
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.collegeStoryKeys button {
+  align-items: start;
+  background: color-mix(in srgb, var(--chapter-accent) 5%, var(--chapter-bg));
+  border: 1px solid var(--chapter-border);
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: 11px;
+  grid-template-columns: 27px minmax(0, 1fr);
+  min-height: 94px;
+  padding: 15px;
+  text-align: left;
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .25s ease, transform .25s ease;
+}
+
+.collegeStoryKeys button:hover,
+.collegeStoryKeys button:focus-visible {
+  border-color: var(--chapter-accent);
+  outline: 0;
+  transform: translateY(-2px);
+}
+
+.collegeStoryKeys button.collegeStoryKeyActive {
+  background: var(--chapter-fg);
+  border-color: var(--chapter-fg);
+  box-shadow: 0 14px 32px color-mix(in srgb, var(--chapter-fg) 17%, transparent);
+  color: var(--chapter-bg);
+}
+
+.collegeStoryKeys i { color: var(--chapter-accent); font: 700 .56rem var(--font-geist-mono), monospace; font-style: normal; padding-top: 2px; }
+.collegeStoryKeys span { display: grid; gap: 7px; }
+.collegeStoryKeys small { color: var(--chapter-accent); font: 700 .54rem var(--font-geist-mono), monospace; letter-spacing: .09em; text-transform: uppercase; }
+.collegeStoryKeys strong { font-size: .8rem; line-height: 1.32; }
+
+.collegeStoryPanel {
+  align-self: stretch;
+  background: var(--chapter-fg);
+  color: var(--chapter-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 472px;
+  padding: clamp(28px, 4vw, 50px);
+}
+
+.collegeStoryPanelTopline { align-items: center; display: flex; justify-content: space-between; }
+.collegeStoryPanelTopline strong { color: color-mix(in srgb, var(--chapter-bg) 62%, transparent); font: 650 .6rem var(--font-geist-mono), monospace; letter-spacing: .08em; }
+.collegeStoryPanel h3 { font-size: clamp(2rem, 4vw, 4.4rem); font-weight: 540; letter-spacing: -.06em; line-height: .96; margin: clamp(40px, 7vw, 90px) 0 22px; max-width: 720px; }
+.collegeStoryPanel > p { font-size: clamp(.9rem, 1.15vw, 1.04rem); line-height: 1.72; margin: 0; max-width: 690px; opacity: .76; }
+
+.collegeStoryPanel footer { align-items: center; display: grid; gap: 14px; grid-template-columns: auto 1fr auto; margin-top: auto; padding-top: 34px; }
+.collegeStoryPanel footer button { align-items: center; background: transparent; border: 1px solid color-mix(in srgb, var(--chapter-bg) 30%, transparent); border-radius: 50%; color: inherit; cursor: pointer; display: flex; font-size: 1rem; height: 42px; justify-content: center; transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease; width: 42px; }
+.collegeStoryPanel footer button:hover { background: var(--chapter-accent); border-color: var(--chapter-accent); color: var(--chapter-fg); transform: translateY(-2px); }
+.collegeStoryPanel footer > div { background: color-mix(in srgb, var(--chapter-bg) 18%, transparent); height: 2px; overflow: hidden; }
+.collegeStoryPanel footer > div span { background: var(--chapter-accent); display: block; height: 100%; transition: width .35s cubic-bezier(.2,.75,.25,1); }
+
+.mentoringMotivation {
+  align-items: center;
+  background:
+    radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--chapter-accent) 18%, transparent), transparent 34%),
+    var(--chapter-fg);
+  color: var(--chapter-bg);
+  display: grid;
+  gap: clamp(28px, 5vw, 72px);
+  grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr);
+  margin-top: clamp(34px, 4vw, 52px);
+  overflow: hidden;
+  padding: clamp(28px, 5vw, 70px);
+  position: relative;
+}
+
+.mentoringMotivationCopy > span {
+  color: var(--chapter-accent);
+  font: 700 .62rem var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.mentoringMotivationCopy h2 {
+  font-family: Georgia, serif;
+  font-size: clamp(2.8rem, 6vw, 6.5rem);
+  font-weight: 400;
+  letter-spacing: -.065em;
+  line-height: .92;
+  margin: clamp(28px, 5vw, 68px) 0 26px;
+}
+
+.mentoringMotivationCopy blockquote {
+  border-left: 3px solid var(--chapter-accent);
+  font-family: Georgia, serif;
+  font-size: clamp(1.05rem, 1.65vw, 1.45rem);
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.mentoringMotivationCopy > p { font-size: .72rem; margin: 18px 0 0 23px; opacity: .62; }
+.mentoringMotivation > a { background: #fff; color: #161714; display: block; overflow: hidden; position: relative; }
+.mentoringMotivation > a img { display: block; height: auto; transition: transform .45s cubic-bezier(.2,.75,.25,1); width: 100%; }
+.mentoringMotivation > a > span { align-items: center; background: rgba(20,21,18,.9); bottom: 0; color: #f5f0e6; display: flex; font-size: .76rem; font-weight: 700; justify-content: space-between; left: 0; padding: 14px 16px; position: absolute; right: 0; }
+.mentoringMotivation > a:hover img { transform: scale(1.018); }
+.mentoringMotivation > a > span i { color: var(--chapter-accent); font-style: normal; }
 
 .lesson {
   border-left: 4px solid var(--chapter-accent);
@@ -676,13 +837,15 @@
 
 .chapterFeedback {
   margin-top: clamp(36px, 5vw, 58px);
-  overflow: hidden;
+  overflow: visible;
   padding: clamp(44px, 5vw, 70px) clamp(24px, 4vw, 54px) clamp(38px, 5vw, 62px);
+  position: relative;
+  z-index: 1;
 }
 
 .feedbackHeading { margin-bottom: 34px; }
 .feedbackHeading h2 { font-size: clamp(2.1rem, 4.1vw, 4.6rem); max-width: 780px; }
-.chapterFeedback :global(.recommendation-marquee) { margin-left: calc(clamp(24px, 4vw, 54px) * -1); margin-right: calc(clamp(24px, 4vw, 54px) * -1); }
+.chapterFeedback :global(.recommendation-marquee) { margin-left: 0; margin-right: 0; }
 
 .chapterFooter {
   align-items: end;
@@ -816,6 +979,10 @@
   .chapterIntro h2 { font-size: clamp(2.75rem, 13vw, 5rem); }
   .chapterIntro > p { max-width: 560px; }
   .workStage { grid-template-columns: 1fr; }
+  .collegeStoryHeading,.collegeStoryLayout { grid-template-columns: 1fr; }
+  .collegeStoryKeys { grid-template-columns: 1fr; }
+  .collegeStoryPanel { min-height: 430px; }
+  .mentoringMotivation { grid-template-columns: 1fr; padding: 28px 22px; }
   .decisionGrid { grid-template-columns: 1fr; }
   .sectionDetailsPanel dl { grid-template-columns: 1fr; }
   .sectionDetailTags { grid-template-columns: 1fr; }
@@ -848,4 +1015,113 @@
   .sectionDetailsPanel dl > div:hover,
   .sectionDetailList li:hover,
   .sectionDetailTags i:hover { transform: none; }
+}
+
+/* Visual interaction layer. Journey copy remains intentionally untouched. */
+.page { background: linear-gradient(180deg, #151611 0%, #10120e 100%); }
+
+.hero { isolation: isolate; }
+.hero::before,
+.hero::after {
+  border-radius: 50%;
+  content: "";
+  filter: blur(2px);
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+.hero::before {
+  animation: heroOrbOne 13s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(200, 210, 100, .2), rgba(200, 210, 100, 0) 68%);
+  height: min(48vw, 620px);
+  right: -12vw;
+  top: -18vw;
+  width: min(48vw, 620px);
+}
+.hero::after {
+  animation: heroOrbTwo 17s ease-in-out infinite alternate;
+  background: radial-gradient(circle, rgba(116, 139, 221, .18), rgba(116, 139, 221, 0) 70%);
+  bottom: -22vw;
+  height: min(52vw, 680px);
+  left: -16vw;
+  width: min(52vw, 680px);
+}
+.heroGrid { animation: gridDrift 22s linear infinite; }
+.heroTopline,
+.heroCopy,
+.heroFooter { z-index: 1; }
+.heroFooter button {
+  align-items: center;
+  border: 1px solid rgba(200, 210, 100, .4);
+  border-radius: 999px;
+  display: inline-flex;
+  min-height: 46px;
+  padding: 9px 12px 9px 18px;
+  transition: background-color .25s ease, border-color .25s ease, color .25s ease, transform .3s cubic-bezier(.2,.75,.25,1);
+}
+.heroFooter button:hover { background: #c8d264; border-color: #c8d264; color: #181914; transform: translateY(-3px); }
+.heroFooter button:hover span { color: #181914; transform: translateY(2px); }
+.heroFooter button span { transition: color .25s ease, transform .25s ease; }
+
+.chapterRail li button {
+  border-radius: 10px;
+  margin-left: -8px;
+  padding-left: 8px;
+  transition: background-color .22s ease, color .22s ease, transform .25s cubic-bezier(.2,.75,.25,1);
+}
+.chapterRail li button:hover { background: rgba(255,255,255,.055); color: #f3f0e7; transform: translateX(4px); }
+.chapterRail li button:hover > span:first-child { border-color: #c8d264; color: #c8d264; }
+
+.chapter { background-attachment: local; transition: box-shadow .4s ease; }
+.chapterActive { box-shadow: inset 5px 0 0 var(--chapter-accent), inset 0 40px 80px color-mix(in srgb, var(--chapter-accent) 4%, transparent); }
+.chapterHeading { transition: border-color .3s ease; }
+.chapter:hover .chapterHeading { border-color: color-mix(in srgb, var(--chapter-accent) 56%, transparent); }
+.chapterIdentity { border-radius: 12px; padding: 7px; transition: background-color .25s ease, transform .3s cubic-bezier(.2,.75,.25,1); }
+.chapterIdentity:hover { background: color-mix(in srgb, var(--chapter-accent) 9%, transparent); transform: translateY(-3px); }
+.logoWrap,.educationMark { transition: box-shadow .3s ease, transform .3s cubic-bezier(.2,.75,.25,1); }
+.chapterIdentity:hover .logoWrap,.chapterIdentity:hover .educationMark { box-shadow: 0 12px 26px color-mix(in srgb, var(--chapter-accent) 22%, transparent); transform: rotate(-2deg) scale(1.04); }
+
+.milestoneGrid { gap: 8px; }
+.milestoneGrid > div { border: 1px solid transparent; border-radius: 12px; min-height: 132px; padding: 18px !important; }
+.milestoneGrid > div:hover { background: color-mix(in srgb, var(--chapter-accent) 12%, transparent); border-color: color-mix(in srgb, var(--chapter-accent) 45%, transparent); box-shadow: 0 14px 32px color-mix(in srgb, var(--chapter-accent) 12%, transparent); transform: translateY(-5px); }
+.milestoneGrid > div:hover strong { color: var(--chapter-accent); }
+.milestoneGrid strong { transition: color .25s ease, transform .25s ease; }
+
+.turningPoint { box-shadow: 0 16px 40px color-mix(in srgb, var(--chapter-fg) 18%, transparent); overflow: hidden; position: relative; transition: box-shadow .35s ease, transform .35s cubic-bezier(.2,.75,.25,1); }
+.turningPoint::after { background: linear-gradient(110deg, transparent 18%, rgba(255,255,255,.13), transparent 58%); content: ""; inset: 0; pointer-events: none; position: absolute; transform: translateX(-130%); transition: transform .7s ease; }
+.turningPoint:hover { box-shadow: 0 24px 54px color-mix(in srgb, var(--chapter-fg) 28%, transparent); transform: translateY(-6px); }
+.turningPoint:hover::after { transform: translateX(130%); }
+.changeList article { border-radius: 8px; transition: background-color .25s ease, box-shadow .25s ease, transform .28s cubic-bezier(.2,.75,.25,1); }
+.changeList article:hover { box-shadow: inset 3px 0 0 var(--chapter-accent); transform: translateX(7px); }
+
+.decisionDetails { border-radius: 12px; overflow: hidden; transition: border-color .25s ease, box-shadow .3s ease, transform .3s cubic-bezier(.2,.75,.25,1); }
+.decisionDetails:hover { border-color: color-mix(in srgb, var(--chapter-accent) 58%, transparent); box-shadow: 0 14px 34px color-mix(in srgb, var(--chapter-accent) 12%, transparent); transform: translateY(-2px); }
+.decisionDetails summary i { transition: background-color .22s ease, border-color .22s ease, color .22s ease, transform .25s ease; }
+.decisionDetails summary:hover i { background: var(--chapter-accent); border-color: var(--chapter-accent); color: var(--chapter-bg); }
+.decisionGrid article { border-radius: 8px; }
+
+.lesson { background: linear-gradient(90deg, color-mix(in srgb, var(--chapter-accent) 10%, transparent), transparent 72%); border-radius: 0 16px 16px 0; padding-bottom: 24px; padding-top: 24px; transition: background-color .3s ease, box-shadow .3s ease, transform .35s cubic-bezier(.2,.75,.25,1); }
+.lesson:hover { box-shadow: 0 20px 46px color-mix(in srgb, var(--chapter-accent) 12%, transparent); transform: translateX(6px); }
+.chapterFooter .nextChapterButton { border-radius: 999px; transition: background-color .25s ease, box-shadow .3s ease, color .25s ease, transform .3s cubic-bezier(.2,.75,.25,1); }
+.chapterFooter .nextChapterButton:hover { background: var(--chapter-accent); border-color: var(--chapter-accent); box-shadow: 0 14px 32px color-mix(in srgb, var(--chapter-accent) 28%, transparent); color: var(--chapter-bg); transform: translateY(-3px); }
+.chapterFooter .nextChapterButton span { transition: color .25s ease, transform .25s ease; }
+.chapterFooter .nextChapterButton:hover span { color: var(--chapter-bg); transform: translateY(2px); }
+
+@keyframes heroOrbOne {
+  from { transform: translate3d(0,0,0) scale(1); }
+  to { transform: translate3d(-5vw,6vh,0) scale(1.12); }
+}
+@keyframes heroOrbTwo {
+  from { transform: translate3d(0,0,0) scale(1); }
+  to { transform: translate3d(7vw,-5vh,0) scale(1.08); }
+}
+@keyframes gridDrift {
+  from { background-position: 0 0,0 0; }
+  to { background-position: 84px 84px,84px 84px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before,.hero::after,.heroGrid { animation: none; }
+  .heroFooter button,.chapterRail li button,.chapter,.chapterIdentity,.logoWrap,.educationMark,.milestoneGrid > div,.turningPoint,.turningPoint::after,.changeList article,.decisionDetails,.decisionDetails summary i,.lesson,.chapterFooter .nextChapterButton,.chapterFooter .nextChapterButton span { transition: none; }
+  .heroFooter button:hover,.chapterRail li button:hover,.chapterIdentity:hover,.chapterIdentity:hover .logoWrap,.chapterIdentity:hover .educationMark,.milestoneGrid > div:hover,.turningPoint:hover,.turningPoint:hover::after,.changeList article:hover,.decisionDetails:hover,.lesson:hover,.chapterFooter .nextChapterButton:hover { transform: none; }
 }

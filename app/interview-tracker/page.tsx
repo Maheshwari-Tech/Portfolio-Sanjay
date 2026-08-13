@@ -54,6 +54,23 @@ const emptyCompany = (): Omit<Company, "id" | "updated_at"> => ({
   last_applied: "", next_action: "", next_action_date: "", rounds_information: "", company_values: "", contacts: "", job_url: "", notes: "",
 });
 
+function companyWritePayload(value: Company) {
+  return {
+    company: value.company,
+    target_role: value.target_role,
+    priority: value.priority,
+    status: value.status,
+    last_applied: value.last_applied || null,
+    next_action: value.next_action || null,
+    next_action_date: value.next_action_date || null,
+    rounds_information: value.rounds_information || null,
+    company_values: value.company_values || null,
+    contacts: value.contacts || null,
+    job_url: value.job_url || null,
+    notes: value.notes || null,
+  };
+}
+
 function safeUserName() {
   if (typeof window === "undefined") return "Sanjay";
   try { return JSON.parse(localStorage.getItem("sanjay_portfolio_user") || "{}").name || "Sanjay"; } catch { return "Sanjay"; }
@@ -76,7 +93,6 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const [state, setState] = useState<"loading" | "ready" | "offline">("loading");
   const [canManage, setCanManage] = useState(false);
   const [isAdminWorkspace, setIsAdminWorkspace] = useState(false);
-  const [candidateStorageKey, setCandidateStorageKey] = useState<string | null>(null);
   const [workspaceUserName, setWorkspaceUserName] = useState("Candidate");
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
@@ -93,6 +109,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const [leetcodeSyncMessage, setLeetcodeSyncMessage] = useState("");
   const [showLeetcodeSetup, setShowLeetcodeSetup] = useState(false);
   const userName = workspaceUserName || safeUserName();
+  const trackerApiRoot = isAdminWorkspace ? "/admin/interview-tracker" : "/member/interview-tracker";
 
   const loadCompanies = useCallback(async (initial = false) => {
     if (initial) setState("loading");
@@ -131,12 +148,29 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
         }
         loadedCompanies = (body.items || []) as Company[];
         setIsAdminWorkspace(true);
-        setCandidateStorageKey(null);
       } else {
         const storageKey = `portfolio_interview_tracker:${identity.id}`;
         const stored = localStorage.getItem(storageKey);
-        loadedCompanies = stored ? JSON.parse(stored) as Company[] : [];
-        setCandidateStorageKey(storageKey);
+        const response = await apiFetch("/member/interview-tracker", {headers: authHeaders()});
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          setState("offline");
+          setMessage(body.detail || "Your tracker could not be loaded.");
+          return;
+        }
+        loadedCompanies = (body.items || []) as Company[];
+        const legacyCompanies = stored ? JSON.parse(stored) as Company[] : [];
+        if (loadedCompanies.length === 0 && legacyCompanies.length > 0) {
+          const migrated: Company[] = [];
+          for (const legacy of legacyCompanies) {
+            const migrationResponse = await apiFetch("/member/interview-tracker", {method: "POST", headers: authHeaders(), body: JSON.stringify(companyWritePayload(legacy))});
+            const migratedCompany = await migrationResponse.json().catch(() => ({}));
+            if (!migrationResponse.ok) throw new Error(migratedCompany.detail || "Your existing tracker could not be moved to your account.");
+            migrated.push(migratedCompany as Company);
+          }
+          loadedCompanies = migrated;
+          localStorage.removeItem(storageKey);
+        }
         setIsAdminWorkspace(false);
       }
       setCompanies(loadedCompanies);
@@ -281,20 +315,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const nextActions = companies.filter(item => item.next_action_date && item.status !== "rejected").length;
 
   async function updateCompany(id: number, changes: Partial<Company>) {
-    if (candidateStorageKey) {
-      let updated = {} as Company;
-      setCompanies(current => {
-        const next = current.map(item => {
-          if (item.id !== id) return item;
-          updated = {...item, ...changes, updated_at: new Date().toISOString()};
-          return updated;
-        });
-        localStorage.setItem(candidateStorageKey, JSON.stringify(next));
-        return next;
-      });
-      return updated;
-    }
-    const response = await apiFetch(`/admin/interview-tracker/${id}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify(changes) });
+    const response = await apiFetch(`${trackerApiRoot}/${id}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify(changes) });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.detail || "The company could not be updated.");
     setCompanies(current => current.map(item => item.id === id ? body : item));
@@ -314,18 +335,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     event.preventDefault();
     setSaving(true); setMessage("");
     try {
-      if (candidateStorageKey) {
-        const created: Company = {...newCompany, id: Date.now(), updated_at: new Date().toISOString()};
-        setCompanies(current => {
-          const next = [...current, created];
-          localStorage.setItem(candidateStorageKey, JSON.stringify(next));
-          return next;
-        });
-        setNewCompany(emptyCompany());
-        setAdding(false);
-        return;
-      }
-      const response = await apiFetch("/admin/interview-tracker", { method: "POST", headers: authHeaders(), body: JSON.stringify(newCompany) });
+      const response = await apiFetch(trackerApiRoot, { method: "POST", headers: authHeaders(), body: JSON.stringify(newCompany) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.detail || "The company could not be added.");
       setCompanies(current => [...current, body]); setNewCompany(emptyCompany()); setAdding(false);
@@ -335,16 +345,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
 
   async function deleteCompany(item: Company) {
     if (!window.confirm(`Remove ${item.company} from the tracker?`)) return;
-    if (candidateStorageKey) {
-      setCompanies(current => {
-        const next = current.filter(company => company.id !== item.id);
-        localStorage.setItem(candidateStorageKey, JSON.stringify(next));
-        return next;
-      });
-      closeEditor();
-      return;
-    }
-    const response = await apiFetch(`/admin/interview-tracker/${item.id}`, { method: "DELETE", headers: authHeaders() });
+    const response = await apiFetch(`${trackerApiRoot}/${item.id}`, { method: "DELETE", headers: authHeaders() });
     if (response.ok) { setCompanies(current => current.filter(company => company.id !== item.id)); closeEditor(); }
     else setMessage("The company could not be removed.");
   }
@@ -359,10 +360,53 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     if (initialCompanySlug) router.push("/interview-tracker/workspace", {scroll: false});
   }
 
+  const leetcodeSetupDialog = showLeetcodeSetup && <div className="leetcode-setup-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) setShowLeetcodeSetup(false); }}>
+    <section className="leetcode-setup" role="dialog" aria-modal="true" aria-labelledby="leetcode-setup-title">
+      <header><div><p className="eyebrow">ONE-TIME SETUP</p><h2 id="leetcode-setup-title">Connect your browser to LeetCode</h2></div><button aria-label="Close setup" onClick={() => setShowLeetcodeSetup(false)}>×</button></header>
+      <p>Always replace an older helper with the latest download. The ZIP does not install when downloaded—unzip it first, then load that folder as an extension.</p>
+      <ol>
+        <li><button className="button button-dark" onClick={downloadLatestLeetCodeHelper}>1. Download latest helper</button><span>Open your Downloads folder and unzip the newly downloaded package.</span></li>
+        <li><strong>2. Open extensions</strong><span>Chrome: <code>chrome://extensions</code> · Edge: <code>edge://extensions</code> · Firefox: <code>about:debugging#/runtime/this-firefox</code></span></li>
+        <li><strong>3. Replace the old helper</strong><span>Remove the existing Portfolio LeetCode Sync extension first. Then choose “Load unpacked” and select the newly downloaded folder. Firefox: choose “Load Temporary Add-on” and select its <code>manifest.json</code>.</span></li>
+        <li><strong>4. Reload this tracker tab</strong><span>The helper cannot activate in a tab that was already open when it was installed.</span></li>
+      </ol>
+      <div className="leetcode-setup-actions"><button className="button button-dark" onClick={() => window.location.reload()}>Reload tracker</button><button className="button" onClick={() => setShowLeetcodeSetup(false)}>Close setup</button></div>
+      <small>The helper reads only progress from the LeetCode account signed in within this browser. It never sends your LeetCode cookies to this site.</small>
+    </section>
+  </div>;
+
   if (state !== "ready") return <main className="tracker-page">
     <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker">Preparation home</Link></nav></header>
     <section className="admin-empty"><p className="eyebrow">PRIVATE PREPARATION WORKSPACE</p><h1>{state === "loading" ? "Opening your workspace…" : "Workspace unavailable."}</h1><p>{message}</p>{state === "offline" && <button className="button button-dark" onClick={() => void loadCompanies(true)}>Retry connection</button>}</section>
   </main>;
+
+  if (initialCompanySlug) {
+    if (!editing) return <main className="tracker-page">
+      <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker/workspace">← All companies</Link></nav><span>{userName}</span></header>
+      <section className="admin-empty"><p className="eyebrow">COMPANY PREPARATION</p><h1>Company not found.</h1><p>{message || "This company is not part of your tracker."}</p><Link className="button button-dark" href="/interview-tracker/workspace">Return to the tracker</Link></section>
+    </main>;
+
+    return <main className="tracker-page company-tracker-page">
+      <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker/workspace">← All companies</Link>{isAdminWorkspace && <Link href="/admin">Admin portal</Link>}</nav><span>{userName}</span></header>
+      <section className="company-tracker-shell">
+        <header className="company-tracker-heading">
+          <div><p className="eyebrow">COMPANY PREPARATION</p><h1>{editing.company}</h1><p>{editing.target_role}</p></div>
+          <div className="company-tracker-heading-actions"><span className={`tracker-stage tracker-stage-readonly ${editing.status}`}>{stages.find(([value]) => value === editing.status)?.[1] || editing.status}</span><button className="tracker-delete" onClick={() => void deleteCompany(editing)}>Remove company</button></div>
+        </header>
+
+        {leetcodeSyncMessage && <div className={`tracker-sync-status ${leetcodeSyncState}`} role="status"><strong>{leetcodeSyncState === "done" ? "LeetCode connected" : leetcodeSyncState === "error" ? "Connection needs attention" : "LeetCode connection"}</strong><span>{leetcodeSyncMessage}</span>{leetcodeSyncState === "error" && <button onClick={() => { setLeetcodeSyncState("idle"); setLeetcodeSyncMessage(""); }}>Dismiss</button>}</div>}
+
+        <QuestionBank company={editing.company} onRefresh={(questionSlugs, companyName) => void connectLeetCode(questionSlugs, companyName)}/>
+
+        <section className="company-tracker-details">
+          <div className="tracker-heading"><div><p className="eyebrow">COMPANY DETAILS</p><h2>Application and preparation notes</h2></div></div>
+          <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving}/>
+        </section>
+        {message && <div className="tracker-alert">{message}<button onClick={() => setMessage("")}>×</button></div>}
+      </section>
+      {leetcodeSetupDialog}
+    </main>;
+  }
 
   return <main className="tracker-page">
     <header className="admin-topbar"><Wordmark/><nav><Link href="/interview-tracker">Preparation home</Link>{isAdminWorkspace && <Link href="/admin">Admin portal</Link>}<a href="#companies">Companies</a><a href="#actions">Next actions</a></nav><span>{userName}</span></header>
@@ -374,20 +418,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
 
       {leetcodeSyncMessage && <div className={`tracker-sync-status ${leetcodeSyncState}`} role="status"><strong>{leetcodeSyncState === "done" ? "LeetCode connected" : leetcodeSyncState === "error" ? "Connection needs attention" : "LeetCode connection"}</strong><span>{leetcodeSyncMessage}</span>{leetcodeSyncState === "error" && <button onClick={() => { setLeetcodeSyncState("idle"); setLeetcodeSyncMessage(""); }}>Dismiss</button>}</div>}
 
-      {showLeetcodeSetup && <div className="leetcode-setup-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) setShowLeetcodeSetup(false); }}>
-        <section className="leetcode-setup" role="dialog" aria-modal="true" aria-labelledby="leetcode-setup-title">
-          <header><div><p className="eyebrow">ONE-TIME SETUP</p><h2 id="leetcode-setup-title">Connect your browser to LeetCode</h2></div><button aria-label="Close setup" onClick={() => setShowLeetcodeSetup(false)}>×</button></header>
-          <p>Always replace an older helper with the latest download. The ZIP does not install when downloaded—unzip it first, then load that folder as an extension.</p>
-          <ol>
-            <li><button className="button button-dark" onClick={downloadLatestLeetCodeHelper}>1. Download latest helper</button><span>Open your Downloads folder and unzip the newly downloaded package.</span></li>
-            <li><strong>2. Open extensions</strong><span>Chrome: <code>chrome://extensions</code> · Edge: <code>edge://extensions</code> · Firefox: <code>about:debugging#/runtime/this-firefox</code></span></li>
-            <li><strong>3. Replace the old helper</strong><span>Remove the existing Portfolio LeetCode Sync extension first. Then choose “Load unpacked” and select the newly downloaded folder. Firefox: choose “Load Temporary Add-on” and select its <code>manifest.json</code>.</span></li>
-            <li><strong>4. Reload this tracker tab</strong><span>The helper cannot activate in a tab that was already open when it was installed.</span></li>
-          </ol>
-          <div className="leetcode-setup-actions"><button className="button button-dark" onClick={() => window.location.reload()}>Reload tracker</button><button className="button" onClick={() => setShowLeetcodeSetup(false)}>Close setup</button></div>
-          <small>The helper reads only progress from the LeetCode account signed in within this browser. It never sends your LeetCode cookies to this site.</small>
-        </section>
-      </div>}
+      {leetcodeSetupDialog}
 
       <section className="tracker-summary" aria-label="Application summary">
         <article><span>Target list</span><strong>{companies.length}</strong><small>companies</small></article>
@@ -422,7 +453,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
               <td>{item.target_role || <span className="tracker-muted">Add role</span>}</td>
               {canManage && <><td>{item.last_applied || <span className="tracker-muted">Not applied</span>}</td><td><strong className="tracker-action-copy">{item.next_action || "Define next move"}</strong>{item.next_action_date && <small>{item.next_action_date}</small>}</td><td>{item.contacts || <span className="tracker-muted">Add contact</span>}</td></>}
               <td><time dateTime={item.updated_at}>{item.updated_at ? new Date(item.updated_at).toLocaleDateString(undefined, {day: "2-digit", month: "short", year: "numeric"}) : "—"}</time></td>
-              <td><button className="tracker-open" onClick={() => openCompany(item)}>Questions →</button></td>
+              <td><div className="tracker-preparation-actions"><button className="tracker-open" onClick={() => openCompany(item)}>Questions →</button><button className="tracker-remove-row" onClick={() => void deleteCompany(item)} aria-label={`Remove ${item.company}`}>Remove</button></div></td>
             </tr>)}</tbody>
           </table>
           {visibleCompanies.length === 0 && <div className="tracker-zero"><strong>No companies found.</strong><p>Try clearing a filter or add another target company.</p></div>}
@@ -435,9 +466,6 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     {(editing || adding) && <div className="tracker-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) closeEditor(); }}>
       <section className="tracker-editor" role="dialog" aria-modal="true" aria-label={adding ? "Add company" : `Edit ${editing?.company}`}>
         <header><div><p className="eyebrow">{adding ? "NEW TARGET" : canManage ? "COMPANY DOSSIER" : "INTERVIEW PREPARATION"}</p><h2>{adding ? "Add a company" : editing?.company}</h2></div><button aria-label="Close" onClick={closeEditor}>×</button></header>
-        {editing && (
-          <QuestionBank company={editing.company} onRefresh={(questionSlugs, companyName) => void connectLeetCode(questionSlugs, companyName)}/>
-        )}
         {canManage && (adding ? <CompanyForm value={newCompany} onChange={setNewCompany} onSubmit={createCompany} saving={saving}/>: editing && <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving} onDelete={() => void deleteCompany(editing)}/>)}
       </section>
     </div>}

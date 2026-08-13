@@ -29,7 +29,7 @@ function RecommendationCard({ recommendation, duplicate = false }: { recommendat
   const identity = recommendationIdentity(recommendation);
 
   return (
-    <article className={`recommendation-card recommendation-company-${identity.tone}`}>
+    <article className={`recommendation-card recommendation-company-${identity.tone}`} role="listitem">
       <div className="recommendation-topline">
         <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
         <time>{recommendation.date}</time>
@@ -48,14 +48,38 @@ function RecommendationCard({ recommendation, duplicate = false }: { recommendat
   );
 }
 
-export default function RecommendationCarousel({ recommendations }: { recommendations: Recommendation[] }) {
+export default function RecommendationCarousel({
+  recommendations,
+  variant = "marquee",
+}: {
+  recommendations: Recommendation[];
+  variant?: "marquee" | "scroll";
+}) {
+  const uniqueRecommendations = Array.from(
+    new Map(
+      recommendations.map((recommendation) => [
+        `${recommendation.name.trim().toLowerCase()}|${recommendation.comment.trim().toLowerCase()}|${recommendation.date}`,
+        recommendation,
+      ]),
+    ).values(),
+  );
+  if (variant === "scroll") {
+    return (
+      <div className="recommendation-carousel recommendation-carousel-scroll" role="region" aria-label="LinkedIn recommendations">
+        <div className="recommendation-scroll-track" role="list">
+          {uniqueRecommendations.map((recommendation) => <RecommendationCard key={recommendation.id} recommendation={recommendation} />)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="recommendation-carousel" role="region" aria-label="LinkedIn recommendations">
       <div className="recommendation-marquee">
         <div className="recommendation-marquee-track">
           {[false, true].map((duplicate) => (
             <div className="recommendation-marquee-set" aria-hidden={duplicate} key={String(duplicate)}>
-              {recommendations.map((recommendation) => <RecommendationCard duplicate={duplicate} key={`${duplicate}-${recommendation.id}`} recommendation={recommendation} />)}
+              {uniqueRecommendations.map((recommendation) => <RecommendationCard duplicate={duplicate} key={`${duplicate}-${recommendation.id}`} recommendation={recommendation} />)}
             </div>
           ))}
         </div>
