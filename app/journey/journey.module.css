@@ -614,19 +614,21 @@
 .collegeStoryPanel footer > div span { background: var(--chapter-accent); display: block; height: 100%; transition: width .35s cubic-bezier(.2,.75,.25,1); }
 
 .mentoringMotivation {
-  align-items: center;
+  align-items: start;
   background:
     radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--chapter-accent) 18%, transparent), transparent 34%),
     var(--chapter-fg);
   color: var(--chapter-bg);
   display: grid;
-  gap: clamp(28px, 5vw, 72px);
-  grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr);
+  gap: clamp(32px, 4vw, 60px);
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
   margin-top: clamp(34px, 4vw, 52px);
   overflow: hidden;
-  padding: clamp(28px, 5vw, 70px);
+  padding: clamp(34px, 4vw, 58px);
   position: relative;
 }
+
+.mentoringMotivationCopy { min-width: 0; }
 
 .mentoringMotivationCopy > span {
   color: var(--chapter-accent);
@@ -637,11 +639,12 @@
 
 .mentoringMotivationCopy h2 {
   font-family: Georgia, serif;
-  font-size: clamp(2.8rem, 6vw, 6.5rem);
+  font-size: clamp(2.8rem, 4vw, 5.25rem);
   font-weight: 400;
   letter-spacing: -.065em;
   line-height: .92;
-  margin: clamp(28px, 5vw, 68px) 0 26px;
+  margin: clamp(24px, 3vw, 44px) 0 24px;
+  overflow-wrap: normal;
 }
 
 .mentoringMotivationCopy blockquote {
@@ -654,11 +657,17 @@
 }
 
 .mentoringMotivationCopy > p { font-size: clamp(.94rem, 1.25vw, 1.08rem); line-height: 1.72; margin: 0; max-width: 600px; opacity: .76; }
-.mentoringMotivation > a { background: #fff; color: #161714; display: block; overflow: hidden; position: relative; }
+.mentoringMotivation > a { align-self: start; background: #fff; color: #161714; display: block; min-width: 0; overflow: hidden; position: relative; }
 .mentoringMotivation > a img { display: block; height: auto; transition: transform .45s cubic-bezier(.2,.75,.25,1); width: 100%; }
 .mentoringMotivation > a > span { align-items: center; background: rgba(20,21,18,.9); bottom: 0; color: #f5f0e6; display: flex; font-size: .76rem; font-weight: 700; justify-content: space-between; left: 0; padding: 14px 16px; position: absolute; right: 0; }
 .mentoringMotivation > a:hover img { transform: scale(1.018); }
 .mentoringMotivation > a > span i { color: var(--chapter-accent); font-style: normal; }
+
+@media (max-width: 1180px) {
+  .mentoringMotivation { grid-template-columns: 1fr; }
+  .mentoringMotivationCopy h2 { max-width: 760px; }
+  .mentoringMotivation > a { width: 100%; }
+}
 
 .lesson {
   border-left: 4px solid var(--chapter-accent);

@@ -6,6 +6,7 @@ export type Recommendation = {
   date: string;
   context: string;
   socialLink: string;
+  highlight?: string;
 };
 
 function recommendationIdentity(recommendation: Recommendation) {
@@ -25,13 +26,12 @@ function recommendationIdentity(recommendation: Recommendation) {
   return { initials, tone };
 }
 
-function recommendationHighlight(comment: string) {
-  const normalized = comment.replace(/\s+/g, " ").trim();
-  const firstSentence = normalized.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? normalized;
-  if (firstSentence.length <= 112) return firstSentence;
+function recommendationHighlight(recommendation: Recommendation) {
+  return recommendation.highlight ?? recommendation.comment.replace(/\s+/g, " ").trim();
+}
 
-  const shortened = firstSentence.slice(0, 109).replace(/\s+\S*$/, "").replace(/[.,;:!?]+$/, "");
-  return `${shortened}…`;
+function displayRecommendation(comment: string) {
+  return comment.replace(/\s*[—–]\s*/g, ", ");
 }
 
 function RecommendationCard({
@@ -45,14 +45,40 @@ function RecommendationCard({
 }) {
   const identity = recommendationIdentity(recommendation);
 
+  if (showHighlight) {
+    return (
+      <article className={`recommendation-card recommendation-company-${identity.tone}`} role="listitem">
+        <div className="recommendation-review-half">
+          <div className="recommendation-topline">
+            <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
+            <time>{recommendation.date}</time>
+          </div>
+          <blockquote className="recommendation-quote">“{displayRecommendation(recommendation.comment)}”</blockquote>
+        </div>
+        <div className="recommendation-highlight-half">
+          <div className="recommendation-highlight-copy">
+            <span>Highlight</span>
+            <p className="recommendation-highlight">{recommendationHighlight(recommendation)}</p>
+          </div>
+          <div className="recommendation-person">
+            <span className="recommendation-avatar" aria-hidden="true">{identity.initials}</span>
+            <div className="recommendation-identity-copy">
+              <a href={recommendation.socialLink} target="_blank" rel="noreferrer">{recommendation.name} <span className="recommendation-linkedin-badge" aria-hidden="true">in</span></a>
+              <p dangerouslySetInnerHTML={{ __html: recommendation.context }} />
+            </div>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
   return (
     <article className={`recommendation-card recommendation-company-${identity.tone}`} role="listitem">
       <div className="recommendation-topline">
         <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
         <time>{recommendation.date}</time>
       </div>
-      {showHighlight && <p className="recommendation-highlight">{recommendationHighlight(recommendation.comment)}</p>}
-      <blockquote className="recommendation-quote">“{recommendation.comment}”</blockquote>
+      <blockquote className="recommendation-quote">“{displayRecommendation(recommendation.comment)}”</blockquote>
       <div className="recommendation-person">
         <span className="recommendation-avatar" aria-hidden="true">{identity.initials}</span>
         <div className="recommendation-identity-copy">
