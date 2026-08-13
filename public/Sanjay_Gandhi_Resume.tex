@@ -16,6 +16,8 @@
 \usepackage{fancyhdr}
 \usepackage[english]{babel}
 \usepackage{tabularx}
+\usepackage{fontspec}
+\setmainfont{Helvetica}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -61,7 +63,7 @@
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
 \newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.16in,itemsep=2pt,topsep=2pt,parsep=0pt]}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{3pt}}
-\newcommand{\achievementCategory}[1]{\vspace{4pt}\noindent\textbf{#1}\vspace{1.5pt}}
+\newcommand{\achievementCategory}[1]{\par\vspace{4pt}\noindent\textbf{#1}\par\vspace{1.5pt}}
 \newcommand{\resumeHref}[2]{\href{#1}{\uline{#2}}}
 \newcommand{\resumeSkillRow}[2]{\noindent{\small\hangindent=0.18in\hangafter=1\textbf{#1:}\enspace #2\par}\vspace{3pt}}
 
@@ -96,45 +98,45 @@
 \resumeSubHeadingListStart
   \resumeSubheading
     {Oracle}{Apr 2024 - Present}
-    {Senior Member of Technical Staff (SDE III) $|$ \textbf{Promoted to Tech Lead (Oct 2025)}}{Bengaluru (Remote)}
+    {Senior Member of Technical Staff (SDE III) $|$ Promoted to Tech Lead (Oct \textbf{2025})}{Bengaluru (Remote)}
   \resumeItemListStart
-    \resumeItem{Own architecture, technical direction, delivery, and production readiness across \textbf{3 Oracle Health products}: \textbf{MRO Gen2}, \textbf{XR Gen1}, and \textbf{Dex Gen1}.}
-    \resumeItem{Built \textbf{7+ Java Micronaut microservices} from \textbf{0 to 1}, evolving the medical-record output platform into modular APIs for template management, data extraction, report generation, and the \textbf{mro-ai-intelligence-service}.}
-    \resumeItem{Scaled the platform to \textbf{1M+ daily requests} with \textbf{p90 latency under 30 seconds}; introduced asynchronous fast and slow lanes for roughly \textbf{1\%} of complex reports taking over \textbf{10 minutes}, and sometimes hours.}
-    \resumeItem{Led \textbf{4 quarterly releases} from roadmap to production, scoped work for \textbf{5 to 8 engineers}, removed blockers, and drove architecture, compliance, monitoring, and operational readiness.}
-    \resumeItem{Served as a primary escalation owner for critical production issues. In one example, brought approximately \textbf{1,000-page reports} back within the \textbf{30-second SLA}, reduced heap usage by \textbf{40\%}, improved performance by over \textbf{25\%}, and drove request-level caching that cut data-extraction time by \textbf{60\%}.}
-    \resumeItem{Partnered with \textbf{25+ cross-functional teams} to build reusable reporting capabilities and cut Gen2 onboarding from \textbf{2 weeks} to \textbf{under 1 week}, a reduction of \textbf{more than 50\%}.}
-    \resumeItem{Led a project involving \textbf{3 engineers} to deliver Gen1 \textbf{Report Ingress} and \textbf{6 APIs} in \textbf{1 quarter + 1 month} vs. \textbf{2 quarters planned}; enabled WebSphere-to-EJS migration with better performance, stability, scalability, and lower cost.}
-    \resumeItem{Built and led the India Clinical Reporting team from scratch, growing leadership scope to \textbf{10+ engineers} across \textbf{3+ products}; strengthened hiring through \textbf{100+ interviews} and \textbf{25+ hires}.}
+    \resumeItem{Own architecture, technical direction, delivery, and production readiness across \textbf{3} Oracle Health products: MRO Gen2, XR Gen1, and Dex Gen1.}
+    \resumeItem{Built \textbf{7+} Java Micronaut microservices from \textbf{0 to 1}, evolving the medical-record output platform into modular APIs for template management, data extraction, report generation, and the mro-ai-intelligence-service.}
+    \resumeItem{Scaled the platform to \textbf{1M+} daily requests with p\textbf{90} latency under \textbf{30} seconds; introduced asynchronous fast and slow lanes for roughly \textbf{1\%} of complex reports taking over \textbf{10} minutes, and sometimes hours.}
+    \resumeItem{Led \textbf{4} quarterly releases from roadmap to production, scoped work for \textbf{5 to 8} engineers, removed blockers, and drove architecture, compliance, monitoring, and operational readiness.}
+    \resumeItem{Served as a primary escalation owner for critical production issues. In one example, brought approximately \textbf{1,000}-page reports back within the \textbf{30}-second SLA, reduced heap usage by \textbf{40\%}, improved performance by over \textbf{25\%}, and drove request-level caching that cut data-extraction time by \textbf{60\%}.}
+    \resumeItem{Partnered with \textbf{25+} cross-functional teams to build reusable reporting capabilities and cut Gen2 onboarding from \textbf{2} weeks to under \textbf{1} week, a reduction of more than \textbf{50\%}.}
+    \resumeItem{Led a project involving \textbf{3} engineers to deliver Gen1 Report Ingress and \textbf{6} APIs in \textbf{1} quarter + \textbf{1} month vs. \textbf{2} quarters planned; enabled WebSphere-to-EJS migration with better performance, stability, scalability, and lower cost.}
+    \resumeItem{Built and led the India Clinical Reporting team from scratch, growing leadership scope to \textbf{10+} engineers across \textbf{3+} products; strengthened hiring through \textbf{100+} interviews and \textbf{25+} hires.}
   \resumeItemListEnd
 
   \resumeSubheading
     {Google}{Sep 2021 - Feb 2024}
     {Software Engineer II}{Bengaluru (Hybrid)}
   \resumeItemListStart
-    \resumeItem{As part of Google's \textbf{Search India Team}, built exam OSRPs and the interactive \textbf{Exam Quiz}, reaching \textbf{100M+ educational users} on a product serving \textbf{1B+ queries per day}.}
-    \resumeItem{Migrated Google \textbf{Search}'s serving query-understanding architecture from \textbf{entity-driven} to \textbf{intent-driven} through the \textbf{diOSRP Migration}, enabling better \textbf{Organized Search Result Pages (OSRPs)} that answered user intent directly instead of routing users to the traditional \textbf{10 blue links}; impacted \textbf{0.05\%} of Search traffic.}
-    \resumeItem{Launched localized Exam OSRP experiences in Hindi, Tamil, and Telugu and designed a scalable \textbf{Language API} to extend Indic-language access across lower-tier cities.}
-    \resumeItem{Contributed across Google Search's monorepo, one of the world's largest codebases with \textbf{2B+ lines of code} and \textbf{10M+ files}, using \textbf{C++, Java, Python, Go, gRPC, Protocol Buffers, Knowledge Graphs}, and other internal technologies.}
+    \resumeItem{As part of Google's Search India Team, built exam OSRPs and the interactive Exam Quiz, reaching \textbf{100M+} educational users on a product serving \textbf{1B+} queries per day.}
+    \resumeItem{Migrated Google Search's serving query-understanding architecture from entity-driven to intent-driven through the diOSRP Migration, enabling better Organized Search Result Pages (OSRPs) that answered user intent directly instead of routing users to the traditional \textbf{10} blue links; impacted \textbf{0.05\%} of Search traffic.}
+    \resumeItem{Launched localized Exam OSRP experiences in Hindi, Tamil, and Telugu and designed a scalable Language API to extend Indic-language access across lower-tier cities.}
+    \resumeItem{Contributed across Google Search's monorepo, one of the world's largest codebases with \textbf{2B+} lines of code and \textbf{10M+} files, using C++, Java, Python, Go, gRPC, Protocol Buffers, Knowledge Graphs, and other internal technologies.}
   \resumeItemListEnd
 
   \resumeSubheading
     {Amazon}{Jul 2020 - Aug 2021}
     {Software Development Engineer I}{Hyderabad}
   \resumeItemListStart
-    \resumeItem{Built invoice creation, update, and anomaly-detection workflows in \textbf{Amazon Finance Automation}, handling \textbf{1 lakh+ daily requests} across retail, non-retail, and corporate finance systems.}
-    \resumeItem{Implemented \textbf{3 anomaly-detection rules} using \textbf{statistical analysis} and \textbf{machine learning}, including \textbf{Isolation Forest}; identified over \textbf{100M USD} in anomalies within the \textbf{first month}.}
-    \resumeItem{Reduced anomaly reporting latency from \textbf{24 hours} to approximately \textbf{5 minutes} through Gandalf-Veritas integration, giving finance teams near-real-time visibility into suspicious activity.}
-    \resumeItem{Built APIs, microservices, dashboards, infrastructure, and CI/CD using \textbf{Java, Kotlin, TypeScript, Python, Elasticsearch, DynamoDB, Redshift, Coral, Smithy}, and \textbf{AWS CDK}.}
+    \resumeItem{Built invoice creation, update, and anomaly-detection workflows in Amazon Finance Automation, handling \textbf{1 lakh+} daily requests across retail, non-retail, and corporate finance systems.}
+    \resumeItem{Implemented \textbf{3} anomaly-detection rules using statistical analysis and machine learning, including Isolation Forest; identified over \textbf{100M USD} in anomalies within the first month.}
+    \resumeItem{Reduced anomaly reporting latency from \textbf{24} hours to approximately \textbf{5} minutes through Gandalf-Veritas integration, giving finance teams near-real-time visibility into suspicious activity.}
+    \resumeItem{Built APIs, microservices, dashboards, infrastructure, and CI/CD using Java, Kotlin, TypeScript, Python, Elasticsearch, DynamoDB, Redshift, Coral, Smithy, and AWS CDK.}
   \resumeItemListEnd
 
   \resumeSubheading
     {HackerEarth}{Jan 2020 - Jun 2020}
     {Problem Curator Intern}{Bengaluru}
   \resumeItemListStart
-    \resumeItem{Set and tested algorithmic problems for hiring programs at Infosys, Google, Facebook, Nokia, PayPal, and Salesforce, and helped run the nationwide \textbf{HackWithInfy} contest for \textbf{167,000 participants} by resolving contestant doubts and queries at scale.}
-    \resumeItem{Improved Nokia's post-contest \textbf{Net Promoter Score} from \textbf{7} to \textbf{8} after an internal coding contest by strengthening problem quality, communication, and participant support.}
-    \resumeItem{Presented a \textbf{2-day / 10+ hour} Advanced Data Structures and Algorithms workshop at MNIT Jaipur to \textbf{120+ attendees} on behalf of HackerEarth.}
+    \resumeItem{Set and tested algorithmic problems for hiring programs at Infosys, Google, Facebook, Nokia, PayPal, and Salesforce, and helped run the nationwide HackWithInfy contest for \textbf{167,000} participants by resolving contestant doubts and queries at scale.}
+    \resumeItem{Improved Nokia's post-contest Net Promoter Score from \textbf{7} to \textbf{8} after an internal coding contest by strengthening problem quality, communication, and participant support.}
+    \resumeItem{Presented a \textbf{2}-day / \textbf{10+}-hour Advanced Data Structures and Algorithms workshop at MNIT Jaipur to \textbf{120+} attendees on behalf of HackerEarth.}
   \resumeItemListEnd
 \resumeSubHeadingListEnd
 
@@ -157,7 +159,7 @@ DevOps & Docker, Kubernetes, Terraform, AWS CDK, CI/CD, Jenkins \\[3pt]
 Cloud & AWS, Oracle Cloud Infrastructure (OCI), Azure Cloud \\[3pt]
 AI & Generative AI, LLMs, RAG, AI Agents, LangChain, LangGraph, MCP, Scikit-Learn, Isolation Forest \\[3pt]
 Distributed System & System Design, Microservices, Event-driven and asynchronous systems, Kafka, gRPC, WebSockets \\[3pt]
-Leadership & Technical Direction, Architecture Reviews, Mentoring, Hiring, Cross-team Delivery, Roadmapping
+Leadership & Technical Direction, Architecture and Code Reviews, Technical Documentation, Mentoring, Hiring, Cross-team Delivery, Roadmapping
 \end{tabularx}
 \vspace{1pt}
 
@@ -177,11 +179,11 @@ Leadership & Technical Direction, Architecture Reviews, Mentoring, Hiring, Cross
 \achievementCategory{Cloud \& Technical Certifications}
 {\small
 \begin{itemize}[leftmargin=0.30in,itemsep=1.5pt,topsep=2pt]
-  \item \resumeHref{https://catalog-education.oracle.com/pls/certview/sharebadge?id=C72EFA41F0C8B51EEDCF7E759B92FCA34E59F058D11AFD39D71DB564ABB8DDFE}{Oracle Cloud Infrastructure 2025 Generative AI Professional}
-  \item \resumeHref{https://catalog-education.oracle.com/ords/certview/sharebadge?id=E6EA0D02CCCB8650680C392264F1F29B72C5B8895C915ED25C8F1C63C6D850EE}{Oracle Cloud Infrastructure 2025 Certified Developer Professional}
-  \item \resumeHref{https://catalog-education.oracle.com/ords/certview/sharebadge?id=0A80139CE66ACD03D6226677B4ED648AE55C308A559F9D9E222F1906F6DF6904}{Oracle Cloud Infrastructure 2024 Certified AI Foundations Associate}
+  \item \resumeHref{https://catalog-education.oracle.com/pls/certview/sharebadge?id=C72EFA41F0C8B51EEDCF7E759B92FCA34E59F058D11AFD39D71DB564ABB8DDFE}{Oracle Cloud Infrastructure 2025 Generative AI Professional}.
+  \item \resumeHref{https://catalog-education.oracle.com/ords/certview/sharebadge?id=E6EA0D02CCCB8650680C392264F1F29B72C5B8895C915ED25C8F1C63C6D850EE}{Oracle Cloud Infrastructure 2025 Certified Developer Professional}.
+  \item \resumeHref{https://catalog-education.oracle.com/ords/certview/sharebadge?id=0A80139CE66ACD03D6226677B4ED648AE55C308A559F9D9E222F1906F6DF6904}{Oracle Cloud Infrastructure 2024 Certified AI Foundations Associate}.
   % \item \href{https://catalog-education.oracle.com/ords/certview/sharebadge?id=54658A707D70FAE955041F74C82458539E2EB6ACD5F2BBB5FAD88DAF8767FA12}{Oracle Cloud Infrastructure 2023 Certified Foundations Associate}
-  \item \resumeHref{https://www.codechef.com/certificates/public/1765982}{CodeChef Certified Data Structures and Algorithms Programme \textbf{(CCDSAP, Advanced)}}
+  \item \resumeHref{https://www.codechef.com/certificates/public/1765982}{CodeChef Certified Data Structures and Algorithms Programme \textbf{(CCDSAP, Advanced)}}.
   \item \resumeHref{https://www.linkedin.com/in/snjumaheshwari/details/certifications/}{Earned \textbf{30+ technical certifications} across computer science, cloud, and software engineering.}
 \end{itemize}
 }

@@ -2216,16 +2216,17 @@ a.contact-option:hover{background:#2c3855}
 
 /* Journey recommendations stay compact and render once in a horizontal rail. */
 .recommendation-carousel-scroll{max-width:none;min-width:0}
-.recommendation-scroll-track{display:flex;gap:20px;overflow-x:auto;overscroll-behavior-inline:contain;padding:8px 2px 22px;scroll-behavior:smooth;scroll-snap-type:inline mandatory;scrollbar-color:#a77524 transparent;scrollbar-width:thin}
-.recommendation-carousel-scroll .recommendation-card{background:#f3eee3;border-color:rgba(224,177,82,.5);box-shadow:0 14px 34px rgba(0,0,0,.24);color:#1b1a17;flex:0 0 min(390px,calc(100vw - 72px));height:500px;padding:25px;width:min(390px,calc(100vw - 72px))}
+.recommendation-scroll-track{display:flex;gap:18px;overflow-x:auto;overscroll-behavior-inline:contain;padding:8px 2px 18px;scroll-behavior:smooth;scroll-padding-inline:2px;scroll-snap-type:inline mandatory;scrollbar-color:#a77524 rgba(243,238,227,.14);scrollbar-width:thin}
+.recommendation-carousel-scroll .recommendation-card{background:#f3eee3;border-color:rgba(224,177,82,.5);box-shadow:0 14px 34px rgba(0,0,0,.24);color:#1b1a17;flex:0 0 min(380px,calc(100vw - 72px));height:430px;padding:25px;width:min(380px,calc(100vw - 72px))}
 .recommendation-carousel-scroll .recommendation-card::before{background:linear-gradient(180deg,#e0b152,#9d7029);transform:scaleY(1)}
 .recommendation-carousel-scroll .recommendation-card::after{background:var(--recommendation-company);content:"";height:3px;inset:0 0 auto;position:absolute}
-.recommendation-carousel-scroll .recommendation-quote{font-size:.94rem;line-height:1.58;margin:25px 0;overflow-y:auto;padding-right:8px;white-space:pre-line}
+.recommendation-carousel-scroll .recommendation-highlight{color:#1b1a17;font:600 clamp(1.18rem,1.8vw,1.45rem)/1.25 Georgia,serif;letter-spacing:-.025em;margin:25px 0 12px}
+.recommendation-carousel-scroll .recommendation-quote{border-top:1px solid rgba(113,105,87,.25);font-size:.9rem;line-height:1.58;margin:0 0 18px;min-height:0;overflow-y:auto;padding:15px 9px 0 0;scrollbar-color:#b7893b transparent;scrollbar-width:thin;white-space:pre-line}
 .recommendation-carousel-scroll .recommendation-person{align-items:center;display:grid;gap:13px;grid-template-columns:46px minmax(0,1fr)}
 .recommendation-carousel-scroll .recommendation-topline{justify-content:space-between;gap:16px;width:100%}
 .recommendation-carousel-scroll .recommendation-topline span{color:#a77524}
 .recommendation-carousel-scroll .recommendation-topline time,.recommendation-carousel-scroll .recommendation-person p{color:#716957}
-@media(max-width:620px){.recommendation-carousel-scroll .recommendation-card{flex-basis:calc(100vw - 88px);height:470px;width:calc(100vw - 88px)}}
+@media(max-width:620px){.recommendation-carousel-scroll .recommendation-card{flex-basis:calc(100vw - 88px);height:420px;width:calc(100vw - 88px)}}
 
 /* A restrained reveal rhythm for headings and static cards only. */
 @keyframes sectionEntrance{

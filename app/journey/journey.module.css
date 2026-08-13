@@ -653,7 +653,7 @@
   padding-left: 20px;
 }
 
-.mentoringMotivationCopy > p { font-size: .72rem; margin: 18px 0 0 23px; opacity: .62; }
+.mentoringMotivationCopy > p { font-size: clamp(.94rem, 1.25vw, 1.08rem); line-height: 1.72; margin: 0; max-width: 600px; opacity: .76; }
 .mentoringMotivation > a { background: #fff; color: #161714; display: block; overflow: hidden; position: relative; }
 .mentoringMotivation > a img { display: block; height: auto; transition: transform .45s cubic-bezier(.2,.75,.25,1); width: 100%; }
 .mentoringMotivation > a > span { align-items: center; background: rgba(20,21,18,.9); bottom: 0; color: #f5f0e6; display: flex; font-size: .76rem; font-weight: 700; justify-content: space-between; left: 0; padding: 14px 16px; position: absolute; right: 0; }

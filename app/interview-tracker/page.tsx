@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { apiFetch, ApiUnavailableError, authHeaders } from "../apiClient";
+import { authenticatedApiFetch, ApiUnavailableError, getFreshAccessToken } from "../apiClient";
+import AccountStatus from "../AccountStatus";
 import Wordmark from "../Wordmark";
 import QuestionBank from "./QuestionBank";
 
@@ -115,14 +116,14 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     if (initial) setState("loading");
     setMessage("");
     try {
-      const token = localStorage.getItem("sanjay_portfolio_token");
+      const token = await getFreshAccessToken();
       if (!token) {
         const requestedPath = `${window.location.pathname}${window.location.search}`;
         window.location.replace(`/login?next=${encodeURIComponent(requestedPath)}`);
         return;
       }
 
-      const identityResponse = await apiFetch("/auth/me", {headers: authHeaders()});
+      const identityResponse = await authenticatedApiFetch("/auth/me");
       const identity = await identityResponse.json().catch(() => ({})) as AuthenticatedUser & {detail?: string};
       if (!identityResponse.ok) {
         if (identityResponse.status === 401) {
@@ -132,18 +133,20 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
           return;
         }
         setState("offline");
-        setMessage(identity.detail || "Your account could not be verified.");
+        setMessage(identityResponse.status === 404
+          ? "The tracker API was not found. Start the latest UltimateBackend service, then retry."
+          : identity.detail || "Your account could not be verified.");
         return;
       }
 
       setWorkspaceUserName(identity.name || safeUserName());
       let loadedCompanies: Company[] = [];
       if (identity.role === "admin") {
-        const response = await apiFetch("/admin/interview-tracker", {headers: authHeaders()});
+        const response = await authenticatedApiFetch("/admin/interview-tracker");
         const body = await response.json().catch(() => ({}));
         if (!response.ok) {
           setState("offline");
-          setMessage(body.detail || "The tracker could not be loaded.");
+          setMessage(response.status === 404 ? "The admin tracker API was not found. Restart the latest backend, then retry." : body.detail || "The tracker could not be loaded.");
           return;
         }
         loadedCompanies = (body.items || []) as Company[];
@@ -151,11 +154,11 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       } else {
         const storageKey = `portfolio_interview_tracker:${identity.id}`;
         const stored = localStorage.getItem(storageKey);
-        const response = await apiFetch("/member/interview-tracker", {headers: authHeaders()});
+        const response = await authenticatedApiFetch("/member/interview-tracker");
         const body = await response.json().catch(() => ({}));
         if (!response.ok) {
           setState("offline");
-          setMessage(body.detail || "Your tracker could not be loaded.");
+          setMessage(response.status === 404 ? "The member tracker API was not found. Restart the latest backend, then retry." : body.detail || "Your tracker could not be loaded.");
           return;
         }
         loadedCompanies = (body.items || []) as Company[];
@@ -163,7 +166,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
         if (loadedCompanies.length === 0 && legacyCompanies.length > 0) {
           const migrated: Company[] = [];
           for (const legacy of legacyCompanies) {
-            const migrationResponse = await apiFetch("/member/interview-tracker", {method: "POST", headers: authHeaders(), body: JSON.stringify(companyWritePayload(legacy))});
+            const migrationResponse = await authenticatedApiFetch("/member/interview-tracker", {method: "POST", body: JSON.stringify(companyWritePayload(legacy))});
             const migratedCompany = await migrationResponse.json().catch(() => ({}));
             if (!migrationResponse.ok) throw new Error(migratedCompany.detail || "Your existing tracker could not be moved to your account.");
             migrated.push(migratedCompany as Company);
@@ -184,7 +187,9 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
       if (new URLSearchParams(window.location.search).get("intent") === "add") setAdding(true);
     } catch (error) {
       setState("offline");
-      setMessage(error instanceof ApiUnavailableError ? "The tracker service is unavailable." : "The tracker could not be loaded.");
+      setMessage(error instanceof ApiUnavailableError
+        ? "Your sign-in is still available, but the tracker API is offline. Start or reconnect UltimateBackend on port 8001, then retry."
+        : "The tracker could not be loaded.");
     }
   }, [initialCompanySlug]);
 
@@ -315,7 +320,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const nextActions = companies.filter(item => item.next_action_date && item.status !== "rejected").length;
 
   async function updateCompany(id: number, changes: Partial<Company>) {
-    const response = await apiFetch(`${trackerApiRoot}/${id}`, { method: "PATCH", headers: authHeaders(), body: JSON.stringify(changes) });
+    const response = await authenticatedApiFetch(`${trackerApiRoot}/${id}`, { method: "PATCH", body: JSON.stringify(changes) });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(body.detail || "The company could not be updated.");
     setCompanies(current => current.map(item => item.id === id ? body : item));
@@ -335,7 +340,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     event.preventDefault();
     setSaving(true); setMessage("");
     try {
-      const response = await apiFetch(trackerApiRoot, { method: "POST", headers: authHeaders(), body: JSON.stringify(newCompany) });
+      const response = await authenticatedApiFetch(trackerApiRoot, { method: "POST", body: JSON.stringify(newCompany) });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.detail || "The company could not be added.");
       setCompanies(current => [...current, body]); setNewCompany(emptyCompany()); setAdding(false);
@@ -345,7 +350,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
 
   async function deleteCompany(item: Company) {
     if (!window.confirm(`Remove ${item.company} from the tracker?`)) return;
-    const response = await apiFetch(`${trackerApiRoot}/${item.id}`, { method: "DELETE", headers: authHeaders() });
+    const response = await authenticatedApiFetch(`${trackerApiRoot}/${item.id}`, { method: "DELETE" });
     if (response.ok) { setCompanies(current => current.filter(company => company.id !== item.id)); closeEditor(); }
     else setMessage("The company could not be removed.");
   }
@@ -481,7 +486,7 @@ const interviewPrepPaths = [
 
 export default function InterviewTrackerPage() {
   return <main className="prep-home">
-    <header className="admin-topbar prep-home-topbar"><Wordmark/><nav><Link href="/">Portfolio</Link><Link href={{pathname: "/login", query: {next: "/interview-tracker/workspace"}}}>Sign in</Link></nav></header>
+    <header className="admin-topbar prep-home-topbar"><Wordmark/><nav><Link href="/">Portfolio</Link></nav><AccountStatus/></header>
     <section className="prep-home-shell">
       <header className="prep-home-hero">
         <div><p className="eyebrow">INTERVIEW PREPARATION</p><h1>Prepare with<br/><em>a clear path.</em></h1></div>

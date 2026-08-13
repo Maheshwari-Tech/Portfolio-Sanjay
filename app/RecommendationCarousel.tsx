@@ -25,7 +25,24 @@ function recommendationIdentity(recommendation: Recommendation) {
   return { initials, tone };
 }
 
-function RecommendationCard({ recommendation, duplicate = false }: { recommendation: Recommendation; duplicate?: boolean }) {
+function recommendationHighlight(comment: string) {
+  const normalized = comment.replace(/\s+/g, " ").trim();
+  const firstSentence = normalized.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? normalized;
+  if (firstSentence.length <= 112) return firstSentence;
+
+  const shortened = firstSentence.slice(0, 109).replace(/\s+\S*$/, "").replace(/[.,;:!?]+$/, "");
+  return `${shortened}…`;
+}
+
+function RecommendationCard({
+  recommendation,
+  duplicate = false,
+  showHighlight = false,
+}: {
+  recommendation: Recommendation;
+  duplicate?: boolean;
+  showHighlight?: boolean;
+}) {
   const identity = recommendationIdentity(recommendation);
 
   return (
@@ -34,6 +51,7 @@ function RecommendationCard({ recommendation, duplicate = false }: { recommendat
         <span aria-label={`${recommendation.rating} out of 5 stars`}>{"★".repeat(recommendation.rating)}</span>
         <time>{recommendation.date}</time>
       </div>
+      {showHighlight && <p className="recommendation-highlight">{recommendationHighlight(recommendation.comment)}</p>}
       <blockquote className="recommendation-quote">“{recommendation.comment}”</blockquote>
       <div className="recommendation-person">
         <span className="recommendation-avatar" aria-hidden="true">{identity.initials}</span>
@@ -67,7 +85,7 @@ export default function RecommendationCarousel({
     return (
       <div className="recommendation-carousel recommendation-carousel-scroll" role="region" aria-label="LinkedIn recommendations">
         <div className="recommendation-scroll-track" role="list">
-          {uniqueRecommendations.map((recommendation) => <RecommendationCard key={recommendation.id} recommendation={recommendation} />)}
+          {uniqueRecommendations.map((recommendation) => <RecommendationCard key={recommendation.id} recommendation={recommendation} showHighlight />)}
         </div>
       </div>
     );

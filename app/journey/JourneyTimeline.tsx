@@ -137,11 +137,8 @@ function MentoringMotivation() {
     <section className={styles.mentoringMotivation} aria-labelledby="mentoring-motivation-title">
       <div className={styles.mentoringMotivationCopy}>
         <span>What keeps me mentoring</span>
-        <h2 id="mentoring-motivation-title">Find your Sanju Bhaiya.</h2>
-        <blockquote>
-          “Thank you very much Sanju bhaiya for showing me the right direction and assisting me in every possible way.”
-        </blockquote>
-        <p>Krishna Barnwal’s placement reflection.</p>
+        <h2 id="mentoring-motivation-title">The motivation behind every mentoring conversation</h2>
+        <p>Achievements create proud moments, but helping someone discover their potential creates lasting meaning. Krishna’s post reminds me that being present, showing the right direction, and believing in someone can influence an entire journey. That is what keeps me mentoring.</p>
       </div>
       <a href="/images/krishna-barnwal-mentoring-post.png" target="_blank" rel="noreferrer" aria-label="Open Krishna Barnwal’s full LinkedIn post">
         <Image
