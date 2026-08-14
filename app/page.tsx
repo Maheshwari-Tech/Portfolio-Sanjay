@@ -19,7 +19,7 @@ import MobileNavigation from "./MobileNavigation";
 import AccountStatus from "./AccountStatus";
 import Wordmark from "./Wordmark";
 import SiteFooter from "./SiteFooter";
-import RecommendationCarousel, { type Recommendation } from "./RecommendationCarousel";
+import RecommendationCarousel, { isRecommendation } from "./RecommendationCarousel";
 import { backendFirst } from "./serverContent";
 import { publicArchiveArticles, type ArticleRecord } from "./articles/articleData";
 
@@ -64,7 +64,7 @@ export default async function Home() {
   const primaryStats = stats.filter((_, index) => primaryStatIndexes.has(index));
   const supportingStats = stats.filter((_, index) => !primaryStatIndexes.has(index));
   const [leadRole, ...focusAreas] = profile.eyebrow.split(" · ");
-  const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
+  const recommendations = (reviews as unknown[]).filter(isRecommendation);
   const allProjectTechnologies = Array.from(new Set(projectData.flatMap((project) => project.technologies))).sort();
   const sourceSkills = skills as Record<string, string[]>;
   const combinedCloudAndDevOps = Array.from(new Set([

@@ -3,7 +3,7 @@ import achievementGroupsFallback from "../../data/source/achievements.json";
 import educationFallback from "../../data/source/education.json";
 import experienceFallback from "../../data/source/experience.json";
 import reviewsFallback from "../../data/source/reviews.json";
-import type { Recommendation } from "../RecommendationCarousel";
+import { isRecommendation, type Recommendation } from "../RecommendationCarousel";
 import { achievementLabels, type Achievement, type RecognitionGroup } from "../RecognitionCarousel";
 import SiteFooter from "../SiteFooter";
 import SiteHeader from "../SiteHeader";
@@ -60,7 +60,7 @@ export default async function JourneyPage() {
     backendFirst("experience", experienceFallback),
     backendFirst("education", educationFallback),
   ]);
-  const recommendations = reviews.filter((review): review is Recommendation => "socialLink" in review);
+  const recommendations = (reviews as unknown[]).filter(isRecommendation);
   const recommendationsBySection = recommendations.reduce<Record<string, Recommendation[]>>((sections, recommendation) => {
     const section = recommendationSection(recommendation);
     if (!section) return sections;

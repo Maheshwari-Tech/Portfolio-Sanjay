@@ -9,6 +9,20 @@ export type Recommendation = {
   highlight?: string;
 };
 
+export function isRecommendation(value: unknown): value is Recommendation {
+  if (!value || typeof value !== "object") return false;
+
+  const recommendation = value as Record<string, unknown>;
+  return typeof recommendation.id === "number"
+    && typeof recommendation.name === "string"
+    && typeof recommendation.rating === "number"
+    && typeof recommendation.comment === "string"
+    && typeof recommendation.date === "string"
+    && typeof recommendation.context === "string"
+    && typeof recommendation.socialLink === "string"
+    && (recommendation.highlight === undefined || typeof recommendation.highlight === "string");
+}
+
 function recommendationIdentity(recommendation: Recommendation) {
   const initials = recommendation.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
   const company = recommendation.context.match(/<b>([^<]+)<\/b>/i)?.[1] ?? "Professional network";
