@@ -17,14 +17,14 @@ export default function GoalsPage() {
           <strong>SM<span>.</span></strong>
           <small>Goals</small>
         </div>
-        <p>Direction for the next chapter.</p>
+        <p>What matters in the next opportunity.</p>
       </header>
 
       <main>
         <section className={styles.hero}>
           <div>
-            <p className={styles.eyebrow}>Top five goals</p>
-            <h1>What I want next, and why it matters.</h1>
+            <p className={styles.eyebrow}>What I look for</p>
+            <h1>What I look for in the next opportunity.</h1>
           </div>
           <div className={styles.northStar}>
             <span>10 to 15 year direction</span>
@@ -33,7 +33,7 @@ export default function GoalsPage() {
           </div>
         </section>
 
-        <section className={styles.goals} aria-label="Five career goals">
+        <section className={styles.goals} aria-label="What I look for in a career opportunity">
           {goals.map((goal) => (
             <article className={styles.goal} key={goal.number}>
               <span className={styles.number}>{goal.number}</span>
@@ -49,8 +49,12 @@ export default function GoalsPage() {
           ))}
         </section>
 
-        <aside className={styles.principle}>
-          <p>Career trade-offs</p>
+        <section className={styles.tradeoffs} aria-labelledby="tradeoffs-title">
+          <header className={styles.tradeoffsHeader}>
+            <p>My career equation</p>
+            <h2 id="tradeoffs-title">How I view career value.</h2>
+          </header>
+
           <div className={styles.formula} aria-label="Compensation equals title multiplied by brand name">
             <strong>Compensation</strong>
             <i>=</i>
@@ -58,8 +62,32 @@ export default function GoalsPage() {
             <i>×</i>
             <strong>Brand Name</strong>
           </div>
-          <span>When compensation is constant: <strong>Title ∝ 1 / Brand Name</strong></span>
-        </aside>
+
+          <section className={styles.switchSection} aria-labelledby="switch-title">
+            <header>
+              <p>How I consider a switch</p>
+              <h3 id="switch-title">What I can evaluate, and what takes time.</h3>
+            </header>
+
+            <div className={styles.switchRule} aria-label="Career switch trade-offs">
+              <article>
+                <span>Known company</span>
+                <strong>I prioritize the title.</strong>
+                <p>When I already know the company and trust its brand, I look for a title that gives me greater scope, ownership, and room to grow.</p>
+              </article>
+              <article>
+                <span>Unknown company</span>
+                <strong>I prioritize compensation.</strong>
+                <p>When the company is less familiar to me, I expect compensation to justify the additional uncertainty and brand trade-off.</p>
+              </article>
+            </div>
+
+            <aside className={styles.discoveryNote}>
+              <span>How I assess the other two goals</span>
+              <p><strong>The right team and a problem worth solving:</strong> I use the interview to form my own unbiased view of the hiring manager, team, and problem. If I expect a favourable result, I research them in depth afterward. This protects my first-hand judgment and avoids spending an hour on an opportunity that may not progress.</p>
+            </aside>
+          </section>
+        </section>
       </main>
 
       <SiteFooter />
