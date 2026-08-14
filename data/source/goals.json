@@ -1,0 +1,32 @@
+[
+  {
+    "number": "01",
+    "title": "Title and ownership",
+    "summary": "A title that earns respect quickly and gives me the space to think more deeply about the product and take ownership at a broader level.",
+    "why": "Good engineering ideas are not always treated as important until they become production issues. The result is panic, immediate action, and another rushed fix. Preventive work can save significant engineering time, but its value is often difficult to see because the problem never happens. It takes time to establish this trust, and frequent management changes make that effort start again."
+  },
+  {
+    "number": "02",
+    "title": "Fair compensation",
+    "summary": "Compensation that meets my financial needs and reflects the value of my work.",
+    "why": "When the market values the same work at nearly 2X, the difference creates a distraction. Fair compensation lets me focus fully on the work, meet my financial responsibilities, and avoid feeling undervalued."
+  },
+  {
+    "number": "03",
+    "title": "The right team",
+    "summary": "Work with managers, leaders, and developers who make good work possible.",
+    "why": "I want managers and leaders who listen, whose philosophy aligns with mine, and from whom I can continue learning. I want developers who take ownership, care about engineering quality, challenge ideas thoughtfully, and learn from one another."
+  },
+  {
+    "number": "04",
+    "title": "Problems worth solving",
+    "summary": "Understand the real problem before judging the role or the opportunity.",
+    "why": "I want to know what problem the team is solving, why it matters, and what makes it difficult. The best opportunities give me meaningful technical challenges, people challenges, or both."
+  },
+  {
+    "number": "05",
+    "title": "Brand name and scale",
+    "summary": "Work where the problems, products, and outcomes operate at meaningful scale.",
+    "why": "The impact of the problems I solve motivates me to go further. A respected brand can provide greater scale, stronger engineering standards, and the opportunity to make work matter to more people."
+  }
+]
