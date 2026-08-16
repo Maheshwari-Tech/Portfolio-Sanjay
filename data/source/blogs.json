@@ -145,21 +145,27 @@
     "id": 15,
     "title": "Learnings for Growth - Software Professionals",
     "summary": "Notes on building a genuine resume, learning through projects, filling knowledge gaps, and preparing for interviews.",
-    "content_description": "# Learnings for Growth - Software Professionals\n\n## Building a resume\n\n- Keep it 100% genuine.\n- Use it as a retrospective of your experience.\n\n## Hands-on experience with modern technologies\n\n- Use projects to cover the breadth and depth of technologies.\n- Use them to develop LLD skills, code-review experience, production experience, or anything your work has not given you the opportunity to practise.\n- Some groundwork - reading, courses, training, or certifications - may be needed, but think project first.\n- Build with AI, review the work, and make it production-ready.\n- Make sure the code is written in a way you understand and would have written yourself: clean, easy to understand, and easy to change later without AI.\n\n## Revision and filling gaps\n\n- Revisit DSA, algorithms, and computer fundamentals.\n- What you need to work on depends on your level and current gaps.\n\n## High-level system design and architecture\n\n- Read useful notes and blogs.\n- You can demonstrate an idea in a project only when you understand where it can be applied.\n\n## What matters more\n\n- Practical demonstration matters more than ever.\n- Leadership skills matter: authenticity, a learning attitude, clear communication, being easy to collaborate with, and being receptive to feedback.\n\n## Interview preparation\n\nMy interview preparation starts when an interview is actually scheduled. Companies that require more revision of past skills usually provide time accordingly:\n\n- Google: around one month on average.\n- Meta: around three weeks.\n\nI then focus on:\n\n- A quick review of the work I have done.\n- Interview experiences and company-specific leadership principles.\n- Staying calm and maintaining a positive attitude.",
-    "date": "2026-07-31",
-    "created_at": "2026-07-31T09:44:38+05:30",
+    "content_description": "Learning & Growth as an Strong SE\nBuilding Profile\n- Building Resume / Profile / Yourself\n- Excel in current work.\n- Retrospection.\n- 100 % Genuine\n- Networking\n- Interpersonal Skills\nHands on\nExperience -\nModern\ntechnologies -\nProjects\nRevision / Filling\nup the Gaps\nHigh Level System\nDesign /\nArchitecture\nCover breadth / depth of Technologies.\n* LLD skills, Code Reviews, Production\nexperience, any missing experience that your\nwork experience missed to give you opportunity.\n* You may need to do some groundwork -\nreading/ courses/trainings/ certifications with\nrespect to project ; but think project first.\n* Build with AI - reviews, make it\nproduction ready.\n* Ensure Code is the way you would have\nwritten - use your brains. - Clean code & easy\nto understand and change later without AI.\nDSA / Algorithmic or\nComputer fundamentals.\n* Depends upon\nyour level, and gaps with\nrespect to that you will\nneed to work accordingly\nhere.\n-\n* If you know what can be applied, then\nonly you can demonstrate in projects.\nMy Interview Preparation Strategy\nMy Interview preparation starts when the\ninterview is actually scheduled. Company which require more time to revise the\npast skills gives times accordingly.\n* Google : On avg gives 1 month.\n* Meta : 3 weeks.\n* Quick Review of what all things you have done.\n* Interview Experiences, and company specific\nleadership principles. * Keep Calm, and Positive attitude.\nWhat Matters More\n* Practical Demonstration matter more than ever.\n* Leadership Skills : Authenticity, Learning attitude - Easy to collaborate and\nwork with - Clear Communication, Receptive to feedback.\n~25 mins\nof retro ~ 1 hour\nRemaining\nfor\nprojects\nSpend your Saturday's\nRetrospection\nBuilding profile Read Blogs Build Something\nIf I feel there is any Gaps in some area -\n25 mins\nof\nquick\nrevision\nTime :\n1. Depends on the Gap,\nUpcoming Interview requirements.\n2. How does it Helps?\n* Daily I don't need to think about\nwhat to studu\n* I have fixed target - that covers\nthese.\nI may be able to cover just 1 good in\nsystem design and move on.\n* Always be ready - rather than ready\nafter 6 month.\n* One topic / blocker is not affecting\nthe plan.\n* we will see that in next week.",
+    "date": "2026-08-13",
     "tags": [
       "Career Growth",
       "Software Engineering",
       "Interview Preparation"
     ],
     "author": "Sanjay Gandhi",
-    "fileType": "md",
-    "isTextFile": true,
+    "fileType": "pdf",
+    "isTextFile": false,
     "visibility": "public",
     "hidden": false,
     "source": "obsidian",
-    "source_path": "Learnings for Growth - Software Professionals.md"
+    "source_path": "Learning For Growth - Software Engineer.pdf",
+    "asset_url": "/blogs/obsidian/learning-for-growth-software-engineer-762511a5.pdf",
+    "blob_key": "blogs/obsidian/learning-for-growth-software-engineer-762511a5.pdf",
+    "file_name": "Learning For Growth - Software Engineer.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 279709,
+    "created_at": "2026-07-31T09:44:38+05:30",
+    "page_count": 2
   },
   {
     "id": 16,
@@ -182,5 +188,28 @@
     "source_path": "Evaluations in Each Round.pdf",
     "asset_url": "/blogs/obsidian/evaluations-in-each-round-ef0fb8aa.pdf",
     "page_count": 2
+  },
+  {
+    "id": 17,
+    "title": "AI - My AI and ML Usage",
+    "summary": "AI Personal Level Notable Achievements Team Level Multiple Teams/ Product and Consumer Levels 1. Development 2. Design 3. Communication (rephrase) 4. Planning Assist * Slack queries, emails, PR review request 5. Feedback Assist 6. Debug Assist 7. PR Review…",
+    "content_description": "AI\nPersonal\nLevel Notable Achievements\nTeam Level\nMultiple Teams/ Product and\nConsumer Levels\n1. Development\n2. Design\n3. Communication (rephrase)\n4. Planning Assist\n* Slack queries, emails, PR review request\n5. Feedback Assist\n6. Debug Assist\n7. PR Review Assist - Multi Agent PR\nreviewer\n8. Learnings and Building Personal\nProjects.\n1. MCP server - Integration Tests\nduring concept onboarding.\n2. release activities - automations\ntest plan\n3. Knowledge Sharing across Team.\n4. Code Atlas\n5. Created shared Project in chatgpt -\nrepetitive chats, prompts and shared\ncontext.\n6. Scheduled - Daily Updates.\n1. SKILLS - for concept onboarding.\n2. Product Roadmap :\n- AI driven report generation.\n- AI template customisation.\n- AI report analyse\n-report time estimation.\nPlanned 10+ AI Features, developed\nPOCs for above mentioned.\n1. Oracle :\nOraHacks - Mentor and Judge - Evaluated and guided 12 Teams for their AI product POC to\nproduction ready. CodeAtlas - Interesting Project.\n2. Google :\nLargest Repo of world - Google Search - 20Millions + files and multiple language.\nMajor experience is around looking at the code and understanding it.\nGoogle Bard - Trained LLMs to be better.\npart of journey when LLM was garbage to slight useful.\n3. Amazon - Finance Automation - Anomaly Detection\n5. Education :\nSpecialization in Machine Learning\n6.Certifications :\nOCI Gen AI Professional, Andrew NG for Machine Learning\n7. Projects - Build 10+ projects involving ML and AI\n* Start at Solving Personal Level -\nSomething exceptional result\nMove to another category\n* MCP Server\n* Agent\n* Project\n* Context enrichment, and training LLMs.\n* Training People\n* Learning and Building 0 to 1.\nIn Summary :",
+    "date": "2026-08-16",
+    "tags": [
+      "Engineering Notes"
+    ],
+    "author": "Sanjay Gandhi",
+    "fileType": "pdf",
+    "isTextFile": false,
+    "visibility": "public",
+    "hidden": false,
+    "source": "obsidian",
+    "source_path": "AI - My AI and ML Usage.pdf",
+    "asset_url": "/blogs/obsidian/ai-my-ai-and-ml-usage-833d3ffe.pdf",
+    "blob_key": "blogs/obsidian/ai-my-ai-and-ml-usage-833d3ffe.pdf",
+    "file_name": "AI - My AI and ML Usage.pdf",
+    "content_type": "application/pdf",
+    "size_bytes": 36406,
+    "page_count": 1
   }
 ]
