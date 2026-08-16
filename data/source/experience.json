@@ -10,14 +10,14 @@
     "rating": 10,
     "details": [
       "Technical Lead for Oracle Health’s Clinical Reporting / Output Management team, owning the architecture, technical direction, delivery, and production readiness across <strong>3 products: MRO Gen2, XR Gen1, and Dex Gen1</strong>.",
-      "Built <strong>7+ Java Micronaut microservices from 0 to 1</strong>, transforming a medical-record output platform into a modular Gen2 reporting system spanning APIs, template management, data extraction, report generation, and the <strong>mro-ai-intelligence-service</strong>.",
+      "Built <strong>7+ Java Micronaut microservices from 0 to 1</strong>, transforming a medical-record output platform into a modular Gen2 reporting system spanning APIs, template management, data extraction, report generation, and the <strong>mro-ai-intelligence-service</strong>. Proposed modern AI capabilities, including an <strong>advanced AI-powered template builder</strong>, shaped the product roadmap, and aligned execution with product managers and partner teams.",
       "Scaled the platform to handle <strong>1M+ requests per day</strong> while keeping <strong>p90 latency under 30 seconds</strong>. For the roughly <strong>1%</strong> of complex reports that take more than <strong>10 minutes</strong>, and sometimes hours, introduced asynchronous fast and slow lanes with bulk generation, retries, DLQs, idempotency, horizontal scaling, security, dashboards, and alerting.",
       "Led product delivery across <strong>4 quarterly releases</strong>, from roadmap planning and architecture through production launch. Broke down work for <strong>5 to 8 engineers</strong>, removed blockers, and drove architecture decisions, defect resolution, compliance, monitoring, and operational readiness.",
       "Served as a primary escalation owner for critical production issues, leading high-severity investigations through diagnosis, remediation, and prevention. In one example, brought approximately <strong>1,000-page reports</strong> back within the <strong>30-second SLA</strong>, reducing heap usage by <strong>40%</strong>, improving performance by over <strong>25%</strong>, and driving request-level caching that cut data-extraction time by <strong>60%</strong>.",
       "Partnered with <strong>25+ cross-functional teams</strong> to turn custom clinical-reporting needs into reusable platform capabilities. Cut Gen2 onboarding from <strong>2 weeks to under 1 week</strong>, a reduction of <strong>more than 50%</strong>.",
       "Led a project involving <strong>3 engineers</strong> to deliver Gen1 <strong>Report Ingress</strong> and <strong>6 APIs</strong> in <strong>1 quarter + 1 month</strong> versus <strong>2 quarters planned</strong>; enabled WebSphere-to-EJS migration with better performance, stability, scalability, and lower third-party cost.",
-      "Resolved technical and scope ambiguities across multiple initiatives and contributed to early-stage architecture and planning discussions for the <strong>SI DRZ region build</strong> and <strong>EHRC modernization program</strong>.",
-      "Built and led the India Clinical Reporting team from scratch. Grew the leadership scope to <strong>10+ engineers</strong> across <strong>3+ products</strong> and strengthened hiring through <strong>100+ interviews</strong> and <strong>25+ hires</strong>."
+      "Took ownership of <strong>highly ambiguous technical and product scopes</strong>, turning open questions into clear architecture and execution plans across multiple initiatives, including early-stage planning for the <strong>SI DRZ region build</strong> and <strong>EHRC modernization program</strong>.",
+      "Built and led the India Clinical Reporting team from scratch, growing the leadership scope to <strong>10+ engineers</strong> across <strong>3+ products</strong>. Strengthened organization-wide hiring as a Senior Key Interviewer (Bar Raiser), conducting <strong>100+ interviews</strong> and contributing to <strong>25+ hires</strong>; also mentored and judged <strong>12 teams</strong> developing AI projects at Oracle-wide <strong>OraHacks</strong> hackathons."
     ]
   },
   {
@@ -34,7 +34,8 @@
       "Migrated Google <strong>Search</strong>’s serving query-understanding architecture from <strong>entity-driven to intent-driven</strong> through the <strong>diOSRP Migration</strong>, enabling better <strong>Organized Search Result Pages (OSRPs)</strong> that answered user intent directly instead of routing users to the traditional <strong>10 blue links</strong>; impacted <strong>0.05%</strong> of Search traffic.",
       "Launched localized <strong>Exam OSRPs</strong> in <strong>Hindi, Tamil, and Telugu</strong>, adding exam dates, fees and waivers, tabbed result layouts, and the <strong>Periodic Table</strong>. Localization reached <strong>0.03% of Search queries</strong> and <strong>0.0019% of educational queries</strong>, improving accessibility; also designed a scalable <strong>Language API</strong> for Indic locales.",
       "Contributed across Google Search’s monorepo, one of the world’s largest codebases with <strong>2B+ lines of code</strong> and <strong>10M+ files</strong>, using <strong>C++</strong>, <strong>Java</strong>, <strong>Python</strong>, <strong>Go</strong>, <strong>gRPC</strong>, <strong>Protocol Buffers</strong>, <strong>Knowledge Graphs</strong>, and other internal technologies.",
-      "Collaborated across Search teams to resolve production issues, align requirements, and prioritize high-impact improvements."
+      "Collaborated across Search teams to resolve production issues, align requirements, and prioritize high-impact improvements.",
+      "Contributed to <strong>Google Bard’s early model-improvement journey</strong> by training and evaluating LLM responses, helping improve output quality as the technology evolved from unreliable early behavior toward practical usefulness."
     ]
   },
   {
@@ -48,7 +49,7 @@
     "rating": 10,
     "details": [
       "Built statistical and ML-powered systems in Amazon Finance Automation to detect invoice fraud, duplicates, and anomalies at scale.",
-      "Worked on invoice creation and update workflows handling <strong>1 lakh+ requests every day</strong> across Amazon’s retail, non-retail, and corporate finance systems.",
+      "Built duplicate- and anomaly-detection capabilities for invoice creation and update workflows handling <strong>1 lakh+ requests every day</strong> across Amazon’s retail, non-retail, and corporate finance systems.",
       "Implemented <strong>3 anomaly-detection rules</strong> using <strong>statistical analysis</strong> and <strong>machine learning</strong>, including <strong>Isolation Forest</strong>. The rules identified over <strong>100M USD</strong> in anomalies within the <strong>first month</strong>.",
       "Reduced anomaly reporting latency from <strong>24 hours to approximately 5 minutes</strong> through Gandalf-Veritas integration, giving finance teams near-real-time visibility into suspicious activity.",
       "Built <strong>APIs</strong> and operational dashboards for <strong>monitoring and alerting</strong>, and used <strong>AWS CDK</strong> to provision infrastructure and <strong>CI/CD pipelines</strong> across multiple services.",
@@ -65,8 +66,8 @@
     "keySkills": ["Problem Setting", "Competitive Programming", "Teaching", "Public Speaking"],
     "rating": 10,
     "details": [
-      "Set and tested algorithmic problems for hiring programs at Infosys, Google, Facebook, Nokia, PayPal, and Salesforce, and helped run the nationwide <strong>HackWithInfy</strong> contest for <strong>167,000 participants</strong> by resolving contestant doubts and queries at scale.",
-      "Raised the <strong>Net Promoter Score received from Nokia from 7 to 8</strong> by setting high-quality problems for its internal developer contest and providing prompt, responsive support.",
+      "Curated and tested algorithmic problems for hiring and internal coding contests conducted for Google, Facebook, Nokia, PayPal, Salesforce, and Infosys, including the nationwide <strong>HackWithInfy</strong> contest with <strong>167,000+ participants</strong>.",
+      "Helped increase Nokia’s post-contest <strong>Net Promoter Score from 7 to 8</strong> by strengthening problem quality, accelerating issue resolution, and promptly addressing participant queries.",
       "Presented a <strong>2-day / 10+ hour</strong> advanced data structures and algorithms workshop at MNIT Jaipur to <strong>120+ attendees</strong>."
     ]
   }

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import blogs from "../../../data/source/blogs.json";
 import { siteConfig } from "../../siteConfig";
@@ -8,6 +7,7 @@ import ContentInteractions from "../../ContentInteractions";
 import SiteHeader from "../../SiteHeader";
 import SiteFooter from "../../SiteFooter";
 import RelatedArticles from "../RelatedArticles";
+import VisualArticleAsset from "../VisualArticleAsset";
 import { publicArchiveArticles, similarArticles } from "../articleData";
 
 export const dynamicParams = true;
@@ -162,7 +162,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
   const asset = articleAssets[article.id];
   const importedAsset = typeof article.asset_url === "string" ? article.asset_url : undefined;
   const blobAsset = article.blob_key && apiBase ? `${apiBase}/content/blogs/${article.id}/asset` : undefined;
-  const visualAsset = blobAsset ?? importedAsset ?? asset?.svg;
+  const localAsset = importedAsset ?? asset?.svg;
+  const visualAsset = blobAsset ?? localAsset;
   const isPdf = article.fileType === "pdf";
   const related = similarArticles(article, publicArchiveArticles(allBlogs));
   const articleTitle = cleanTitle(article.title);
@@ -204,16 +205,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         {article.isTextFile ? (
           <MarkdownArticle content={markdownContent} />
         ) : visualAsset ? (
-          <div className="visual-article">
-            <object type={isPdf ? "application/pdf" : "image/svg+xml"} data={visualAsset} title={cleanTitle(article.title)}>
-              <a href={visualAsset} target="_blank" rel="noreferrer">Open the visual article</a>
-            </object>
-            <div className="visual-article-actions">
-              <a href={visualAsset} target="_blank" rel="noreferrer">Open full screen</a>
-              {isPdf && <a href={visualAsset} download>Download PDF ↓</a>}
-              {!isPdf && asset?.pdf && <a href={asset.pdf} download>Download PDF ↓</a>}
-            </div>
-          </div>
+          <VisualArticleAsset primaryAsset={visualAsset} fallbackAsset={localAsset} fallbackPdf={asset?.pdf} isPdf={isPdf} title={articleTitle} />
         ) : null}
         <ContentInteractions contentId={`article-${article.id}`} />
       </article>

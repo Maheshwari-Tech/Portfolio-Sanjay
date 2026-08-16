@@ -1,16 +1,16 @@
 {
-  "about": "Experienced Software Engineer with 5+ years of expertise in backend systems, distributed architectures, and cloud-native solutions. Senior Bar Raiser / Key Interviewer at Oracle, recognized for upholding technical excellence and guiding high-quality hiring decisions. Proven ability to design scalable systems in healthcare, education, and finance domains using Java, Python, Kafka, and OCI/AWS. Specialized in machine learning, applying techniques such as anomaly detection and generative AI to solve real-world problems and enhance system intelligence. Passionate about mentoring juniors, solving complex problems, and driving product impact through innovative technologies and continuous learning.",
+  "about": "Senior Software Engineer and Tech Lead with 6+ years of experience across Oracle, Google, and Amazon, leading 10+ engineers owning 3 products and having built 7+ microservices from 0 to 1. Senior Bar Raiser / Key Interviewer at Oracle with expertise in cloud-native healthcare, search, and finance systems, distributed architectures, machine learning, and generative AI.",
   "experience": [
     {
       "title": "Senior Member of Technical Staff (SDE-3) at Oracle",
       "period": "April 2024 – Present, Bengaluru (Remote)",
       "details": [
         "Working in Healthcare domain in XR team responsible for Clinical Reporting and output management.",
-        "Architected and implemented mro-gen-services, a Java Micronaut-based solution for generating medical record outputs.",
+        "Built 7+ Java Micronaut microservices from 0 to 1, transforming medical-record output into a modular Gen2 reporting platform; proposed modern AI capabilities, including an advanced AI-powered template builder, shaped the roadmap, and aligned product managers and partner teams.",
         "Migrated Cerner enterprise applications to a modern architecture.",
         "Led a project involving 3 engineers to deliver Gen1 Report Ingress and 6 APIs in 1 quarter + 1 month versus 2 quarters planned; enabled WebSphere-to-EJS migration with better performance, stability, scalability, and lower third-party cost.",
-        "Resolved technical and scope ambiguities across multiple initiatives and contributed to early-stage architecture and planning for the SI DRZ region build and EHRC modernization program.",
-        "Built and led the India Clinical Reporting team."
+        "Took ownership of highly ambiguous technical and product scopes, turning open questions into clear architecture and execution plans for initiatives including the SI DRZ region build and EHRC modernization program.",
+        "Built the India Clinical Reporting team from scratch and grew the leadership scope to 10+ engineers across 3+ products; conducted 100+ interviews, contributed to 25+ hires as a Senior Key Interviewer (Bar Raiser), and mentored and judged 12 OraHacks AI teams."
       ]
     },
     {
@@ -19,14 +19,16 @@
       "details": [
         "Worked in Search India Education Team, developing features for exam OSRPs.",
         "Built the Exam Quiz feature and migrated architecture.",
-        "Launched localized Exam OSRPs in Hindi, Tamil, and Telugu with exam dates, fees and waivers, tabbed result layouts, and the Periodic Table; localization reached 0.03% of Search queries and 0.0019% of educational queries, improving accessibility."
+        "Launched localized Exam OSRPs in Hindi, Tamil, and Telugu with exam dates, fees and waivers, tabbed result layouts, and the Periodic Table; localization reached 0.03% of Search queries and 0.0019% of educational queries, improving accessibility.",
+        "Collaborated across Search teams to resolve production issues, align requirements, and prioritize high-impact improvements.",
+        "Contributed to Google Bard’s early model-improvement journey by training and evaluating LLM responses, helping improve output quality as the technology evolved from unreliable early behavior toward practical usefulness."
       ]
     },
     {
       "title": "Software Development Engineer-1 at Amazon",
       "period": "July 2020 – Aug 2021, Hyderabad",
       "details": [
-        "Worked in Finance Automation Team to detect anomalies and duplicates in invoices.",
+        "Built duplicate- and anomaly-detection capabilities for invoice creation and update workflows handling 1 lakh+ daily requests across Amazon’s retail, non-retail, and corporate finance systems.",
         "Implemented ML-based rules discovering over 100M USD anomalies.",
         "Built APIs and operational dashboards for monitoring and alerting, and used AWS CDK to provision infrastructure and CI/CD pipelines across multiple services."
       ]
@@ -35,7 +37,8 @@
       "title": "Problem Curator Intern at HackerEarth",
       "period": "Jan 2020 – June 2020, Bangalore",
       "details": [
-        "Created and tested algorithmic problems for hiring contests.",
+        "Curated and tested algorithmic problems for hiring and internal contests at Google, Facebook, Nokia, PayPal, Salesforce, and Infosys, including HackWithInfy with 167,000+ participants.",
+        "Helped increase Nokia’s post-contest Net Promoter Score from 7 to 8 by strengthening problem quality, accelerating issue resolution, and promptly addressing participant queries.",
         "Presented workshop on Advanced Data Structures and Algorithms."
       ]
     }
