@@ -384,11 +384,6 @@ export const journeyChapters: JourneyChapter[] = [
     decisions: [
       {
         outcome: "Rejected",
-        title: "xFlow",
-        copy: "I interviewed with the startup but was not selected because the cofounders and I had differing opinions.",
-      },
-      {
-        outcome: "Rejected",
         title: "Meta",
         copy: "I interviewed after joining Oracle and was not selected.",
       },
@@ -406,6 +401,11 @@ export const journeyChapters: JourneyChapter[] = [
         outcome: "Offer",
         title: "Microsoft · L62",
         copy: "I stayed at Oracle because ownership, growth, and impact mattered more than changing logos.",
+      },
+      {
+        outcome: "Rejected",
+        title: "xFlow",
+        copy: "I interviewed with the startup but was not selected because the cofounders and I had differing opinions.",
       },
       {
         outcome: "Rejected · First round",
