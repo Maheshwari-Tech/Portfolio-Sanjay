@@ -384,6 +384,11 @@ export const journeyChapters: JourneyChapter[] = [
     decisions: [
       {
         outcome: "Rejected",
+        title: "xFlow",
+        copy: "I interviewed with the startup but was not selected because the cofounders and I had differing opinions.",
+      },
+      {
+        outcome: "Rejected",
         title: "Meta",
         copy: "I interviewed after joining Oracle and was not selected.",
       },
@@ -401,6 +406,11 @@ export const journeyChapters: JourneyChapter[] = [
         outcome: "Offer",
         title: "Microsoft · L62",
         copy: "I stayed at Oracle because ownership, growth, and impact mattered more than changing logos.",
+      },
+      {
+        outcome: "Rejected · First round",
+        title: "Uber · Senior Software Engineer (L5A)",
+        copy: "Hard luck · bad day.",
       },
     ],
     lesson: "Leadership creates clarity, grows judgement, and leaves the team stronger than one individual.",

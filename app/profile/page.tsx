@@ -10,7 +10,7 @@ type ProfileState = "loading" | "ready" | "unavailable";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [state, setState] = useState<ProfileState>("loading");
+  const [state, setState] = useState<ProfileState>(() => getSupabaseBrowserClient() ? "loading" : "unavailable");
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [phone, setPhone] = useState("");
@@ -23,10 +23,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
-    if (!supabase) {
-      setState("unavailable");
-      return;
-    }
+    if (!supabase) return;
 
     void supabase.auth.getUser().then(({ data, error }) => {
       if (error || !data.user) {
@@ -111,11 +108,11 @@ export default function ProfilePage() {
           </form>
 
           <form className="profile-card profile-password-card" onSubmit={changePassword}>
-            <div><p className="eyebrow">SECURITY</p><h2>Change password</h2></div>
-            <p className="profile-card-copy">Use a unique password with at least eight characters.</p>
+            <div><p className="eyebrow">SECURITY</p><h2>Set or change password</h2></div>
+            <p className="profile-card-copy">Create a password after OTP sign-in or replace your current one. Use at least eight characters.</p>
             <label>New password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={8} autoComplete="new-password" /></label>
             <label>Confirm new password<input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required minLength={8} autoComplete="new-password" /></label>
-            <button className="button button-dark" disabled={savingPassword}>{savingPassword ? "Changing…" : "Change password"}</button>
+            <button className="button button-dark" disabled={savingPassword}>{savingPassword ? "Saving…" : "Save new password"}</button>
             {passwordStatus && <p className="form-status" role="status">{passwordStatus}</p>}
           </form>
         </section>

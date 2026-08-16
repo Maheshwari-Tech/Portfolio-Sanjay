@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { authenticatedApiFetch, ApiUnavailableError, getFreshAccessToken } from "../apiClient";
 import AccountStatus from "../AccountStatus";
 import Wordmark from "../Wordmark";
@@ -39,6 +39,7 @@ type Company = {
   notes?: string | null;
   updated_at: string;
 };
+type CompanyOption = { slug: string; name: string };
 
 const stages: Array<[Stage, string]> = [
   ["wishlist", "Wish list"], ["researching", "Researching"], ["ready", "Ready to apply"],
@@ -88,6 +89,17 @@ function companySlug(value: string) {
   return value.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+function companyDisplayName(slug: string) {
+  const preserved = new Map([
+    ["ai", "AI"], ["amd", "AMD"], ["aws", "AWS"], ["c3", "C3"],
+    ["cgi", "CGI"], ["docusign", "DocuSign"], ["ebay", "eBay"], ["hsbc", "HSBC"],
+    ["ibm", "IBM"], ["jp", "JP"], ["msci", "MSCI"], ["ncr", "NCR"], ["npci", "NPCI"],
+    ["okx", "OKX"], ["opentext", "OpenText"], ["paypal", "PayPal"], ["sap", "SAP"],
+    ["spacex", "SpaceX"], ["tcs", "TCS"], ["ubs", "UBS"], ["ukg", "UKG"],
+  ]);
+  return slug.split("-").map(part => preserved.get(part) || `${part.charAt(0).toUpperCase()}${part.slice(1)}`).join(" ");
+}
+
 export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: string}) {
   const router = useRouter();
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -104,6 +116,8 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
   const [editing, setEditing] = useState<Company | null>(null);
   const [adding, setAdding] = useState(false);
   const [newCompany, setNewCompany] = useState(emptyCompany());
+  const [companyOptions, setCompanyOptions] = useState<CompanyOption[]>([]);
+  const [companyOptionsState, setCompanyOptionsState] = useState<"loading" | "ready" | "error">("loading");
   const [saving, setSaving] = useState(false);
   const [leetcodePairingToken, setLeetcodePairingToken] = useState<string | null>(null);
   const [leetcodeSyncState, setLeetcodeSyncState] = useState<"idle" | "opening" | "waiting" | "saving" | "done" | "error">("idle");
@@ -197,6 +211,23 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     const task = window.setTimeout(() => { void loadCompanies(true); }, 0);
     return () => window.clearTimeout(task);
   }, [loadCompanies]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCompanyOptions() {
+      try {
+        const response = await fetch("/data/interview-questions/manifest.json");
+        if (!response.ok) throw new Error("Company list unavailable");
+        const manifest = await response.json() as {companies?: string[]};
+        const options = (manifest.companies || []).map(slug => ({slug, name: companyDisplayName(slug)}));
+        if (!cancelled) { setCompanyOptions(options); setCompanyOptionsState("ready"); }
+      } catch {
+        if (!cancelled) setCompanyOptionsState("error");
+      }
+    }
+    void loadCompanyOptions();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     const task = window.setTimeout(() => {
@@ -471,7 +502,7 @@ export function InterviewTracker({initialCompanySlug}: {initialCompanySlug?: str
     {(editing || adding) && <div className="tracker-overlay" role="presentation" onMouseDown={event => { if (event.currentTarget === event.target) closeEditor(); }}>
       <section className="tracker-editor" role="dialog" aria-modal="true" aria-label={adding ? "Add company" : `Edit ${editing?.company}`}>
         <header><div><p className="eyebrow">{adding ? "NEW TARGET" : canManage ? "COMPANY DOSSIER" : "INTERVIEW PREPARATION"}</p><h2>{adding ? "Add a company" : editing?.company}</h2></div><button aria-label="Close" onClick={closeEditor}>×</button></header>
-        {canManage && (adding ? <CompanyForm value={newCompany} onChange={setNewCompany} onSubmit={createCompany} saving={saving}/>: editing && <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving} onDelete={() => void deleteCompany(editing)}/>)}
+        {canManage && (adding ? <CompanyForm value={newCompany} onChange={setNewCompany} onSubmit={createCompany} saving={saving} companyOptions={companyOptions} companyOptionsState={companyOptionsState} trackedCompanies={companies.map(item => item.company)}/>: editing && <CompanyForm value={editing} onChange={value => setEditing(value as Company)} onSubmit={saveEdit} saving={saving} onDelete={() => void deleteCompany(editing)}/>)}
       </section>
     </div>}
   </main>;
@@ -504,11 +535,11 @@ export default function InterviewTrackerPage() {
 
 type CompanyFormValue = Omit<Company, "id" | "updated_at"> | Company;
 
-function CompanyForm<T extends CompanyFormValue>({value, onChange, onSubmit, saving, onDelete}: {value: T; onChange: (value: T) => void; onSubmit: (event: FormEvent) => void; saving: boolean; onDelete?: () => void}) {
+function CompanyForm<T extends CompanyFormValue>({value, onChange, onSubmit, saving, onDelete, companyOptions, companyOptionsState, trackedCompanies = []}: {value: T; onChange: (value: T) => void; onSubmit: (event: FormEvent) => void; saving: boolean; onDelete?: () => void; companyOptions?: CompanyOption[]; companyOptionsState?: "loading" | "ready" | "error"; trackedCompanies?: string[]}) {
   const field = (name: keyof Company, next: string) => onChange({...value, [name]: next} as T);
   return <form className="tracker-form" onSubmit={onSubmit}>
     <div className="tracker-form-grid">
-      <label>Company<input required minLength={2} value={value.company} onChange={event => field("company", event.target.value)}/></label>
+      {companyOptions ? <CompanyTypeahead value={value.company} onChange={next => field("company", next)} options={companyOptions} state={companyOptionsState || "loading"} trackedCompanies={trackedCompanies}/> : <label>Company<input required minLength={2} value={value.company} onChange={event => field("company", event.target.value)}/></label>}
       <label>Target role<input value={value.target_role || ""} onChange={event => field("target_role", event.target.value)}/></label>
       <label>Priority<select value={value.priority} onChange={event => field("priority", event.target.value)}>{priorities.map(([key, label]) => <option value={key} key={key}>{label}</option>)}</select></label>
       <label>Status<select value={value.status} onChange={event => field("status", event.target.value)}>{stages.map(([key, label]) => <option value={key} key={key}>{label}</option>)}</select></label>
@@ -523,4 +554,45 @@ function CompanyForm<T extends CompanyFormValue>({value, onChange, onSubmit, sav
     </div>
     <footer>{onDelete && <button type="button" className="tracker-delete" onClick={onDelete}>Remove company</button>}<button type="submit" className="tracker-save" disabled={saving}>{saving ? "Saving…" : "Save changes"}</button></footer>
   </form>;
+}
+
+function CompanyTypeahead({value, onChange, options, state, trackedCompanies}: {value: string; onChange: (value: string) => void; options: CompanyOption[]; state: "loading" | "ready" | "error"; trackedCompanies: string[]}) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const trackedSlugs = useMemo(() => new Set(trackedCompanies.map(companySlug)), [trackedCompanies]);
+  const matches = useMemo(() => {
+    const query = value.trim().toLowerCase();
+    return options
+      .filter(option => !trackedSlugs.has(option.slug))
+      .filter(option => !query || `${option.name} ${option.slug}`.toLowerCase().includes(query))
+      .slice(0, 10);
+  }, [options, trackedSlugs, value]);
+  const exactMatch = options.some(option => option.name.toLowerCase() === value.trim().toLowerCase() || option.slug === companySlug(value));
+  const select = (option: CompanyOption) => { onChange(option.name); setOpen(false); setActiveIndex(0); };
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Escape") { setOpen(false); return; }
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      setOpen(true);
+      setActiveIndex(current => event.key === "ArrowDown" ? (current + 1) % Math.max(matches.length, 1) : (current - 1 + Math.max(matches.length, 1)) % Math.max(matches.length, 1));
+      return;
+    }
+    if (event.key === "Enter" && open && matches[activeIndex]) {
+      event.preventDefault();
+      select(matches[activeIndex]);
+    }
+  };
+
+  return <label className="company-typeahead wide">Company
+    <span className="company-typeahead-input">
+      <input required minLength={2} role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls="company-options" aria-activedescendant={open && matches[activeIndex] ? `company-option-${matches[activeIndex].slug}` : undefined} value={value} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={handleKeyDown} onChange={event => { onChange(event.target.value); setOpen(true); setActiveIndex(0); }} placeholder="Search 650+ companies or enter a new one…"/>
+      {open && <span className="company-typeahead-menu" id="company-options" role="listbox">
+        {matches.map((option, index) => <button id={`company-option-${option.slug}`} type="button" role="option" aria-selected={index === activeIndex} className={index === activeIndex ? "active" : ""} key={option.slug} onMouseDown={event => event.preventDefault()} onClick={() => select(option)}><strong>{option.name}</strong><small>LeetCode question bank available</small></button>)}
+        {state === "loading" && <span className="company-typeahead-state">Loading companies from the question CSVs…</span>}
+        {state === "ready" && matches.length === 0 && <span className="company-typeahead-state">No CSV company matches. Keep this name to add it as a custom company.</span>}
+        {state === "error" && <span className="company-typeahead-state">The CSV company list could not load. You can still add a custom company.</span>}
+      </span>}
+    </span>
+    <small className={`company-typeahead-hint ${value.trim() && !exactMatch ? "custom" : ""}`}>{state === "ready" ? `${options.length} companies have LeetCode question banks. ${value.trim() && !exactMatch ? `“${value.trim()}” will be added as a custom company.` : "Start typing or choose from the list."}` : "You can always enter a company that is not listed."}</small>
+  </label>;
 }

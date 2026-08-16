@@ -10,17 +10,20 @@ import CountryCodePicker from "../CountryCodePicker";
 import Wordmark from "../Wordmark";
 
 type SignupInvitation = {phone: string; countryCode: string; nationalPhone: string; name: string; requestToken: string; status: "pending" | "later" | "accepted" | "rejected"};
+type LocalAuthData = {token:string;user:{id:number;name:string;phone:string;role:string}};
 
 export default function LoginPage({ adminMode = false }: { adminMode?: boolean }) {
   const [authMode, setAuthMode] = useState<"signIn" | "signUp">("signIn");
   const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState("");
   const [name, setName] = useState("");
-  const [step, setStep] = useState<"password" | "otp" | "profile">("password");
+  const [step, setStep] = useState<"password" | "otp" | "profile" | "setPassword">("password");
   const [verifiedSession, setVerifiedSession] = useState<Session | null>(null);
+  const [localVerifiedAuth, setLocalVerifiedAuth] = useState<LocalAuthData | null>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -42,6 +45,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     setStatus("");
     if (mode === "signUp") {
       setPassword("");
+      setConfirmPassword("");
     }
   };
 
@@ -96,10 +100,16 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     window.location.href = next;
   }
 
-  function finishLocal(data: {token:string;user:{id:number;name:string;phone:string;role:string}}) {
+  function finishLocal(data: LocalAuthData) {
     localStorage.setItem("sanjay_portfolio_token", data.token);
     localStorage.setItem("sanjay_portfolio_user", JSON.stringify(data.user));
     window.location.href = next;
+  }
+
+  function passwordIsValid() {
+    if (password.length < 8) { setStatus("Use at least 8 characters for your password."); return false; }
+    if (password !== confirmPassword) { setStatus("The passwords do not match."); return false; }
+    return true;
   }
 
   const resetCaptcha = useCallback(() => {
@@ -121,6 +131,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   }
 
   async function requestSignupInvitation() {
+    if (!passwordIsValid()) return;
     const normalizedPhone = normalizeIndianPhone(`${countryCode}${phone}`);
     if (!/^\+[1-9]\d{9,14}$/.test(normalizedPhone)) {
       setStatus("Enter a valid mobile number first.");
@@ -203,6 +214,8 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   }
 
   async function requestOtp() {
+    if (authMode === "signUp" && !passwordIsValid()) return;
+    if (authMode === "signIn") { setPassword(""); setConfirmPassword(""); }
     const normalizedPhone = normalizeIndianPhone(`${countryCode}${phone}`);
     if (!/^\+[1-9]\d{9,14}$/.test(normalizedPhone)) {
       setStatus("Enter a valid mobile number first.");
@@ -244,11 +257,12 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     setBusy(true);
     if (!supabase) {
       try {
-        const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(`${countryCode}${phone}`),code:otp})});
+        const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(`${countryCode}${phone}`),code:otp,...(authMode === "signUp" ? {name:name.trim(),password} : {})})});
         const data = await response.json();
         if (response.status === 428) { setStep("profile"); setStatus("Phone verified. Add your name to finish local signup."); return; }
         if (!response.ok) throw new Error(data.detail || "The code is invalid or expired.");
-        finishLocal(data);
+        if (authMode === "signUp") finishLocal(data);
+        else { setLocalVerifiedAuth(data); setStep("setPassword"); setStatus("You are signed in. You can set a new password now or skip this step."); }
       } catch (error) { setStatus(error instanceof Error ? error.message : "The login service is unavailable."); }
       finally { setBusy(false); }
       return;
@@ -260,14 +274,24 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
       return;
     }
 
-    if (authMode === "signUp" || !data.user?.user_metadata?.name) {
+    if (authMode === "signUp") {
+      const { error: profileError } = await supabase.auth.updateUser({password, data: {name: name.trim()}});
+      if (profileError) { setBusy(false); setStatus(profileError.message); return; }
+      localStorage.removeItem("portfolio_signup_invitation");
+      finish(data.session, name.trim());
+      return;
+    }
+    if (!data.user?.user_metadata?.name) {
       setVerifiedSession(data.session);
       setStep("profile");
       setBusy(false);
       setStatus("Phone verified. Add your name to complete your profile.");
       return;
     }
-    finish(data.session);
+    setVerifiedSession(data.session);
+    setStep("setPassword");
+    setBusy(false);
+    setStatus("You are signed in. You can set a new password now or skip this step.");
   }
 
   async function saveProfile(event: FormEvent) {
@@ -279,7 +303,10 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         const response = await apiFetch("/auth/verify-otp", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:normalizeIndianPhone(`${countryCode}${phone}`),code:otp,name:name.trim()})});
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || "Could not complete signup.");
-        finishLocal(data);
+        setLocalVerifiedAuth(data);
+        setStep("setPassword");
+        setStatus("Profile saved. You can set a password now or skip this step.");
+        setBusy(false);
       } catch (error) { setStatus(error instanceof Error ? error.message : "The login service is unavailable."); setBusy(false); }
       return;
     }
@@ -290,7 +317,34 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
       setStatus(error.message);
       return;
     }
-    finish(verifiedSession, name.trim());
+    setStep("setPassword");
+    setStatus("Profile saved. You can set a password now or skip this step.");
+    setBusy(false);
+  }
+
+  function finishVerifiedLogin() {
+    if (localVerifiedAuth) finishLocal(localVerifiedAuth);
+    else if (verifiedSession) finish(verifiedSession, name.trim() || undefined);
+  }
+
+  async function saveOptionalPassword(event: FormEvent) {
+    event.preventDefault();
+    if (!passwordIsValid()) return;
+    setBusy(true);
+    if (localVerifiedAuth) {
+      try {
+        const response = await apiFetch("/auth/password", {method:"PATCH",headers:{"Content-Type":"application/json",Authorization:`Bearer ${localVerifiedAuth.token}`},body:JSON.stringify({password})});
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.detail || "The password could not be updated.");
+        finishLocal(localVerifiedAuth);
+      } catch (error) { setStatus(error instanceof Error ? error.message : "The password could not be updated."); setBusy(false); }
+      return;
+    }
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase || !verifiedSession) { setBusy(false); return; }
+    const {error} = await supabase.auth.updateUser({password});
+    if (error) { setStatus(error.message); setBusy(false); return; }
+    finish(verifiedSession, name.trim() || undefined);
   }
 
   return (
@@ -303,10 +357,11 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         {!adminMode && step === "password" && <div className="auth-mode-switch" role="tablist" aria-label="Choose account action"><button ref={(element) => { authTabRefs.current[0] = element; }} id="sign-in-tab" type="button" role="tab" aria-selected={authMode === "signIn"} aria-controls="sign-in-panel" tabIndex={authMode === "signIn" ? 0 : -1} className={authMode === "signIn" ? "active" : ""} onKeyDown={(event) => handleAuthTabKey(event, 0)} onClick={() => selectAuthMode("signIn")}>Sign in</button><button ref={(element) => { authTabRefs.current[1] = element; }} id="sign-up-tab" type="button" role="tab" aria-selected={authMode === "signUp"} aria-controls="sign-up-panel" tabIndex={authMode === "signUp" ? 0 : -1} className={authMode === "signUp" ? "active" : ""} onKeyDown={(event) => handleAuthTabKey(event, 1)} onClick={() => selectAuthMode("signUp")}>Sign up</button></div>}
         <div className="auth-form-stage" id={!adminMode && step === "password" ? authMode === "signIn" ? "sign-in-panel" : "sign-up-panel" : undefined} role={!adminMode && step === "password" ? "tabpanel" : undefined} aria-labelledby={!adminMode && step === "password" ? authMode === "signIn" ? "sign-in-tab" : "sign-up-tab" : undefined}>
         <p className="eyebrow">{adminMode ? "ADMIN ACCESS" : authMode === "signUp" ? "NEW MEMBER" : "WELCOME BACK"}</p>
-        <h1 ref={stepHeadingRef} tabIndex={-1}>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : "Complete your profile."}</h1>
-        {step === "password" && authMode === "signUp" && <p className="auth-intro">Use your mobile number to create an account. We’ll verify it with a one-time code.</p>}
+        <h1 ref={stepHeadingRef} tabIndex={-1}>{step === "password" ? adminMode ? "Admin sign in." : authMode === "signUp" ? "Create your account." : "Sign in with mobile." : step === "otp" ? "Enter your OTP." : step === "setPassword" ? "Set your password." : "Complete your profile."}</h1>
+        {step === "password" && authMode === "signUp" && <p className="auth-intro">Add your details and a password. We’ll verify your mobile number with a one-time code before creating the account.</p>}
         {step === "otp" && <p>Enter the six-digit code to continue.</p>}
         {step === "profile" && <p>Add your name to complete your profile.</p>}
+        {step === "setPassword" && <p>Optional: set a new password for future sign-ins, or skip and continue.</p>}
 
         {step === "password" && authMode === "signIn" && (
           <form onSubmit={tryPassword}>
@@ -337,6 +392,8 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
           <form onSubmit={(event) => { event.preventDefault(); if (signupInvitation?.status === "accepted") void requestOtp(); else void requestSignupInvitation(); }}>
             <label>Your name<input required value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" placeholder="Your name" /></label>
             <label>Mobile number<span className="phone-input-group"><CountryCodePicker value={countryCode} onChange={setCountryCode} disabled={Boolean(signupInvitation)} /><input required disabled={Boolean(signupInvitation)} type="tel" inputMode="numeric" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 15))} autoComplete="tel-national" aria-label="Mobile number" placeholder="Mobile number" /></span></label>
+            <label>Password<input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} autoComplete="new-password" placeholder="At least 8 characters" /></label>
+            <label>Confirm password<input required type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} minLength={8} autoComplete="new-password" placeholder="Enter the same password again" /></label>
             {signupInvitation && <div className={`trial-verification signup-invitation ${signupInvitation.status}`} role="status"><strong>Signup by invite</strong><p>{signupInvitation.status === "accepted" ? "Your request is approved. Complete the security check and request your verification code." : signupInvitation.status === "rejected" ? "This request was not approved." : "Your request is waiting for admin approval. The admin will verify your number before approving it."}</p></div>}
             {captchaConfigured && signupInvitation?.status === "accepted" && <CaptchaChallenge provider={captchaProvider!} siteKey={captchaSiteKey} resetKey={captchaResetKey} onToken={setCaptchaToken} />}
             <button disabled={busy || signupInvitation?.status === "pending" || signupInvitation?.status === "later"} className="button button-dark">{busy ? "Please wait…" : signupInvitation?.status === "accepted" ? "Send verification code" : signupInvitation?.status === "rejected" ? "Request not approved" : "Request signup invite"}</button>
@@ -358,6 +415,14 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
           <form onSubmit={saveProfile}>
             <label>Your name<input required value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" placeholder="Your name" /></label>
             <button disabled={busy} className="button button-dark">Create profile</button>
+          </form>
+        )}
+        {step === "setPassword" && (
+          <form onSubmit={saveOptionalPassword}>
+            <label>New password<input required type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} autoComplete="new-password" placeholder="At least 8 characters" /></label>
+            <label>Confirm new password<input required type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} minLength={8} autoComplete="new-password" placeholder="Enter the same password again" /></label>
+            <button disabled={busy} className="button button-dark">{busy ? "Saving…" : "Save password and continue"}</button>
+            <button disabled={busy} type="button" className="text-link" onClick={finishVerifiedLogin}>Skip for now</button>
           </form>
         )}
         {status && <p className="form-status" role="status" aria-live="polite">{status}</p>}

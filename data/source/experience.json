@@ -49,7 +49,7 @@
     "rating": 10,
     "details": [
       "Built statistical and ML-powered systems in Amazon Finance Automation to detect invoice fraud, duplicates, and anomalies at scale.",
-      "Built duplicate- and anomaly-detection capabilities for invoice creation and update workflows handling <strong>1 lakh+ requests every day</strong> across Amazon’s retail, non-retail, and corporate finance systems.",
+      "Built duplicate and anomaly-detection capabilities for invoice creation and update workflows handling <strong>1 lakh+ requests every day</strong> across Amazon’s retail, non-retail, and corporate finance systems.",
       "Implemented <strong>3 anomaly-detection rules</strong> using <strong>statistical analysis</strong> and <strong>machine learning</strong>, including <strong>Isolation Forest</strong>. The rules identified over <strong>100M USD</strong> in anomalies within the <strong>first month</strong>.",
       "Reduced anomaly reporting latency from <strong>24 hours to approximately 5 minutes</strong> through Gandalf-Veritas integration, giving finance teams near-real-time visibility into suspicious activity.",
       "Built <strong>APIs</strong> and operational dashboards for <strong>monitoring and alerting</strong>, and used <strong>AWS CDK</strong> to provision infrastructure and <strong>CI/CD pipelines</strong> across multiple services.",
@@ -67,7 +67,7 @@
     "rating": 10,
     "details": [
       "Curated and tested algorithmic problems for hiring and internal coding contests conducted for Google, Facebook, Nokia, PayPal, Salesforce, and Infosys, including the nationwide <strong>HackWithInfy</strong> contest with <strong>167,000+ participants</strong>.",
-      "Helped increase Nokia’s post-contest <strong>Net Promoter Score from 7 to 8</strong> by strengthening problem quality, accelerating issue resolution, and promptly addressing participant queries.",
+      "Helped increase Nokia’s post-contest <strong>Net Promoter Score from 7 to 8</strong> by strengthening problem quality, promptly addressing participant queries and accelerated issue resolution.",
       "Presented a <strong>2-day / 10+ hour</strong> advanced data structures and algorithms workshop at MNIT Jaipur to <strong>120+ attendees</strong>."
     ]
   }

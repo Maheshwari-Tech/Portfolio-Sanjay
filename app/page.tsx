@@ -119,7 +119,7 @@ export default async function Home() {
     name: profile.name,
     url: siteConfig.url,
     image: `${siteConfig.url}${profile.image}`,
-    jobTitle: "Tech Lead and Software Engineer",
+    jobTitle: "Tech Lead and Senior Software Engineer",
     email: `mailto:${profile.email}`,
     sameAs: [siteConfig.linkedIn, "https://github.com/Maheshwari-Tech"],
     knowsAbout: ["Distributed systems", "Cloud architecture", "Generative AI", "LangChain", "LangGraph", "RAG", "Technical leadership"],
